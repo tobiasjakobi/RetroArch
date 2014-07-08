@@ -18,6 +18,19 @@
 
 #include "softfilter.h"
 #include <stdlib.h>
+#include <stdio.h>
+
+#ifdef USE_NEON
+extern void neon_scale2x_8_8(const uint8_t *src, uint8_t *dst,
+   unsigned int width, unsigned int srcstride, unsigned int dststride, unsigned int height);
+extern void neon_scale2x_16_16(const uint16_t *src, uint16_t *dst,
+   unsigned int width, unsigned int srcstride, unsigned int dststride, unsigned int height);
+#else
+void neon_scale2x_8_8(const uint8_t *src, uint8_t *dst,
+   unsigned int width, unsigned int srcstride, unsigned int dststride, unsigned int height) {}
+void neon_scale2x_16_16(const uint16_t *src, uint16_t *dst,
+   unsigned int width, unsigned int srcstride, unsigned int dststride, unsigned int height) {}
+#endif
 
 #ifdef RARCH_INTERNAL
 #define softfilter_get_implementation scale2x_get_implementation
@@ -126,7 +139,12 @@ static void *scale2x_generic_create(unsigned in_fmt, unsigned out_fmt,
       unsigned max_width, unsigned max_height,
       unsigned threads, softfilter_simd_mask_t simd)
 {
+#ifdef USE_NEON
+   if (simd & SOFTFILTER_SIMD_NEON)
+      threads = 1;
+#else
    (void)simd;
+#endif
 
    struct filter_data *filt = (struct filter_data*)calloc(1, sizeof(*filt));
    if (!filt)
@@ -226,9 +244,79 @@ static const struct softfilter_implementation scale2x_generic = {
    SOFTFILTER_API_VERSION,
 };
 
+static void scale2x_neon_work_cb_rgb565(void *data, void *thread_data)
+{
+   struct softfilter_thread_data *thr = thread_data;
+
+   if (thr->first != 1 || thr->last != 1) return;
+
+   neon_scale2x_16_16(thr->in_data, thr->out_data, thr->width,
+                      thr->in_pitch, thr->out_pitch, thr->height);
+}
+
+static void scale2x_neon_packets(void *data,
+      struct softfilter_work_packet *packets,
+      void *output, size_t output_stride,
+      const void *input, unsigned width, unsigned height, size_t input_stride)
+{
+   struct filter_data *filt = (struct filter_data*)data;
+   struct softfilter_thread_data *thr;
+
+   if (filt->threads != 1) return;
+   if (filt->in_fmt != SOFTFILTER_FMT_RGB565) {
+      static int warn = 1;
+      if (warn) {
+         printf("softfilter: scale2x: only RGB565 input is NEON accelerated\n"
+                "softfilter: scale2x: falling back to slower C implementation\n");
+         warn = 0;
+      }
+   }
+
+   thr = filt->workers;
+
+   thr->out_data = output;
+   thr->in_data = input;
+   thr->out_pitch = output_stride;
+   thr->in_pitch = input_stride;
+   thr->width = width;
+   thr->height = height;
+
+   thr->first = 1;
+   thr->last = 1;
+
+   /* Fall back to the generic C implementation when the input format is XRGB8888. *
+    * Note that applying the Scale2x filter to this kind of data is useless anyway *
+    * since the algorithm depends on 'hard' integer comparison, which works best   *
+    * for heavily quantized color formats (a.k.a 'pixel art').                     */
+   if (filt->in_fmt == SOFTFILTER_FMT_XRGB8888)
+      packets->work = scale2x_work_cb_xrgb8888;
+   else if (filt->in_fmt == SOFTFILTER_FMT_RGB565)
+      packets->work = scale2x_neon_work_cb_rgb565;
+   packets->thread_data = thr;
+}
+
+static const struct softfilter_implementation scale2x_neon = {
+   scale2x_generic_input_fmts,
+   scale2x_generic_output_fmts,
+
+   scale2x_generic_create,
+   scale2x_generic_destroy,
+
+   scale2x_generic_threads,
+   scale2x_generic_output,
+   scale2x_neon_packets,
+   "Scale2x (NEON)",
+   SOFTFILTER_API_VERSION,
+};
+
 const struct softfilter_implementation *softfilter_get_implementation(softfilter_simd_mask_t simd)
 {
+#ifdef USE_NEON
+   if (simd & SOFTFILTER_SIMD_NEON)
+      return &scale2x_neon;
+#else
    (void)simd;
+#endif
    return &scale2x_generic;
 }
 
