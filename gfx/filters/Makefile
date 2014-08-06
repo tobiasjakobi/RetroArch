@@ -2,6 +2,7 @@ compiler    := gcc
 extra_flags :=
 use_neon    := 0
 release	    := release
+neon_asm    :=
 DYLIB	    := so
 
 ifeq ($(platform),)
@@ -21,7 +22,7 @@ else ifneq ($(findstring win,$(shell uname -a)),)
 endif
 endif
 
-ifeq ($(platform),gcc)
+ifeq ($(platform), unix)
 extra_rules_gcc := $(shell $(compiler) -dumpmachine)
 endif
 
@@ -34,11 +35,11 @@ ifneq (,$(findstring hardfloat,$(extra_rules_gcc)))
 extra_flags += -mfloat-abi=hard
 endif
 
-ifeq (release,$(build))
+ifeq ($(build), release)
 extra_flags += -O2
 endif
 
-ifeq (debug,$(build))
+ifeq ($(build), debug)
 extra_flags += -O0 -g
 endif
 
@@ -63,22 +64,24 @@ objects :=
 flags   += -std=c99
 
 
-ifeq (1,$(use_neon))
-ASMFLAGS := -INEON/asm
-asflags += -mfpu=neon
+ifeq ($(use_neon), 1)
+asflags += -mfpu=neon -Iasm
+flags += -DUSE_NEON
+neon_asm := $(patsubst %.S,%.o,$(wildcard *_neon.S))
 endif
-           
+
 objects += blargg_ntsc_snes_composite.$(DYLIB) blargg_ntsc_snes_rf.$(DYLIB) blargg_ntsc_snes_svideo.$(DYLIB) blargg_ntsc_snes_rgb.$(DYLIB) phosphor2x.$(DYLIB) epx.$(DYLIB) lq2x.$(DYLIB) 2xsai.$(DYLIB) super2xsai.$(DYLIB) supereagle.$(DYLIB) 2xbr.$(DYLIB) darken.$(DYLIB) scale2x.$(DYLIB)
 
 all: build;
 
 %.o: %.S
-	$(CC) -c -o $@ $(asflags)  $(ASMFLAGS)  $<
+	$(CC) -c -o $@ $(asflags) $<
 
 %.o: %.c
 	$(CC) -c -o $@ $(flags) $<
 
-%.$(DYLIB): %.o
+.SECONDEXPANSION:
+%.$(DYLIB): %.o $$(findstring %_neon.o,$$(neon_asm))
 	$(CC) -o $@ $(ldflags) $(flags) $^
 
 build: $(objects)
