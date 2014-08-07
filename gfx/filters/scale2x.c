@@ -21,15 +21,15 @@
 #include <stdio.h>
 
 #ifdef USE_NEON
-extern void neon_scale2x_8_8(const uint8_t *src, uint8_t *dst,
-   unsigned int width, unsigned int srcstride, unsigned int dststride, unsigned int height);
-extern void neon_scale2x_16_16(const uint16_t *src, uint16_t *dst,
-   unsigned int width, unsigned int srcstride, unsigned int dststride, unsigned int height);
+extern void neon_scale2x_8_8(const uint8_t *src, uint8_t *dst, unsigned int width,
+   unsigned int srcstride, unsigned int dststride, unsigned int height);
+extern void neon_scale2x_16_16(const uint16_t *src, uint16_t *dst, unsigned int width,
+   unsigned int srcstride, unsigned int dststride, unsigned int height, unsigned int position);
 #else
-void neon_scale2x_8_8(const uint8_t *src, uint8_t *dst,
-   unsigned int width, unsigned int srcstride, unsigned int dststride, unsigned int height) {}
-void neon_scale2x_16_16(const uint16_t *src, uint16_t *dst,
-   unsigned int width, unsigned int srcstride, unsigned int dststride, unsigned int height) {}
+void neon_scale2x_8_8(const uint8_t *src, uint8_t *dst, unsigned int width,
+   unsigned int srcstride, unsigned int dststride, unsigned int height) {}
+void neon_scale2x_16_16(const uint16_t *src, uint16_t *dst, unsigned int width,
+   unsigned int srcstride, unsigned int dststride, unsigned int height, unsigned int access) {}
 #endif
 
 #ifdef RARCH_INTERNAL
@@ -40,6 +40,15 @@ void neon_scale2x_16_16(const uint16_t *src, uint16_t *dst,
 
 #define SCALE2X_SCALE 2
 
+/* first_line_access: bit is set when the first line of the buffer segment is *
+ *                    also the first line of the entire buffer.               *
+ * last_line_access:  bit is set then the last line of the buffer segment is  *
+ *                    also the last line of the entire buffer.                */
+enum softfilter_access {
+   first_line_access = (1 << 0),
+   last_line_access  = (1 << 1)
+};
+
 struct softfilter_thread_data
 {
    void *out_data;
@@ -49,8 +58,7 @@ struct softfilter_thread_data
    unsigned colfmt;
    unsigned width;
    unsigned height;
-   int first;
-   int last;
+   unsigned access;
 };
 
 struct filter_data
@@ -139,10 +147,7 @@ static void *scale2x_generic_create(unsigned in_fmt, unsigned out_fmt,
       unsigned max_width, unsigned max_height,
       unsigned threads, softfilter_simd_mask_t simd)
 {
-#ifdef USE_NEON
-   if (simd & SOFTFILTER_SIMD_NEON)
-      threads = 1;
-#else
+#ifndef USE_NEON
    (void)simd;
 #endif
 
@@ -182,8 +187,8 @@ static void scale2x_work_cb_xrgb8888(void *data, void *thread_data)
    unsigned width = thr->width;
    unsigned height = thr->height;
 
-   scale2x_generic_xrgb8888(width, height,
-         thr->first, thr->last, input, thr->in_pitch / SOFTFILTER_BPP_XRGB8888, output, thr->out_pitch / SOFTFILTER_BPP_XRGB8888);
+   scale2x_generic_xrgb8888(width, height, thr->access & first_line_access, thr->access & last_line_access,
+                            input, thr->in_pitch / SOFTFILTER_BPP_XRGB8888, output, thr->out_pitch / SOFTFILTER_BPP_XRGB8888);
 }
 
 static void scale2x_work_cb_rgb565(void *data, void *thread_data)
@@ -194,8 +199,8 @@ static void scale2x_work_cb_rgb565(void *data, void *thread_data)
    unsigned width = thr->width;
    unsigned height = thr->height;
 
-   scale2x_generic_rgb565(width, height,
-         thr->first, thr->last, input, thr->in_pitch / SOFTFILTER_BPP_RGB565, output, thr->out_pitch / SOFTFILTER_BPP_RGB565);
+   scale2x_generic_rgb565(width, height, thr->access & first_line_access, thr->access & last_line_access,
+                          input, thr->in_pitch / SOFTFILTER_BPP_RGB565, output, thr->out_pitch / SOFTFILTER_BPP_RGB565);
 }
 
 static void scale2x_generic_packets(void *data,
@@ -219,8 +224,8 @@ static void scale2x_generic_packets(void *data,
       thr->height = y_end - y_start;
 
       // Workers need to know if they can access pixels outside their given buffer.
-      thr->first = y_start;
-      thr->last = y_end == height;
+      thr->access = (y_start == 0 ? first_line_access : 0);
+      if (y_end == height) thr->access &= last_line_access;
 
       if (filt->in_fmt == SOFTFILTER_FMT_XRGB8888)
          packets[i].work = scale2x_work_cb_xrgb8888;
@@ -248,10 +253,11 @@ static void scale2x_neon_work_cb_rgb565(void *data, void *thread_data)
 {
    struct softfilter_thread_data *thr = thread_data;
 
-   if (thr->first != 1 || thr->last != 1) return;
+   if (thr->height < 2) return;
 
    neon_scale2x_16_16(thr->in_data, thr->out_data, thr->width,
-                      thr->in_pitch, thr->out_pitch, thr->height);
+                      thr->in_pitch, thr->out_pitch, thr->height,
+                      thr->access);
 }
 
 static void scale2x_neon_packets(void *data,
@@ -261,8 +267,8 @@ static void scale2x_neon_packets(void *data,
 {
    struct filter_data *filt = (struct filter_data*)data;
    struct softfilter_thread_data *thr;
+   unsigned i;
 
-   if (filt->threads != 1) return;
    if (filt->in_fmt != SOFTFILTER_FMT_RGB565) {
       static int warn = 1;
       if (warn) {
@@ -272,27 +278,32 @@ static void scale2x_neon_packets(void *data,
       }
    }
 
-   thr = filt->workers;
+   for (i = 0; i < filt->threads; i++) {
+      const unsigned y_start = (height * i) / filt->threads;
+      const unsigned y_end = (height * (i + 1)) / filt->threads;
 
-   thr->out_data = output;
-   thr->in_data = input;
-   thr->out_pitch = output_stride;
-   thr->in_pitch = input_stride;
-   thr->width = width;
-   thr->height = height;
+      thr = &filt->workers[i];
 
-   thr->first = 1;
-   thr->last = 1;
+      thr->out_data = (uint8_t*)output + y_start * SCALE2X_SCALE * output_stride;
+      thr->in_data = (const uint8_t*)input + y_start * input_stride;
+      thr->out_pitch = output_stride;
+      thr->in_pitch = input_stride;
+      thr->width = width;
+      thr->height = y_end - y_start;
 
-   /* Fall back to the generic C implementation when the input format is XRGB8888. *
-    * Note that applying the Scale2x filter to this kind of data is useless anyway *
-    * since the algorithm depends on 'hard' integer comparison, which works best   *
-    * for heavily quantized color formats (a.k.a 'pixel art').                     */
-   if (filt->in_fmt == SOFTFILTER_FMT_XRGB8888)
-      packets->work = scale2x_work_cb_xrgb8888;
-   else if (filt->in_fmt == SOFTFILTER_FMT_RGB565)
-      packets->work = scale2x_neon_work_cb_rgb565;
-   packets->thread_data = thr;
+      thr->access = (y_start == 0 ? first_line_access : 0);
+      if (y_end == height) thr->access &= last_line_access;
+
+      /* Fall back to the generic C implementation when the input format is XRGB8888. *
+       * Note that applying the Scale2x filter to this kind of data is useless anyway *
+       * since the algorithm depends on 'hard' integer comparison, which works best   *
+       * for heavily quantized color formats (a.k.a 'pixel art').                     */
+      if (filt->in_fmt == SOFTFILTER_FMT_XRGB8888)
+         packets[i].work = scale2x_work_cb_xrgb8888;
+      else if (filt->in_fmt == SOFTFILTER_FMT_RGB565)
+         packets[i].work = scale2x_neon_work_cb_rgb565;
+      packets[i].thread_data = thr;
+   }
 }
 
 static const struct softfilter_implementation scale2x_neon = {
