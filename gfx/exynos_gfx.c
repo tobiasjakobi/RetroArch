@@ -44,6 +44,15 @@
 
 extern void *memcpy_neon(void *dst, const void *src, size_t n);
 
+typedef unsigned short ushort;
+
+typedef union exynos_boundingbox {
+  struct {
+    ushort x, y;
+    ushort w, h;
+  };
+  uint64_t data;
+} exynos_boundingbox_t;
 
 /* We use two GEM buffers (main and aux) to handle 'data' from the frontend. */
 enum exynos_buffer_type {
@@ -96,6 +105,10 @@ struct exynos_page {
 
   struct exynos_data *base;
 
+  /* Track damage done by blit operations (damage[0]) *
+   * and damage by font rendering (damage[1]).        */
+  exynos_boundingbox_t damage[2];
+
   bool used; /* Set if page is currently used. */
   bool clear; /* Set if page has to be cleared. */
 };
@@ -146,7 +159,8 @@ struct exynos_data {
   float aspect;
 
   /* parameters for blitting emulator fb to screen */
-  unsigned blit_params[6];
+  exynos_boundingbox_t blit_damage;
+  ushort blit_w, blit_h;
 
   /* bytes per pixel */
   unsigned bpp;
@@ -160,6 +174,24 @@ struct exynos_data {
   struct exynos_perf perf;
 #endif
 };
+
+static inline void exynos_boundingbox_clear(exynos_boundingbox_t *bb) {
+  bb->data = 0;
+}
+
+static inline bool exynos_boundingbox_empty(const exynos_boundingbox_t *bb) {
+  return (bb->data == 0);
+}
+
+static void exynos_boundingbox_merge(exynos_boundingbox_t *bb,
+                    const exynos_boundingbox_t* merge) {
+  if (merge->x < bb->x) bb->x = merge->x;
+  if (merge->y < bb->y) bb->y = merge->y;
+  if (merge->x + merge->w > bb->x + bb->w)
+    bb->w = merge->x + merge->w - bb->x;
+  if (merge->y + merge->h > bb->y + bb->h)
+    bb->h = merge->y + merge->h - bb->y;
+}
 
 static inline unsigned align_common(unsigned i, unsigned j) {
   return (i + j - 1) & ~(j - 1);
@@ -364,6 +396,47 @@ static int clear_buffer(struct g2d_context *g2d, struct g2d_image *img) {
   if (ret != 0)
     RARCH_ERR("video_exynos: failed to clear buffer using G2D\n");
 
+  return ret;
+}
+
+/* Partial clear of a buffer based on old (obb) and new (nbb) boundingbox. */
+static int clear_buffer_bb(struct g2d_context *g2d, struct g2d_image *img,
+  const exynos_boundingbox_t *obb, const exynos_boundingbox_t *nbb) {
+  int ret = 0;
+
+  if (exynos_boundingbox_empty(obb))
+    goto out; /* nothing to clear */
+
+  if (obb->x == 0 && nbb->x == 0) {
+    if (obb->y >= nbb->y) {
+      goto out; /* old bb contained in new bb */
+    } else {
+      const ushort edge_y = nbb->y + nbb->h;
+
+      ret = g2d_solid_fill(g2d, img, 0, obb->y, img->width, nbb->y - obb->y) ||
+            g2d_solid_fill(g2d, img, 0, edge_y, img->width, obb->y + obb->h - edge_y);
+    }
+  } else if (obb->y == 0 && nbb->y == 0) {
+    if (obb->x >= nbb->x) {
+      goto out; /* old bb contained in new bb */
+    } else {
+      const ushort edge_x = nbb->x + nbb->w;
+
+      ret = g2d_solid_fill(g2d, img, obb->x, 0, nbb->x - obb->x, img->height) ||
+            g2d_solid_fill(g2d, img, edge_x, 0, obb->x + obb->w - edge_x, img->height);
+    }
+  } else {
+    /* Clear the entire old boundingbox. */
+    ret = g2d_solid_fill(g2d, img, obb->x, obb->y, obb->w, obb->h);
+  }
+
+  if (ret == 0)
+    ret = g2d_exec(g2d);
+
+  if (ret != 0)
+    RARCH_ERR("video_exynos: failed to clear buffer (bb) using G2D\n");
+
+out:
   return ret;
 }
 
@@ -900,12 +973,12 @@ static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
     }
   }
 
-  pdata->blit_params[0] = (pdata->width - w) / 2;
-  pdata->blit_params[1] = (pdata->height - h) / 2;
-  pdata->blit_params[2] = w;
-  pdata->blit_params[3] = h;
-  pdata->blit_params[4] = width;
-  pdata->blit_params[5] = height;
+  pdata->blit_damage.x = (pdata->width - w) / 2;
+  pdata->blit_damage.y = (pdata->height - h) / 2;
+  pdata->blit_damage.w = w;
+  pdata->blit_damage.h = h;
+  pdata->blit_w = width;
+  pdata->blit_h = height;
 
   for (i = 0; i < pdata->num_pages; ++i)
     pdata->pages[i].clear = true;
@@ -914,10 +987,10 @@ static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
 static void exynos_set_fake_blit(struct exynos_data *pdata) {
   unsigned i;
 
-  pdata->blit_params[0] = 0;
-  pdata->blit_params[1] = 0;
-  pdata->blit_params[2] = pdata->width;
-  pdata->blit_params[3] = pdata->height;
+  pdata->blit_damage.x = 0;
+  pdata->blit_damage.y = 0;
+  pdata->blit_damage.w = pdata->width;
+  pdata->blit_damage.h = pdata->height;
 
   for (i = 0; i < pdata->num_pages; ++i)
     pdata->pages[i].clear = true;
@@ -926,7 +999,7 @@ static void exynos_set_fake_blit(struct exynos_data *pdata) {
 static int exynos_blit_frame(struct exynos_data *pdata, const void *frame,
                              unsigned src_pitch) {
   const enum exynos_buffer_type buf_type = defaults[exynos_image_frame].buf_type;
-  const unsigned size = src_pitch * pdata->blit_params[5];
+  const unsigned size = src_pitch * pdata->blit_h;
 
   struct g2d_image *src = pdata->src[exynos_image_frame];
 
@@ -950,9 +1023,9 @@ static int exynos_blit_frame(struct exynos_data *pdata, const void *frame,
 #endif
 
   if (g2d_copy_with_scale(pdata->g2d, src, pdata->dst, 0, 0,
-                          pdata->blit_params[4], pdata->blit_params[5],
-                          pdata->blit_params[0], pdata->blit_params[1],
-                          pdata->blit_params[2], pdata->blit_params[3], 0) ||
+                          pdata->blit_w, pdata->blit_h,
+                          pdata->blit_damage.x, pdata->blit_damage.y,
+                          pdata->blit_damage.w, pdata->blit_damage.h, 0) ||
       g2d_exec(pdata->g2d)) {
     RARCH_ERR("video_exynos: failed to blit frame\n");
     return -1;
@@ -974,9 +1047,9 @@ static int exynos_blend_menu(struct exynos_data *pdata,
 #endif
 
   if (g2d_scale_and_blend(pdata->g2d, src, pdata->dst, 0, 0,
-                          src->width, src->height, pdata->blit_params[0],
-                          pdata->blit_params[1], pdata->blit_params[2],
-                          pdata->blit_params[3], G2D_OP_INTERPOLATE) ||
+                          src->width, src->height, pdata->blit_damage.x,
+                          pdata->blit_damage.y, pdata->blit_damage.w,
+                          pdata->blit_damage.h, G2D_OP_INTERPOLATE) ||
       g2d_exec(pdata->g2d)) {
     RARCH_ERR("video_exynos: failed to blend menu\n");
     return -1;
