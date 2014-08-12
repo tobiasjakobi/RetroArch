@@ -405,7 +405,7 @@ ifneq ($(V),1)
    Q := @
 endif
 
-OPTIMIZE_FLAG = -O3 -ffast-math
+OPTIMIZE_FLAG = -O2 -ffast-math
 ifeq ($(DEBUG), 1)
    OPTIMIZE_FLAG = -O0
 endif
