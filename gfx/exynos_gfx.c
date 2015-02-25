@@ -940,6 +940,7 @@ static void exynos_alloc_status(struct exynos_data *pdata) {
 static struct exynos_page *exynos_free_page(struct exynos_data *pdata) {
   struct exynos_page *page = NULL;
   struct g2d_image *dst = pdata->dst;
+  int ret;
 
   /* Wait until a free page is available. */
   while (page == NULL) {
@@ -950,11 +951,17 @@ static struct exynos_page *exynos_free_page(struct exynos_data *pdata) {
 
   dst->bo[0] = page->bo->handle;
 
-  if (page->clear == exynos_buffer_all || page->clear == exynos_buffer_partial) {
-    if (clear_buffer(pdata->g2d, dst) == 0)
-      page->clear = exynos_buffer_non;
-  }
+  if (page->clear == exynos_buffer_all)
+    ret = clear_buffer(pdata->g2d, dst);
+  else if (page->clear == exynos_buffer_partial)
+    ret = clear_buffer_bb(pdata->g2d, dst, &page->damage[0], &pdata->blit_damage);
+  else
+    goto out;
 
+  if (ret == 0)
+    page->clear = exynos_buffer_non;
+
+out:
   page->used = true;
   return page;
 }
