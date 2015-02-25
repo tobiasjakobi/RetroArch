@@ -54,6 +54,12 @@ typedef union exynos_boundingbox {
   uint64_t data;
 } exynos_boundingbox_t;
 
+enum exynos_buffer_clear {
+  exynos_buffer_non     = 0x0,
+  exynos_buffer_all     = 0x1,
+  exynos_buffer_partial = 0x2
+};
+
 /* We use two GEM buffers (main and aux) to handle 'data' from the frontend. */
 enum exynos_buffer_type {
   exynos_buffer_main = 0,
@@ -109,8 +115,11 @@ struct exynos_page {
    * and damage by font rendering (damage[1]).        */
   exynos_boundingbox_t damage[2];
 
-  bool used; /* Set if page is currently used. */
-  bool clear; /* Set if page has to be cleared. */
+  struct {
+    unsigned used:1; /* Set if page is currently used. */
+    enum exynos_buffer_clear clear:2; /* Set if page has to be cleared. */
+    unsigned pad:29;
+  };
 };
 
 struct exynos_fliphandler {
@@ -844,7 +853,7 @@ static int exynos_alloc(struct exynos_data *pdata) {
     pages[i].base = pdata;
 
     pages[i].used = false;
-    pages[i].clear = true;
+    pages[i].clear = exynos_buffer_all;
   }
 
   pixel_format = (pdata->bpp == 2) ? DRM_FORMAT_RGB565 : DRM_FORMAT_XRGB8888;
@@ -936,9 +945,9 @@ static struct exynos_page *exynos_free_page(struct exynos_data *pdata) {
 
   dst->bo[0] = page->bo->handle;
 
-  if (page->clear) {
+  if (page->clear == exynos_buffer_all) {
     if (clear_buffer(pdata->g2d, dst) == 0)
-      page->clear = false;
+      page->clear = exynos_buffer_non;
   }
 
   page->used = true;
@@ -981,7 +990,7 @@ static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
   pdata->blit_h = height;
 
   for (i = 0; i < pdata->num_pages; ++i)
-    pdata->pages[i].clear = true;
+    pdata->pages[i].clear = exynos_buffer_all;
 }
 
 static void exynos_set_fake_blit(struct exynos_data *pdata) {
@@ -993,7 +1002,7 @@ static void exynos_set_fake_blit(struct exynos_data *pdata) {
   pdata->blit_damage.h = pdata->height;
 
   for (i = 0; i < pdata->num_pages; ++i)
-    pdata->pages[i].clear = true;
+    pdata->pages[i].clear = exynos_buffer_all;
 }
 
 static int exynos_blit_frame(struct exynos_data *pdata, const void *frame,
@@ -1389,7 +1398,7 @@ static bool exynos_gfx_frame(void *data, const void *frame, unsigned width,
     if (exynos_render_msg(vid, msg) != 0) goto fail;
 
     /* Font is blitted to the entire screen, so issue clear afterwards. */
-    page->clear = true;
+    page->clear = exynos_buffer_all;
   }
 
   if (exynos_flip(vid->data, page) != 0) goto fail;
