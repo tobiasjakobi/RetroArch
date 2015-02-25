@@ -945,7 +945,7 @@ static struct exynos_page *exynos_free_page(struct exynos_data *pdata) {
 
   dst->bo[0] = page->bo->handle;
 
-  if (page->clear == exynos_buffer_all) {
+  if (page->clear == exynos_buffer_all || page->clear == exynos_buffer_partial) {
     if (clear_buffer(pdata->g2d, dst) == 0)
       page->clear = exynos_buffer_non;
   }
@@ -990,7 +990,7 @@ static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
   pdata->blit_h = height;
 
   for (i = 0; i < pdata->num_pages; ++i)
-    pdata->pages[i].clear = exynos_buffer_all;
+    pdata->pages[i].clear = exynos_buffer_partial;
 }
 
 static void exynos_set_fake_blit(struct exynos_data *pdata) {
