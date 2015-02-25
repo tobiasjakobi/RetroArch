@@ -202,6 +202,11 @@ static void exynos_boundingbox_merge(exynos_boundingbox_t *bb,
     bb->h = merge->y + merge->h - bb->y;
 }
 
+static inline void apply_damage(struct exynos_page *p, unsigned idx,
+                    const exynos_boundingbox_t *bb) {
+  p->damage[idx].data = bb->data;
+}
+
 static inline unsigned align_common(unsigned i, unsigned j) {
   return (i + j - 1) & ~(j - 1);
 }
@@ -1400,6 +1405,8 @@ static bool exynos_gfx_frame(void *data, const void *frame, unsigned width,
     /* Font is blitted to the entire screen, so issue clear afterwards. */
     page->clear = exynos_buffer_all;
   }
+
+  apply_damage(page, 0, &vid->data->blit_damage);
 
   if (exynos_flip(vid->data, page) != 0) goto fail;
 
