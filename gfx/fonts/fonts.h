@@ -48,6 +48,12 @@ struct font_atlas
    uint8_t *buffer; // Alpha channel.
    unsigned width;
    unsigned height;
+
+   // This is to estimate 'damage' done by font rendering.
+   unsigned max_glyph_width;
+   unsigned max_glyph_height;
+   unsigned max_abs_doffset_x;
+   unsigned max_abs_doffset_y;
 };
 
 typedef struct font_renderer_driver

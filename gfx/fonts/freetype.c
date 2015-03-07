@@ -71,8 +71,8 @@ static bool ft_renderer_create_atlas(ft_renderer_t *handle)
    uint8_t *buffer[ATLAS_SIZE] = {NULL};
    unsigned pitches[ATLAS_SIZE] = {0};
 
-   unsigned max_width = 0;
-   unsigned max_height = 0;
+   unsigned max_width = 0, max_height = 0;
+   unsigned max_offset_x = 0, max_offset_y = 0;
 
    for (i = 0; i < ATLAS_SIZE; i++)
    {
@@ -101,12 +101,20 @@ static bool ft_renderer_create_atlas(ft_renderer_t *handle)
 
       if (buffer[i])
          memcpy(buffer[i], slot->bitmap.buffer, slot->bitmap.rows * pitches[i]);
+
       max_width = max(max_width, (unsigned)slot->bitmap.width);
       max_height = max(max_height, (unsigned)slot->bitmap.rows);
+
+      max_offset_x = max(max_offset_x, abs(slot->bitmap_left));
+      max_offset_y = max(max_offset_y, abs(slot->bitmap_left));
    }
 
    handle->atlas.width = max_width * ATLAS_COLS;
    handle->atlas.height = max_height * ATLAS_ROWS;
+   handle->atlas.max_glyph_width = max_width;
+   handle->atlas.max_glyph_height = max_height;
+   handle->atlas.max_abs_doffset_x = max_offset_x;
+   handle->atlas.max_abs_doffset_y = max_offset_y;
 
    handle->atlas.buffer = (uint8_t*)calloc(handle->atlas.width * handle->atlas.height, 1);
    if (!handle->atlas.buffer)

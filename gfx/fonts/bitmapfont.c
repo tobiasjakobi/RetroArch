@@ -72,7 +72,7 @@ static void char_to_texture(bm_renderer_t *handle, uint8_t letter, unsigned atla
 static void *font_renderer_init(const char *font_path, float font_size)
 {
    (void)font_path;
-   unsigned i;
+   unsigned i, glyph_width, glyph_height;
 
    bm_renderer_t *handle = (bm_renderer_t*)calloc(1, sizeof(*handle));
    if (!handle)
@@ -82,18 +82,23 @@ static void *font_renderer_init(const char *font_path, float font_size)
    if (!handle->scale_factor)
       handle->scale_factor = 1;
 
-   handle->atlas.width  = FONT_WIDTH * handle->scale_factor * ATLAS_COLS;
-   handle->atlas.height = FONT_HEIGHT * handle->scale_factor * ATLAS_ROWS;
+   glyph_width  = FONT_WIDTH * handle->scale_factor;
+   glyph_height = FONT_HEIGHT * handle->scale_factor;
+
+   handle->atlas.width  = glyph_width * ATLAS_COLS;
+   handle->atlas.height = glyph_height * ATLAS_ROWS;
+   handle->atlas.max_glyph_width  = glyph_width;
+   handle->atlas.max_glyph_height = glyph_height;
    handle->atlas.buffer = (uint8_t*)calloc(handle->atlas.width * handle->atlas.height, 1);
 
    for (i = 0; i < ATLAS_SIZE; i++)
    {
-      unsigned x = (i % ATLAS_COLS) * handle->scale_factor * FONT_WIDTH;
-      unsigned y = (i / ATLAS_COLS) * handle->scale_factor * FONT_HEIGHT;
+      unsigned x = (i % ATLAS_COLS) * glyph_width;
+      unsigned y = (i / ATLAS_COLS) * glyph_height;
       char_to_texture(handle, i, x, y);
 
-      handle->glyphs[i].width = FONT_WIDTH * handle->scale_factor;
-      handle->glyphs[i].height = FONT_HEIGHT * handle->scale_factor;
+      handle->glyphs[i].width = glyph_width;
+      handle->glyphs[i].height = glyph_height;
       handle->glyphs[i].atlas_offset_x = x;
       handle->glyphs[i].atlas_offset_y = y;
       handle->glyphs[i].draw_offset_x  = 0;
@@ -101,6 +106,9 @@ static void *font_renderer_init(const char *font_path, float font_size)
       handle->glyphs[i].advance_x = (FONT_WIDTH + 1) * handle->scale_factor;
       handle->glyphs[i].advance_y = 0;
    }
+
+   handle->atlas.max_abs_doffset_x = 0;
+   handle->atlas.max_abs_doffset_y = FONT_HEIGHT_BASELINE * handle->scale_factor;
 
    return handle;
 }
