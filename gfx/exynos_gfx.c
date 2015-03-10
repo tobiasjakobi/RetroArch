@@ -178,7 +178,7 @@ static int get_device_index(void) {
     snprintf(buf, sizeof(buf), "/dev/dri/card%d", index);
 
     fd = open(buf, O_RDWR);
-    if (fd == -1) break;
+    if (fd < 0) break;
 
     ver = drmGetVersion(fd);
 
@@ -543,7 +543,7 @@ static int exynos_open(struct exynos_data *pdata) {
   }
 
   fd = open(buf, O_RDWR);
-  if (fd == -1) {
+  if (fd < 0) {
     RARCH_ERR("video_exynos: can't open drm device\n");
     return -1;
   }
