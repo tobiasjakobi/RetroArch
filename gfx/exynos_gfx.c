@@ -454,6 +454,31 @@ out:
   return ret;
 }
 
+/* Partial clear of a buffer by taking the complement of the (bb) boundingbox. */
+static int clear_buffer_complement(struct g2d_context *g2d, struct g2d_image *img,
+  const exynos_boundingbox_t *bb) {
+  int ret = 0;
+
+  if (bb->x == 0) {
+    ret = g2d_solid_fill(g2d, img, 0, 0, img->width, bb->y) ||
+          g2d_solid_fill(g2d, img, 0, bb->y + bb->h, img->width, img->height);
+  } else if (bb->y == 0) {
+    ret = g2d_solid_fill(g2d, img, 0, 0, bb->x, img->height) ||
+          g2d_solid_fill(g2d, img, bb->x + bb->w, 0, img->width, img->height);
+  } else {
+    /* Clear the entire buffer. */
+    ret = g2d_solid_fill(g2d, img, 0, 0, img->width, img->height);
+  }
+
+  if (ret == 0)
+    ret = g2d_exec(g2d);
+
+  if (ret != 0)
+    RARCH_ERR("video_exynos: failed to clear buffer (complement) using G2D\n");
+
+  return ret;
+}
+
 /* Put a font glyph at a position in the buffer that is backing the G2D font image object. */
 static void put_glyph_rgba4444(struct exynos_data *pdata, const uint8_t *__restrict__ src,
                                uint16_t color, unsigned g_width, unsigned g_height,
