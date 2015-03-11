@@ -57,7 +57,8 @@ typedef union exynos_boundingbox {
 enum exynos_buffer_clear {
   exynos_buffer_non     = 0x0,
   exynos_buffer_all     = 0x1,
-  exynos_buffer_partial = 0x2
+  exynos_buffer_partial = 0x2,
+  exynos_buffer_compl   = 0x3
 };
 
 /* We use two GEM buffers (main and aux) to handle 'data' from the frontend. */
@@ -976,12 +977,23 @@ static struct exynos_page *exynos_free_page(struct exynos_data *pdata) {
 
   dst->bo[0] = page->bo->handle;
 
-  if (page->clear == exynos_buffer_all)
-    ret = clear_buffer(pdata->g2d, dst);
-  else if (page->clear == exynos_buffer_partial)
-    ret = clear_buffer_bb(pdata->g2d, dst, &page->damage[0], &pdata->blit_damage);
-  else
-    goto out;
+  switch (page->clear) {
+    case exynos_buffer_all:
+      ret = clear_buffer(pdata->g2d, dst);
+    break;
+
+    case exynos_buffer_partial:
+      ret = clear_buffer_bb(pdata->g2d, dst, &page->damage[0], &pdata->blit_damage);
+    break;
+
+    case exynos_buffer_compl:
+      ret = clear_buffer_complement(pdata->g2d, dst, &page->damage[0]);
+    break;
+
+    default:
+      goto out;
+    break;
+  }
 
   if (ret == 0)
     page->clear = exynos_buffer_non;
@@ -1435,7 +1447,7 @@ static bool exynos_gfx_frame(void *data, const void *frame, unsigned width,
     if (exynos_render_msg(vid, msg) != 0) goto fail;
 
     /* Font is blitted to the entire screen, so issue clear afterwards. */
-    page->clear = exynos_buffer_all;
+    page->clear = exynos_buffer_compl;
   }
 
   apply_damage(page, 0, &vid->data->blit_damage);
