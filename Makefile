@@ -284,6 +284,7 @@ ifeq ($(HAVE_OPENGL), 1)
          DEFINES += -DHAVE_OPENGLES3
       endif
       OBJ += gfx/glsym/glsym_es2.o
+      LIBS += $(EGL_LIBS)
    else
       DEFINES += -DHAVE_GL_SYNC
       OBJ += gfx/glsym/glsym_gl.o
