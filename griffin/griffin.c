@@ -30,7 +30,7 @@ CONSOLE EXTENSIONS
 
 #if defined(HAVE_LOGGER) && defined(__PSL1GHT__)
 #include "../logger/netlogger/psl1ght_logger.c"
-#elif defined(HAVE_LOGGER) && !defined(ANDROID)
+#elif defined(HAVE_LOGGER)
 #include "../logger/netlogger/logger.c"
 #endif
 
@@ -61,11 +61,6 @@ RLAUNCH
 /*============================================================
 PERFORMANCE
 ============================================================ */
-
-#ifdef ANDROID
-#include "../performance/performance_android.c"
-#endif
-
 #include "../performance.c"
 
 /*============================================================
@@ -93,8 +88,6 @@ VIDEO CONTEXT
 
 #if defined(__CELLOS_LV2__)
 #include "../gfx/context/ps3_ctx.c"
-#elif defined(ANDROID)
-#include "../gfx/context/androidegl_ctx.c"
 #elif defined(__QNX__)
 #include "../gfx/context/bbqnx_ctx.c"
 #elif defined(EMSCRIPTEN)
@@ -263,9 +256,6 @@ INPUT
 #endif
 #include "../input/gx_input.c"
 #include "../input/autoconf/builtin_gx.c"
-#elif defined(ANDROID)
-#include "../input/android_input.c"
-#include "../input/autoconf/builtin_android.c"
 #elif defined(IOS) || defined(OSX)
 #include "../input/apple_input.c"
 #include "../input/apple_joypad.c"
@@ -281,7 +271,7 @@ INPUT
 #endif
 #endif
 
-#if defined(__linux__) && !defined(ANDROID) 
+#if defined(__linux__)
 #include "../input/linuxraw_input.c"
 #include "../input/linuxraw_joypad.c"
 #endif
@@ -323,25 +313,12 @@ AUDIO RESAMPLER
 CAMERA
 ============================================================ */
 #ifdef HAVE_CAMERA
-#if defined(ANDROID)
-#include "../camera/android.c"
-#elif defined(EMSCRIPTEN)
+#if defined(EMSCRIPTEN)
 #include "../camera/rwebcam.c"
 #endif
 
 #ifdef HAVE_V4L2
 #include "../camera/video4linux2.c"
-#endif
-
-#endif
-
-/*============================================================
-LOCATION
-============================================================ */
-#ifdef HAVE_LOCATION
-
-#if defined(ANDROID)
-#include "../location/android.c"
 #endif
 
 #endif
@@ -493,8 +470,6 @@ FRONTEND
 #include "../frontend/platform/platform_qnx.c"
 #elif defined(OSX) || defined(IOS)
 #include "../frontend/platform/platform_apple.c"
-#elif defined(ANDROID)
-#include "../frontend/platform/platform_android.c"
 #endif
 #include "../frontend/platform/platform_null.c"
 

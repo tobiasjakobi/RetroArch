@@ -120,7 +120,6 @@ static const char *glsl_prefixes[] = {
    "ruby",
 };
 
-// Need to duplicate these to work around broken stuff on Android.
 // Must enforce alpha = 1.0 or 32-bit games can potentially go black.
 static const char *stock_vertex_modern =
    "attribute vec2 TexCoord;\n"

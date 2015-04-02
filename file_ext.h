@@ -42,8 +42,6 @@
 #else
 #define PLATFORM_NAME   "ngc"
 #endif
-#elif defined(ANDROID)
-#define PLATFORM_NAME   "android"
 #elif defined(IOS)
 #define PLATFORM_NAME   "ios"
 #elif defined(__QNX__)

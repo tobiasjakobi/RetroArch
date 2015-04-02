@@ -33,19 +33,6 @@
 #include "../config.def.h"
 #endif
 
-#if defined(ANDROID)
-
-#define main_entry android_app_entry
-#define returntype void
-#define signature_expand() data
-#define returnfunc() exit(0)
-#define return_negative() return
-#define return_var(var) return
-#define declare_argc() int argc = 0;
-#define declare_argv() char *argv[1]
-#define args_initial_ptr() data
-#else
-
 #if defined(__APPLE__) || defined(HAVE_BB10) || defined(EMSCRIPTEN)
 #define main_entry rarch_main
 #else
@@ -60,8 +47,6 @@
 #define declare_argc()
 #define declare_argv()
 #define args_initial_ptr() NULL
-
-#endif
 
 #if !defined(__APPLE__) && !defined(EMSCRIPTEN)
 #define HAVE_MAIN_LOOP
@@ -230,7 +215,7 @@ void main_exit(args_type() args)
 
    rarch_perf_log();
 
-#if defined(HAVE_LOGGER) && !defined(ANDROID)
+#if defined(HAVE_LOGGER)
    logger_shutdown();
 #endif
 

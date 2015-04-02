@@ -19,9 +19,6 @@
 #include "../thread.h"
 
 #include <SLES/OpenSLES.h>
-#ifdef ANDROID
-#include <SLES/OpenSLES_Android.h>
-#endif
 
 // Helper macros, COM-style!
 #define SLObjectItf_Realize(a, ...) ((*(a))->Realize(a, __VA_ARGS__))

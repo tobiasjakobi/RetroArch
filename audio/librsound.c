@@ -731,7 +731,7 @@ static int64_t rsnd_get_time_usec(void)
    clock_get_time(cclock, &mts);
    mach_port_deallocate(mach_task_self(), cclock);
    return mts.tv_sec * INT64_C(1000000) + (mts.tv_nsec + 500) / 1000;
-#elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__) || defined(ANDROID)
+#elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)
       return 0;

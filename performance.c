@@ -19,10 +19,6 @@
 #include "performance.h"
 #include "general.h"
 
-#ifdef ANDROID
-#include "performance/performance_android.h"
-#endif
-
 #if !defined(_WIN32) && !defined(RARCH_CONSOLE)
 #include <unistd.h>
 #endif
@@ -36,8 +32,7 @@
 #ifndef _PPU_INTRINSICS_H
 #include <ppu_intrinsics.h>
 #endif
-#elif defined(_POSIX_MONOTONIC_CLOCK) || defined(ANDROID) || defined(__QNX__)
-// POSIX_MONOTONIC_CLOCK is not being defined in Android headers despite support being present.
+#elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__)
 #include <time.h>
 #endif
 
@@ -210,7 +205,7 @@ retro_time_t rarch_get_time_usec(void)
    clock_get_time(cclock, &mts);
    mach_port_deallocate(mach_task_self(), cclock);
    return mts.tv_sec * INT64_C(1000000) + (mts.tv_nsec + 500) / 1000;
-#elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__) || defined(ANDROID)
+#elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)
       return 0;
@@ -306,8 +301,6 @@ unsigned rarch_get_cpu_cores(void)
    SYSTEM_INFO sysinfo;
    GetSystemInfo(&sysinfo);
    return sysinfo.dwNumberOfProcessors;
-#elif defined(ANDROID)
-   return android_getCpuCount();
 #elif defined(GEKKO)
    return 1;
 #elif defined(_SC_NPROCESSORS_ONLN) // Linux, most unix-likes.
@@ -415,19 +408,6 @@ uint64_t rarch_get_cpu_features(void)
    RARCH_LOG("[CPUID]: SSE4.2: %u\n", !!(cpu & RETRO_SIMD_SSE42));
    RARCH_LOG("[CPUID]: AVX:    %u\n", !!(cpu & RETRO_SIMD_AVX));
    RARCH_LOG("[CPUID]: AVX2:   %u\n", !!(cpu & RETRO_SIMD_AVX2));
-#elif defined(ANDROID) && defined(ANDROID_ARM)
-   uint64_t cpu_flags = android_getCpuFeatures();
-   (void)cpu_flags;
-
-#ifdef __ARM_NEON__
-   if (cpu_flags & ANDROID_CPU_ARM_FEATURE_NEON)
-   {
-      cpu |= RETRO_SIMD_NEON;
-      arm_enable_runfast_mode();
-   }
-#endif
-
-   RARCH_LOG("[CPUID]: NEON: %u\n", !!(cpu & RETRO_SIMD_NEON));
 #elif defined(__ARM_NEON__)
    cpu |= RETRO_SIMD_NEON;
    arm_enable_runfast_mode();

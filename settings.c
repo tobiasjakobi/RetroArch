@@ -127,8 +127,6 @@ const char *config_get_default_input(void)
 {
    switch (INPUT_DEFAULT_DRIVER)
    {
-      case INPUT_ANDROID:
-         return "android_input";
       case INPUT_PS3:
          return "ps3";
       case INPUT_PSP:
@@ -207,8 +205,6 @@ const char *config_get_default_camera(void)
          return "rwebcam";
       case CAMERA_NULL:
          return "null";
-      case CAMERA_ANDROID:
-         return "android";
       case CAMERA_IOS:
          return "ios";
       default:
@@ -222,8 +218,6 @@ const char *config_get_default_location(void)
 {
    switch (LOCATION_DEFAULT_DRIVER)
    {
-      case LOCATION_ANDROID:
-         return "android";
       case LOCATION_APPLE:
          return "apple";
       default:

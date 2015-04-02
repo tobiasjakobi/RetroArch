@@ -54,15 +54,6 @@ static inline void input_conv_analog_id_to_bind_id(unsigned index, unsigned id,
 bool input_translate_coord_viewport(int mouse_x, int mouse_y,
       int16_t *res_x, int16_t *res_y, int16_t *res_screen_x, int16_t *res_screen_y);
 
-#ifdef ANDROID
-enum back_button_enums
-{
-   BACK_BUTTON_QUIT = 0,
-   BACK_BUTTON_GUI_TOGGLE,
-   BACK_BUTTON_MENU_TOGGLE,
-};
-#endif
-
 struct rarch_joypad_driver
 {
    bool (*init)(void);
@@ -108,7 +99,6 @@ extern const rarch_joypad_driver_t ps3_joypad;
 extern const rarch_joypad_driver_t psp_joypad;
 extern const rarch_joypad_driver_t gx_joypad;
 extern const rarch_joypad_driver_t apple_joypad;
-extern const rarch_joypad_driver_t android_joypad;
 extern const rarch_joypad_driver_t qnx_joypad;
 
 struct rarch_key_map

@@ -33,8 +33,6 @@
 #include "logger/ios_logger_override.h"
 #elif defined(IS_SALAMANDER)
 #include "logger/salamander_logger_override.h"
-#elif defined(ANDROID) && defined(HAVE_LOGGER)
-#include "logger/android_logger_override.h"
 #else
 
 #if defined(RARCH_DUMMY_LOG) || !defined(RARCH_INTERNAL)

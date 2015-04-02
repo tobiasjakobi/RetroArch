@@ -844,7 +844,6 @@ static bool gl_cg_init(void *data, const char *path)
    // pass-through.
    prg[cg_shader->passes + 1] = prg[0]; 
 
-   // No need to apply Android hack in Cg.
    prg[GL_SHADER_STOCK_BLEND] = prg[0];
 
    cgGLBindProgram(prg[1].fprg);

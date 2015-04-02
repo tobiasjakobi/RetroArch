@@ -158,13 +158,10 @@ static const input_driver_t *input_drivers[] = {
 #ifdef GEKKO
    &input_gx,
 #endif
-#ifdef ANDROID
-   &input_android,
-#endif
 #ifdef HAVE_UDEV
    &input_udev,
 #endif
-#if defined(__linux__) && !defined(ANDROID)
+#if defined(__linux__)
    &input_linuxraw,
 #endif
 #if defined(IOS) || defined(OSX) //< Don't use __APPLE__ as it breaks basic SDL builds

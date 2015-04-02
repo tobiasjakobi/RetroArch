@@ -68,7 +68,6 @@ enum
    AUDIO_RESAMPLER_CC,
    AUDIO_RESAMPLER_SINC,
 
-   INPUT_ANDROID,
    INPUT_SDL,
    INPUT_X,
    INPUT_WAYLAND,
@@ -86,11 +85,9 @@ enum
 
    CAMERA_V4L2,
    CAMERA_RWEBCAM,
-   CAMERA_ANDROID,
    CAMERA_IOS,
    CAMERA_NULL,
 
-   LOCATION_ANDROID,
    LOCATION_APPLE,
 
    OSK_PS3,
@@ -118,7 +115,7 @@ enum
 #define VIDEO_DEFAULT_DRIVER VIDEO_XVIDEO
 #elif defined(HAVE_SDL)
 #define VIDEO_DEFAULT_DRIVER VIDEO_SDL
-#elif defined(HAVE_DYLIB) && !defined(ANDROID)
+#elif defined(HAVE_DYLIB)
 #define VIDEO_DEFAULT_DRIVER VIDEO_EXT
 #else
 #define VIDEO_DEFAULT_DRIVER VIDEO_NULL
@@ -158,7 +155,7 @@ enum
 #define AUDIO_DEFAULT_DRIVER AUDIO_RSOUND
 #elif defined(HAVE_ROAR)
 #define AUDIO_DEFAULT_DRIVER AUDIO_ROAR
-#elif defined(HAVE_DYLIB) && !defined(ANDROID)
+#elif defined(HAVE_DYLIB)
 #define AUDIO_DEFAULT_DRIVER AUDIO_EXT
 #else
 #define AUDIO_DEFAULT_DRIVER AUDIO_NULL
@@ -172,8 +169,6 @@ enum
 
 #if defined(HAVE_XINPUT2)
 #define INPUT_DEFAULT_DRIVER INPUT_XINPUT
-#elif defined(ANDROID)
-#define INPUT_DEFAULT_DRIVER INPUT_ANDROID
 #elif defined(_WIN32)
 #define INPUT_DEFAULT_DRIVER INPUT_DINPUT
 #elif defined(EMSCRIPTEN)
@@ -186,7 +181,7 @@ enum
 #define INPUT_DEFAULT_DRIVER INPUT_WII
 #elif defined(HAVE_UDEV)
 #define INPUT_DEFAULT_DRIVER INPUT_UDEV
-#elif defined(__linux__) && !defined(ANDROID)
+#elif defined(__linux__)
 #define INPUT_DEFAULT_DRIVER INPUT_LINUXRAW
 #elif defined(HAVE_X11)
 #define INPUT_DEFAULT_DRIVER INPUT_X
@@ -206,17 +201,13 @@ enum
 #define CAMERA_DEFAULT_DRIVER CAMERA_V4L2
 #elif defined(EMSCRIPTEN)
 #define CAMERA_DEFAULT_DRIVER CAMERA_RWEBCAM
-#elif defined(ANDROID)
-#define CAMERA_DEFAULT_DRIVER CAMERA_ANDROID
 #elif defined(IOS)
 #define CAMERA_DEFAULT_DRIVER CAMERA_IOS
 #else
 #define CAMERA_DEFAULT_DRIVER CAMERA_NULL
 #endif
 
-#if defined(ANDROID)
-#define LOCATION_DEFAULT_DRIVER LOCATION_ANDROID
-#elif defined(IOS) || defined(OSX)
+#if defined(IOS) || defined(OSX)
 #define LOCATION_DEFAULT_DRIVER LOCATION_APPLE
 #endif
 
@@ -236,7 +227,7 @@ enum
 
 #if defined(__CELLOS_LV2__)
 #define DEFAULT_ASPECT_RATIO 1.7778f
-#elif defined(GEKKO) || defined(ANDROID) || defined(__QNX__)
+#elif defined(GEKKO) || defined(__QNX__)
 #define DEFAULT_ASPECT_RATIO 1.3333f
 #else
 #define DEFAULT_ASPECT_RATIO -1.0f
