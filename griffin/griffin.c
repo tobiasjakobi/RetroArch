@@ -429,12 +429,8 @@ AUDIO
 #endif
 
 #ifdef HAVE_ALSA
-#ifdef __QNX__
-#include "../audio/alsa_qsa.c"
-#else
 #include "../audio/alsa.c"
 #include "../audio/alsathread.c"
-#endif
 #endif
 
 #ifdef HAVE_AL
