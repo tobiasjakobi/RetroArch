@@ -353,10 +353,6 @@ AUDIO
 #include "../audio/dsound.c"
 #endif
 
-#ifdef HAVE_SL
-#include "../audio/opensl.c"
-#endif
-
 #ifdef HAVE_ALSA
 #include "../audio/alsa.c"
 #include "../audio/alsathread.c"
