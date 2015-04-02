@@ -34,25 +34,6 @@ static const char* get_input_config_key(const rarch_setting_t* setting, const ch
    return buffer;
 }
 
-//FIXME - make portable
-#ifdef APPLE
-static const char* get_key_name(const rarch_setting_t* setting)
-{
-   uint32_t hidkey, i;
-
-   if (BINDFOR(*setting).key == RETROK_UNKNOWN)
-      return "nul";
-
-   hidkey = input_translate_rk_to_keysym(BINDFOR(*setting).key);
-
-   for (i = 0; apple_key_name_map[i].hid_id; i++)
-      if (apple_key_name_map[i].hid_id == hidkey)
-         return apple_key_name_map[i].keyname;
-
-   return "nul";
-}
-#endif
-
 static const char* get_button_name(const rarch_setting_t* setting)
 {
    static char buffer[32];
@@ -261,10 +242,6 @@ bool setting_data_save_config(const rarch_setting_t* settings, config_file_t* co
             config_set_float(config, setting->name, *setting->value.fraction);
             break;
          case ST_BIND:
-            //FIXME: make portable
-#ifdef APPLE
-            config_set_string(config, get_input_config_key(setting, 0 ), get_key_name(setting));
-#endif
             config_set_string(config, get_input_config_key(setting, "btn" ), get_button_name(setting));
             config_set_string(config, get_input_config_key(setting, "axis"), get_axis_name(setting));
             break;
@@ -385,9 +362,6 @@ const char* setting_data_get_string_representation(const rarch_setting_t* settin
          strlcpy(buffer, setting->value.string, length);
          break;
       case ST_BIND:
-#ifdef APPLE
-         snprintf(buffer, length, "[KB:%s] [JS:%s] [AX:%s]", get_key_name(setting), get_button_name(setting), get_axis_name(setting));
-#endif
          break;
       default:
          return "";

@@ -57,7 +57,6 @@ enum
    AUDIO_PULSE,
    AUDIO_EXT,
    AUDIO_DSOUND,
-   AUDIO_COREAUDIO,
    AUDIO_PS3,
    AUDIO_WII,
    AUDIO_RWEBAUDIO,
@@ -77,17 +76,13 @@ enum
    INPUT_XINPUT,
    INPUT_UDEV,
    INPUT_LINUXRAW,
-   INPUT_APPLE,
    INPUT_QNX,
    INPUT_RWEBINPUT,
    INPUT_NULL,
 
    CAMERA_V4L2,
    CAMERA_RWEBCAM,
-   CAMERA_IOS,
    CAMERA_NULL,
-
-   LOCATION_APPLE,
 
    OSK_PS3,
    OSK_NULL,
@@ -136,8 +131,6 @@ enum
 #define AUDIO_DEFAULT_DRIVER AUDIO_OSS
 #elif defined(HAVE_JACK)
 #define AUDIO_DEFAULT_DRIVER AUDIO_JACK
-#elif defined(HAVE_COREAUDIO)
-#define AUDIO_DEFAULT_DRIVER AUDIO_COREAUDIO
 #elif defined(HAVE_AL)
 #define AUDIO_DEFAULT_DRIVER AUDIO_AL
 #elif defined(HAVE_DSOUND)
@@ -184,8 +177,6 @@ enum
 #define INPUT_DEFAULT_DRIVER INPUT_X
 #elif defined(HAVE_WAYLAND)
 #define INPUT_DEFAULT_DRIVER INPUT_WAYLAND
-#elif defined(IOS) || defined(OSX)
-#define INPUT_DEFAULT_DRIVER INPUT_APPLE
 #elif defined(__QNX__)
 #define INPUT_DEFAULT_DRIVER INPUT_QNX
 #elif defined(HAVE_SDL)
@@ -198,14 +189,8 @@ enum
 #define CAMERA_DEFAULT_DRIVER CAMERA_V4L2
 #elif defined(EMSCRIPTEN)
 #define CAMERA_DEFAULT_DRIVER CAMERA_RWEBCAM
-#elif defined(IOS)
-#define CAMERA_DEFAULT_DRIVER CAMERA_IOS
 #else
 #define CAMERA_DEFAULT_DRIVER CAMERA_NULL
-#endif
-
-#if defined(IOS) || defined(OSX)
-#define LOCATION_DEFAULT_DRIVER LOCATION_APPLE
 #endif
 
 #if defined(__CELLOS_LV2__)
@@ -250,7 +235,7 @@ static const unsigned monitor_index = 0; // Which monitor to prefer. 0 is any mo
 static const unsigned fullscreen_x = 0; // Fullscreen resolution. A value of 0 uses the desktop resolution.
 static const unsigned fullscreen_y = 0;
 
-#if defined(RARCH_CONSOLE) || defined(__APPLE__)
+#if defined(RARCH_CONSOLE)
 static const bool load_dummy_on_core_shutdown = false;
 #else
 static const bool load_dummy_on_core_shutdown = true;

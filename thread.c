@@ -29,11 +29,6 @@
 #include <time.h>
 #endif
 
-#ifdef __MACH__
-#include <mach/clock.h>
-#include <mach/mach.h>
-#endif
-
 struct thread_data
 {
    void (*func)(void*);
@@ -327,15 +322,7 @@ bool scond_wait_timeout(scond_t *cond, slock_t *lock, int64_t timeout_us)
 {
    struct timespec now = {0};
 
-#ifdef __MACH__ // OSX doesn't have clock_gettime ... :(
-   clock_serv_t cclock;
-   mach_timespec_t mts;
-   host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
-   clock_get_time(cclock, &mts);
-   mach_port_deallocate(mach_task_self(), cclock);
-   now.tv_sec = mts.tv_sec;
-   now.tv_nsec = mts.tv_nsec;
-#elif defined(__CELLOS_LV2__)
+#if defined(__CELLOS_LV2__)
    sys_time_sec_t s;
    sys_time_nsec_t n;
    sys_time_get_current_time(&s, &n);

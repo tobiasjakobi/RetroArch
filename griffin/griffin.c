@@ -256,9 +256,6 @@ INPUT
 #endif
 #include "../input/gx_input.c"
 #include "../input/autoconf/builtin_gx.c"
-#elif defined(IOS) || defined(OSX)
-#include "../input/apple_input.c"
-#include "../input/apple_joypad.c"
 #elif defined(__QNX__)
 #include "../input/qnx_input.c"
 #elif defined(EMSCRIPTEN)
@@ -362,10 +359,6 @@ AUDIO
 #include "../audio/openal.c"
 #endif
 
-#ifdef HAVE_COREAUDIO
-#include "../audio/coreaudio.c"
-#endif
-
 #if defined(HAVE_NULLAUDIO)
 #include "../audio/null.c"
 #endif
@@ -464,8 +457,6 @@ FRONTEND
 #include "../frontend/platform/platform_psp.c"
 #elif defined(__QNX__)
 #include "../frontend/platform/platform_qnx.c"
-#elif defined(OSX) || defined(IOS)
-#include "../frontend/platform/platform_apple.c"
 #endif
 #include "../frontend/platform/platform_null.c"
 
@@ -578,9 +569,6 @@ XML
 #define RXML_LIBXML2_COMPAT
 #include "../compat/rxml/rxml.c"
 #endif
-/*============================================================
- APPLE EXTENSIONS
-============================================================ */
     
 #include "../settings_data.c"
 /*============================================================

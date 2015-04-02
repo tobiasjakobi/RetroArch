@@ -349,13 +349,7 @@ void gl_shader_set_coords(gl_t *gl, const struct gl_coords *coords, const math_m
 #define gl_shader_wrap_type(gl, index) ((gl->shader) ? gl->shader->wrap_type(index) : RARCH_WRAP_BORDER)
 #define gl_shader_mipmap_input(gl, index) ((gl->shader) ? gl->shader->mipmap_input(index) : false)
 
-#ifdef IOS
-// There is no default frame buffer on IOS.
-void apple_bind_game_view_fbo(void);
-#define gl_bind_backbuffer() apple_bind_game_view_fbo()
-#else
 #define gl_bind_backbuffer() glBindFramebuffer(RARCH_GL_FRAMEBUFFER, 0)
-#endif
 
 #ifdef HAVE_FBO
 static void gl_shader_scale(gl_t *gl, unsigned index, struct gfx_fbo_scale *scale)
@@ -736,7 +730,7 @@ static bool gl_init_hw_render(gl_t *gl, unsigned width, unsigned height)
 
          if (stencil)
          {
-#if defined(HAVE_OPENGLES2) || defined(HAVE_OPENGLES1) || defined(OSX_PPC)
+#if defined(HAVE_OPENGLES2) || defined(HAVE_OPENGLES1)
             // GLES2 is a bit weird, as always. :P
             // There's no GL_DEPTH_STENCIL_ATTACHMENT like in desktop GL.
             glFramebufferRenderbuffer(RARCH_GL_FRAMEBUFFER, RARCH_GL_DEPTH_ATTACHMENT,
@@ -1484,10 +1478,6 @@ static bool gl_frame(void *data, const void *frame, unsigned width, unsigned hei
 
    if (gl->shader)
       gl->shader->use(gl, 1);
-
-#ifdef IOS // Apparently the viewport is lost each frame, thanks apple.
-   gl_set_viewport(gl, gl->win_width, gl->win_height, false, true);
-#endif
 
 #ifdef HAVE_FBO
    // Render to texture in first pass.

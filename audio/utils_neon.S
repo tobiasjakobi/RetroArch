@@ -14,10 +14,7 @@
  */
 #if defined(__ARM_NEON__)
 
-#ifndef __MACH__
 .arm
-#endif
-
 .align 4
 .globl audio_convert_s16_float_asm
 .globl _audio_convert_s16_float_asm

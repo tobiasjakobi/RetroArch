@@ -199,7 +199,6 @@ static void sdl2_render_msg(sdl2_video_t *vid, const char *msg)
 
 static void sdl2_gfx_set_handles(sdl2_video_t *vid)
 {
-   // SysWMinfo headers are broken on OSX. :(
 #if defined(_WIN32)
    SDL_SysWMinfo info;
    SDL_VERSION(&info.version);

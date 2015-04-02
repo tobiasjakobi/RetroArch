@@ -71,9 +71,6 @@ static const rarch_joypad_driver_t *joypad_drivers[] = {
 #if defined(HAVE_SDL) || defined(HAVE_SDL2)
    &sdl_joypad,
 #endif
-#ifdef __MACH__
-   &apple_joypad,
-#endif
 #ifdef __QNX__
    &qnx_joypad,
 #endif
@@ -1080,7 +1077,7 @@ const struct input_key_map input_config_key_map[] = {
    { "rctrl", RETROK_RCTRL },
    { "ralt", RETROK_RALT },
 
-   /* Keys not referenced in any keyboard mapping (except perhaps apple_key_map_hidusage) */
+   /* Keys not referenced in any keyboard mapping */
    { "caret", RETROK_CARET },
    { "underscore", RETROK_UNDERSCORE },
    { "exclaim", RETROK_EXCLAIM },

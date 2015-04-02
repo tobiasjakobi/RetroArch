@@ -5,8 +5,6 @@ ifeq ($(shell uname -a),)
    platform = win
 else ifneq ($(findstring MINGW,$(shell uname -a)),)
    platform = win
-else ifneq ($(findstring Darwin,$(shell uname -a)),)
-   platform = osx
 else ifneq ($(findstring win,$(shell uname -a)),)
    platform = win
 endif
@@ -19,11 +17,6 @@ ifeq ($(platform), unix)
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
    GL_LIB := -lGL
-else ifeq ($(platform), osx)
-   TARGET := $(TARGET_NAME)_libretro.dylib
-   fpic := -fPIC
-   SHARED := -dynamiclib
-   GL_LIB := -framework OpenGL
 else ifeq ($(platform), pi)
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
@@ -31,14 +24,6 @@ else ifeq ($(platform), pi)
    CFLAGS += -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/vmcs_host/linux
    GLES := 1
    LIBS += -L/opt/vc/lib
-else ifeq ($(platform), ios)
-   TARGET := $(TARGET_NAME)_libretro_ios.dylib
-   fpic := -fPIC
-   SHARED := -dynamiclib
-   GL_LIB := -framework OpenGLES
-   DEFINES := -DIOS
-   CFLAGS += -DGLES $(DEFINES)
-   CC = clang -arch armv7 -isysroot $(IOSSDK)
 else ifeq ($(platform), qnx)
    TARGET := $(TARGET_NAME)_libretro_qnx.so
    fpic := -fPIC

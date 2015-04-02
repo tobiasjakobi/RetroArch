@@ -693,8 +693,6 @@ static bool path_mkdir_norecurse(const char *dir)
    int ret;
 #if defined(_WIN32)
    ret = _mkdir(dir);
-#elif defined(IOS)
-   ret = mkdir(dir, 0755);
 #else
    ret = mkdir(dir, 0750);
 #endif
@@ -859,19 +857,6 @@ void fill_pathname_application_path(char *buf, size_t size)
 #ifdef _WIN32
    DWORD ret = GetModuleFileName(GetModuleHandle(NULL), buf, size - 1);
    buf[ret] = '\0';
-#elif defined(__APPLE__)
-   CFBundleRef bundle = CFBundleGetMainBundle();
-   if (bundle)
-   {
-      CFURLRef bundle_url = CFBundleCopyBundleURL(bundle);
-      CFStringRef bundle_path = CFURLCopyPath(bundle_url);
-      CFStringGetCString(bundle_path, buf, size, kCFStringEncodingUTF8);
-      CFRelease(bundle_path);
-      CFRelease(bundle_url);
-      
-      rarch_assert(strlcat(buf, "nobin", size) < size);
-      return;
-   }
 #else
    *buf = '\0';
    pid_t pid = getpid(); 

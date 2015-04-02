@@ -503,7 +503,7 @@ static int rsnd_get_backend_info ( rsound_t *rd )
    // We no longer want to read from this socket.
 #ifdef _WIN32
    net_shutdown(rd->conn.socket, SD_RECEIVE);
-#elif !defined(__APPLE__) // OSX doesn't seem to like shutdown()
+#else
    net_shutdown(rd->conn.socket, SHUT_RD);
 #endif
 
@@ -724,13 +724,6 @@ static int64_t rsnd_get_time_usec(void)
    return sys_time_get_system_time();
 #elif defined(GEKKO)
    return ticks_to_microsecs(gettime());
-#elif defined(__MACH__) // OSX doesn't have clock_gettime ...
-   clock_serv_t cclock;
-   mach_timespec_t mts;
-   host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
-   clock_get_time(cclock, &mts);
-   mach_port_deallocate(mach_task_self(), cclock);
-   return mts.tv_sec * INT64_C(1000000) + (mts.tv_nsec + 500) / 1000;
 #elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)

@@ -83,13 +83,6 @@ ifeq ($(REENTRANT_TEST), 1)
    OBJ += console/test.o
 endif
 
-ifneq ($(findstring Darwin,$(OS)),)
-   OSX := 1
-   LIBS += -framework AppKit
-else
-   OSX := 0
-endif
-
 ifneq ($(findstring BSD,$(OS)),)
    BSD_LOCAL_INC = -I/usr/local/include
 endif
@@ -170,11 +163,7 @@ endif
 
 ifeq ($(HAVE_AL), 1)
    OBJ += audio/openal.o
-   ifeq ($(OSX),1)
-      LIBS += -framework OpenAL
-   else
-      LIBS += -lopenal
-   endif
+   LIBS += -lopenal
 endif
 
 ifeq ($(HAVE_V4L2),1)
@@ -192,11 +181,6 @@ ifeq ($(HAVE_PULSE), 1)
    OBJ += audio/pulse.o
    LIBS += $(PULSE_LIBS)
    DEFINES += $(PULSE_CFLAGS)
-endif
-
-ifeq ($(HAVE_COREAUDIO), 1)
-   OBJ += audio/coreaudio.o
-   LIBS += -framework CoreServices -framework CoreAudio -framework AudioUnit
 endif
 
 ifeq ($(SCALER_NO_SIMD), 1)
@@ -288,11 +272,7 @@ ifeq ($(HAVE_OPENGL), 1)
    else
       DEFINES += -DHAVE_GL_SYNC
       OBJ += gfx/glsym/glsym_gl.o
-      ifeq ($(OSX), 1)
-         LIBS += -framework OpenGL
-      else
-         LIBS += -lGL
-      endif
+      LIBS += -lGL
    endif
 
    OBJ += gfx/shader_glsl.o 
@@ -325,11 +305,7 @@ endif
 
 ifeq ($(HAVE_CG), 1)
    OBJ += gfx/shader_cg.o
-   ifeq ($(OSX), 1)
-      LIBS += -framework Cg
-   else
-      LIBS += -lCg -lCgGL
-   endif
+   LIBS += -lCg -lCgGL
 endif
 
 ifeq ($(HAVE_LIBXML2), 1)

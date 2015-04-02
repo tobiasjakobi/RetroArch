@@ -1,5 +1,3 @@
-#<maister> echo -n is broken on recent OSX btw
-
 MAKEFILE_DEFINES='.MAKEFILE_DEFINES'
 CONFIG_DEFINES='.CONFIG_DEFINES'
 cat /dev/null > "$MAKEFILE_DEFINES" > "$CONFIG_DEFINES"

@@ -54,18 +54,11 @@
 #include <ogc/lwp_watchdog.h>
 #endif
 
-// OSX specific. OSX lacks clock_gettime().
-#ifdef __MACH__
-#include <mach/clock.h>
-#include <mach/mach.h>
-#include <mach/mach_time.h>
-#endif
-
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #endif
 
-#if defined(BSD) || defined(__APPLE__)
+#if defined(BSD)
 #include <sys/sysctl.h>
 #endif
 
@@ -133,11 +126,7 @@ void retro_perf_log(void)
 retro_perf_tick_t rarch_get_perf_counter(void)
 {
    retro_perf_tick_t time = 0;
-#if defined(__MACH__) && defined(__APPLE__)
-    struct mach_timebase_info convfact;
-    mach_timebase_info(&convfact);
-    time = mach_absolute_time();
-#elif defined(__linux__) || defined(__QNX__)
+#if defined(__linux__) || defined(__QNX__)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) == 0)
       time = (retro_perf_tick_t)tv.tv_sec * 1000000000 + (retro_perf_tick_t)tv.tv_nsec;
@@ -198,13 +187,6 @@ retro_time_t rarch_get_time_usec(void)
    return sys_time_get_system_time();
 #elif defined(GEKKO)
    return ticks_to_microsecs(gettime());
-#elif defined(__MACH__) // OSX doesn't have clock_gettime ...
-   clock_serv_t cclock;
-   mach_timespec_t mts;
-   host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
-   clock_get_time(cclock, &mts);
-   mach_port_deallocate(mach_task_self(), cclock);
-   return mts.tv_sec * INT64_C(1000000) + (mts.tv_nsec + 500) / 1000;
 #elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)
@@ -308,7 +290,7 @@ unsigned rarch_get_cpu_cores(void)
    if (ret <= 0)
       return (unsigned)1;
    return ret;
-#elif defined(BSD) || defined(__APPLE__) // BSD
+#elif defined(BSD) // BSD
    // Copypasta from stackoverflow, dunno if it works.
    int num_cpu = 0;
    int mib[4];

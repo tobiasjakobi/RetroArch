@@ -404,8 +404,7 @@ enum rarch_display_type
 {
    RARCH_DISPLAY_NONE = 0, // Non-bindable types like consoles, KMS, VideoCore, etc.
    RARCH_DISPLAY_X11, // video_display => Display*, video_window => Window
-   RARCH_DISPLAY_WIN32, // video_display => N/A, video_window => HWND
-   RARCH_DISPLAY_OSX // ?!
+   RARCH_DISPLAY_WIN32 // video_display => N/A, video_window => HWND
 };
 
 typedef struct driver
@@ -601,7 +600,6 @@ extern const audio_driver_t audio_sdl;
 extern const audio_driver_t audio_xa;
 extern const audio_driver_t audio_pulse;
 extern const audio_driver_t audio_dsound;
-extern const audio_driver_t audio_coreaudio;
 extern const audio_driver_t audio_ps3;
 extern const audio_driver_t audio_gx;
 extern const audio_driver_t audio_psp1;
@@ -629,14 +627,11 @@ extern const input_driver_t input_gx;
 extern const input_driver_t input_xinput;
 extern const input_driver_t input_linuxraw;
 extern const input_driver_t input_udev;
-extern const input_driver_t input_apple;
 extern const input_driver_t input_qnx;
 extern const input_driver_t input_rwebinput;
 extern const input_driver_t input_null;
 extern const camera_driver_t camera_v4l2;
 extern const camera_driver_t camera_rwebcam;
-extern const camera_driver_t camera_ios;
-extern const location_driver_t location_apple;
 extern const input_osk_driver_t input_ps3_osk;
 
 extern const menu_ctx_driver_t menu_ctx_rmenu;

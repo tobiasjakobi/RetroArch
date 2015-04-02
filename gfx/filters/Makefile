@@ -11,12 +11,6 @@ ifeq ($(shell uname -a),)
    platform = win
 else ifneq ($(findstring MINGW,$(shell uname -a)),)
    platform = win
-else ifneq ($(findstring Darwin,$(shell uname -a)),)
-   platform = osx
-   arch = intel
-ifeq ($(shell uname -p),powerpc)
-   arch = ppc
-endif
 else ifneq ($(findstring win,$(shell uname -a)),)
    platform = win
 endif
@@ -47,10 +41,6 @@ ldflags := -shared -Wl,--version-script=link.T
 
 ifeq ($(platform), unix)
 DYLIB = so
-else ifeq ($(platform), osx)
-compiler := $(CC)
-DYLIB = dylib
-ldflags := -dynamiclib
 else
 extra_flags += -static-libgcc -static-libstdc++
 DYLIB = dll

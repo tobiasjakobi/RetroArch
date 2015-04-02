@@ -29,8 +29,6 @@
 
 #if defined(RARCH_CONSOLE) && defined(HAVE_LOGGER)
 #include <logger_override.h>
-#elif defined(IOS)
-#include "logger/ios_logger_override.h"
 #elif defined(IS_SALAMANDER)
 #include "logger/salamander_logger_override.h"
 #else

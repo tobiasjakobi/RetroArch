@@ -92,9 +92,7 @@ void *(*pretro_get_memory_data)(unsigned);
 size_t (*pretro_get_memory_size)(unsigned);
 
 #ifdef HAVE_DYNAMIC
-#if defined(__APPLE__)
-#define DYNAMIC_EXT "dylib"
-#elif defined(_WIN32)
+#if defined(_WIN32)
 #define DYNAMIC_EXT "dll"
 #else
 #define DYNAMIC_EXT "so"

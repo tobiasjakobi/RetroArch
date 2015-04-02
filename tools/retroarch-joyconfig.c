@@ -412,10 +412,7 @@ static void parse_input(int argc, char *argv[])
 
 }
 
-// Need SDL_main on OSX.
-#ifndef __APPLE__
 #undef main
-#endif
 
 int main(int argc, char *argv[])
 {

@@ -186,7 +186,6 @@ static void sdl_render_msg(sdl_video_t *vid, SDL_Surface *buffer,
 
 static void sdl_gfx_set_handles(void)
 {
-   // SysWMinfo headers are broken on OSX. :(
 #if defined(_WIN32)
    SDL_SysWMinfo info;
    SDL_VERSION(&info.version);

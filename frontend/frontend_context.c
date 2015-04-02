@@ -30,9 +30,6 @@ static const frontend_ctx_driver_t *frontend_ctx_drivers[] = {
 #if defined(__QNX__)
    &frontend_ctx_qnx,
 #endif
-#if defined(IOS) || defined(OSX)
-   &frontend_ctx_apple,
-#endif
 #if defined(PSP)
    &frontend_ctx_psp,
 #endif

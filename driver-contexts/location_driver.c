@@ -15,9 +15,6 @@
  */
 
 static const location_driver_t *location_drivers[] = {
-#if defined(IOS) || defined(OSX)
-   &location_apple,
-#endif
    NULL,
 };
 

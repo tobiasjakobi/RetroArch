@@ -128,8 +128,4 @@ void setting_data_get_description(const void *data, char *msg, size_t msg_sizeof
 // These functions operate only on RetroArch's main settings list
 rarch_setting_t* setting_data_get_list(void);
 
-#ifdef APPLE
-#include "input/apple_keycode.h"
-#endif
-
 #endif

@@ -14,9 +14,7 @@
  */
 #if defined(__ARM_NEON__)
 
-#ifndef __MACH__
 .arm
-#endif
 .align 4
 .globl process_sinc_neon_asm
 .globl _process_sinc_neon_asm

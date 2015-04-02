@@ -47,8 +47,6 @@ const char *config_get_default_audio(void)
          return "alsathread";
       case AUDIO_ROAR:
          return "roar";
-      case AUDIO_COREAUDIO:
-         return "coreaudio";
       case AUDIO_AL:
          return "openal";
       case AUDIO_SDL:
@@ -145,8 +143,6 @@ const char *config_get_default_input(void)
          return "linuxraw";
       case INPUT_UDEV:
          return "udev";
-      case INPUT_APPLE:
-         return "apple_input";
       case INPUT_QNX:
       	 return "qnx_input";
       case INPUT_RWEBINPUT:
@@ -203,8 +199,6 @@ const char *config_get_default_camera(void)
          return "rwebcam";
       case CAMERA_NULL:
          return "null";
-      case CAMERA_IOS:
-         return "ios";
       default:
          return NULL;
    }
@@ -214,13 +208,7 @@ const char *config_get_default_camera(void)
 #ifdef HAVE_LOCATION
 const char *config_get_default_location(void)
 {
-   switch (LOCATION_DEFAULT_DRIVER)
-   {
-      case LOCATION_APPLE:
-         return "apple";
-      default:
-         return NULL;
-   }
+   return NULL;
 }
 #endif
 
@@ -615,42 +603,6 @@ static config_file_t *open_default_config_file(void)
 
    if (conf)
       strlcpy(g_extern.config_path, conf_path, sizeof(g_extern.config_path));
-#elif defined(OSX)
-   char conf_path[PATH_MAX];
-   const char *home = getenv("HOME");
-
-   if (!home)
-      return NULL;
-
-   fill_pathname_join(conf_path, home, "Library/Application Support/RetroArch", sizeof(conf_path));
-   path_mkdir(conf_path);
-      
-   fill_pathname_join(conf_path, conf_path, "retroarch.cfg", sizeof(conf_path));
-   conf = config_file_new(conf_path);
-
-   if (!conf)
-   {
-      conf = config_file_new(NULL);
-      bool saved = false;
-      if (conf)
-      {
-         config_set_bool(conf, "config_save_on_exit", true);
-         saved = config_file_write(conf, conf_path);
-      }
-      
-      if (saved)
-         RARCH_WARN("Created new config file in: \"%s\".\n", conf_path); // WARN here to make sure user has a good chance of seeing it.
-      else
-      {
-         RARCH_ERR("Failed to create new config file in: \"%s\".\n", conf_path);
-         config_file_free(conf);
-         conf = NULL;
-      }
-   }
-
-   if (conf)
-      strlcpy(g_extern.config_path, conf_path, sizeof(g_extern.config_path));
-
 #elif !defined(__CELLOS_LV2__)
    char conf_path[PATH_MAX];
    const char *xdg  = getenv("XDG_CONFIG_HOME");

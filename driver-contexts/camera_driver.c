@@ -21,9 +21,6 @@ static const camera_driver_t *camera_drivers[] = {
 #ifdef EMSCRIPTEN
    &camera_rwebcam,
 #endif
-#ifdef IOS
-   &camera_ios,
-#endif
    NULL,
 };
 

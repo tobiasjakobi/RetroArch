@@ -54,9 +54,6 @@ static const audio_driver_t *audio_drivers[] = {
 #ifdef HAVE_RSOUND
    &audio_rsound,
 #endif
-#ifdef HAVE_COREAUDIO
-   &audio_coreaudio,
-#endif
 #ifdef HAVE_AL
    &audio_openal,
 #endif
@@ -160,9 +157,6 @@ static const input_driver_t *input_drivers[] = {
 #endif
 #if defined(__linux__)
    &input_linuxraw,
-#endif
-#if defined(IOS) || defined(OSX) //< Don't use __APPLE__ as it breaks basic SDL builds
-   &input_apple,
 #endif
 #ifdef __QNX__
    &input_qnx,

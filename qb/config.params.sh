@@ -34,7 +34,6 @@ HAVE_RSOUND=auto        # Enable RSound support
 HAVE_ROAR=auto          # Enable RoarAudio support
 HAVE_AL=auto            # Enable OpenAL support
 HAVE_JACK=auto          # Enable JACK support
-HAVE_COREAUDIO=auto     # Enable CoreAudio support
 HAVE_PULSE=auto         # Enable PulseAudio support
 HAVE_FREETYPE=auto      # Enable FreeType support
 HAVE_XVIDEO=auto        # Enable XVideo support

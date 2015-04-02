@@ -33,7 +33,7 @@
 #include "../config.def.h"
 #endif
 
-#if defined(__APPLE__) || defined(HAVE_BB10) || defined(EMSCRIPTEN)
+#if defined(HAVE_BB10) || defined(EMSCRIPTEN)
 #define main_entry rarch_main
 #else
 #define main_entry main
@@ -48,7 +48,7 @@
 #define declare_argv()
 #define args_initial_ptr() NULL
 
-#if !defined(__APPLE__) && !defined(EMSCRIPTEN)
+#if !defined(EMSCRIPTEN)
 #define HAVE_MAIN_LOOP
 #endif
 
