@@ -20,8 +20,6 @@
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#elif defined(GEKKO)
-#include "thread/gx_pthread.h"
 #elif defined(PSP)
 #include "thread/psp_pthread.h"
 #else
@@ -333,8 +331,6 @@ bool scond_wait_timeout(scond_t *cond, slock_t *lock, int64_t timeout_us)
    gettimeofday(&tm, NULL);
    now.tv_sec = tm.tv_sec;
    now.tv_nsec = tm.tv_usec * 1000;
-#elif !defined(GEKKO) // timeout on libogc is duration, not end time
-   clock_gettime(CLOCK_REALTIME, &now);
 #endif
 
    now.tv_sec += timeout_us / 1000000LL;

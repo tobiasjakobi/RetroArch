@@ -36,7 +36,6 @@ enum
    VIDEO_XVIDEO,
    VIDEO_SDL,
    VIDEO_EXT,
-   VIDEO_WII,
    VIDEO_PSP1,
    VIDEO_VITA,
    VIDEO_D3D9,
@@ -58,7 +57,6 @@ enum
    AUDIO_EXT,
    AUDIO_DSOUND,
    AUDIO_PS3,
-   AUDIO_WII,
    AUDIO_RWEBAUDIO,
    AUDIO_PSP1,
    AUDIO_NULL,
@@ -72,7 +70,6 @@ enum
    INPUT_DINPUT,
    INPUT_PS3,
    INPUT_PSP,
-   INPUT_WII,
    INPUT_XINPUT,
    INPUT_UDEV,
    INPUT_LINUXRAW,
@@ -94,8 +91,6 @@ enum
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) || defined(__CELLOS_LV2__)
 #define VIDEO_DEFAULT_DRIVER VIDEO_GL
-#elif defined(GEKKO)
-#define VIDEO_DEFAULT_DRIVER VIDEO_WII
 #elif defined(HAVE_WIN32_D3D9)
 #define VIDEO_DEFAULT_DRIVER VIDEO_D3D9
 #elif defined(HAVE_VG)
@@ -116,8 +111,6 @@ enum
 
 #if defined(__CELLOS_LV2__)
 #define AUDIO_DEFAULT_DRIVER AUDIO_PS3
-#elif defined(GEKKO)
-#define AUDIO_DEFAULT_DRIVER AUDIO_WII
 #elif defined(PSP)
 #define AUDIO_DEFAULT_DRIVER AUDIO_PSP1
 #elif defined(HAVE_ALSA) && defined(HAVE_VIDEOCORE)
@@ -166,8 +159,6 @@ enum
 #define INPUT_DEFAULT_DRIVER INPUT_PS3
 #elif (defined(SN_TARGET_PSP2) || defined(PSP))
 #define INPUT_DEFAULT_DRIVER INPUT_PSP
-#elif defined(GEKKO)
-#define INPUT_DEFAULT_DRIVER INPUT_WII
 #elif defined(HAVE_UDEV)
 #define INPUT_DEFAULT_DRIVER INPUT_UDEV
 #elif defined(__linux__)
@@ -206,8 +197,6 @@ enum
 
 #if defined(__CELLOS_LV2__)
 #define DEFAULT_ASPECT_RATIO 1.7778f
-#elif defined(GEKKO)
-#define DEFAULT_ASPECT_RATIO 1.3333f
 #else
 #define DEFAULT_ASPECT_RATIO -1.0f
 #endif
@@ -265,9 +254,6 @@ static const bool video_threaded = false;
 
 // Set to true if HW render cores should get their private context.
 static const bool video_shared_context = false;
-
-// Sets GC/Wii screen width
-static const unsigned video_viwidth = 640;
 
 // Smooths picture
 static const bool video_smooth = true;
@@ -390,7 +376,7 @@ static const bool audio_sync = true;
 
 
 // Audio rate control
-#if defined(GEKKO) || !defined(RARCH_CONSOLE)
+#if !defined(RARCH_CONSOLE)
 static const bool rate_control = true;
 #else
 static const bool rate_control = false;

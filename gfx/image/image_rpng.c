@@ -145,60 +145,6 @@ static bool rpng_image_load_argb_shift(const char *path, struct texture_image *o
    return false;
 }
 
-#ifdef GEKKO
-
-#define GX_BLIT_LINE_32(off) \
-{ \
-   const uint16_t *tmp_src = src; \
-   uint16_t *tmp_dst = dst; \
-   for (unsigned x = 0; x < width2 >> 3; x++, tmp_src += 8, tmp_dst += 32) \
-   { \
-      tmp_dst[  0 + off] = tmp_src[0]; \
-      tmp_dst[ 16 + off] = tmp_src[1]; \
-      tmp_dst[  1 + off] = tmp_src[2]; \
-      tmp_dst[ 17 + off] = tmp_src[3]; \
-      tmp_dst[  2 + off] = tmp_src[4]; \
-      tmp_dst[ 18 + off] = tmp_src[5]; \
-      tmp_dst[  3 + off] = tmp_src[6]; \
-      tmp_dst[ 19 + off] = tmp_src[7]; \
-   } \
-   src += tmp_pitch; \
-}
-
-static bool rpng_gx_convert_texture32(struct texture_image *image)
-{
-   // memory allocation in libogc is extremely primitive so try to avoid gaps in memory when converting
-   // by copying over to temp buffer first then converting over into main buffer again
-   void *tmp = malloc(image->width * image->height * sizeof(uint32_t));
-
-   if (!tmp)
-   {
-      RARCH_ERR("Failed to create temp buffer for conversion.\n");
-      return false;
-   }
-
-   memcpy(tmp, image->pixels, image->width * image->height * sizeof(uint32_t));
-   unsigned tmp_pitch = (image->width * sizeof(uint32_t)) >> 1;
-   image->width &= ~3;
-   image->height &= ~3;
-   unsigned width2 = image->width << 1;
-
-   const uint16_t *src = (uint16_t *) tmp;
-   uint16_t *dst = (uint16_t *) image->pixels;
-   for (unsigned i = 0; i < image->height; i += 4, dst += 4 * width2)
-   {
-      GX_BLIT_LINE_32(0)
-      GX_BLIT_LINE_32(4)
-      GX_BLIT_LINE_32(8)
-      GX_BLIT_LINE_32(12)
-   }
-
-   free(tmp);
-   return true;
-}
-
-#endif
-
 void texture_image_free(struct texture_image *img)
 {
    free(img->pixels);
@@ -214,17 +160,6 @@ bool texture_image_load(struct texture_image *out_img, const char *path)
       ret = rpng_image_load_argb_shift(path, out_img, 24, 0, 8, 16);
    else
       ret = rpng_image_load_argb_shift(path, out_img, 24, 16, 8, 0);
-
-#ifdef GEKKO
-   if (ret)
-   {
-      if (!rpng_gx_convert_texture32(out_img))
-      {
-         texture_image_free(out_img);
-         ret = false;
-      }
-   }
-#endif
 
    return ret;
 }

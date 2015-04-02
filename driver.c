@@ -76,9 +76,6 @@ static const audio_driver_t *audio_drivers[] = {
 #ifdef __CELLOS_LV2__
    &audio_ps3,
 #endif
-#ifdef GEKKO
-   &audio_gx,
-#endif
 #ifdef EMSCRIPTEN
    &audio_rwebaudio,
 #endif
@@ -109,9 +106,6 @@ static const video_driver_t *video_drivers[] = {
 #endif
 #ifdef HAVE_XVIDEO
    &video_xvideo,
-#endif
-#ifdef GEKKO
-   &video_gx,
 #endif
 #ifdef HAVE_VG
    &video_vg,
@@ -146,9 +140,6 @@ static const input_driver_t *input_drivers[] = {
 #endif
 #if defined(HAVE_XINPUT2)
    &input_xinput,
-#endif
-#ifdef GEKKO
-   &input_gx,
 #endif
 #ifdef HAVE_UDEV
    &input_udev,
@@ -1066,9 +1057,6 @@ void init_video_input(void)
    video.fullscreen = g_settings.video.fullscreen;
    video.vsync = g_settings.video.vsync && !g_extern.system.force_nonblock;
    video.force_aspect = g_settings.video.force_aspect;
-#ifdef GEKKO
-   video.viwidth = g_settings.video.viwidth;
-#endif
    video.smooth = g_settings.video.smooth;
    video.input_scale = scale;
    video.rgb32 = g_extern.filter.filter ? g_extern.filter.out_rgb32 : (g_extern.system.pix_fmt == RETRO_PIXEL_FORMAT_XRGB8888);

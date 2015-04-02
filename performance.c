@@ -28,7 +28,7 @@
 #include <intrin.h>
 #endif
 
-#if defined(__CELLOS_LV2__) || defined(GEKKO)
+#if defined(__CELLOS_LV2__)
 #ifndef _PPU_INTRINSICS_H
 #include <ppu_intrinsics.h>
 #endif
@@ -44,10 +44,6 @@
 #include <sys/time.h>
 #elif defined(__CELLOS_LV2__)
 #include <sys/sys_time.h>
-#endif
-
-#ifdef GEKKO
-#include <ogc/lwp_watchdog.h>
 #endif
 
 #ifdef EMSCRIPTEN
@@ -141,7 +137,7 @@ retro_perf_tick_t rarch_get_perf_counter(void)
 
 #elif defined(__ARM_ARCH_6__)
    asm volatile( "mrc p15, 0, %0, c9, c13, 0" : "=r"(time) );
-#elif defined(__CELLOS_LV2__) || defined(GEKKO) || defined(__powerpc__) || defined(__ppc__) || defined(__POWERPC__)
+#elif defined(__CELLOS_LV2__) || defined(__powerpc__) || defined(__ppc__) || defined(__POWERPC__)
    time = __mftb();
 #elif defined(__mips__)
    struct timeval tv;
@@ -181,8 +177,6 @@ retro_time_t rarch_get_time_usec(void)
    return count.QuadPart * 1000000 / freq.QuadPart;
 #elif defined(__CELLOS_LV2__)
    return sys_time_get_system_time();
-#elif defined(GEKKO)
-   return ticks_to_microsecs(gettime());
 #elif defined(_POSIX_MONOTONIC_CLOCK)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)
@@ -279,8 +273,6 @@ unsigned rarch_get_cpu_cores(void)
    SYSTEM_INFO sysinfo;
    GetSystemInfo(&sysinfo);
    return sysinfo.dwNumberOfProcessors;
-#elif defined(GEKKO)
-   return 1;
 #elif defined(_SC_NPROCESSORS_ONLN) // Linux, most unix-likes.
    long ret = sysconf(_SC_NPROCESSORS_ONLN);
    if (ret <= 0)
@@ -396,9 +388,6 @@ uint64_t rarch_get_cpu_features(void)
 #elif defined(PSP)
    cpu |= RETRO_SIMD_VFPU;
    RARCH_LOG("[CPUID]: VFPU: %u\n", !!(cpu & RETRO_SIMD_VFPU));
-#elif defined(GEKKO)
-   cpu |= RETRO_SIMD_PS;
-   RARCH_LOG("[CPUID]: PS: %u\n", !!(cpu & RETRO_SIMD_PS));
 #endif
 
    return cpu;

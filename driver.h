@@ -186,7 +186,6 @@ typedef struct video_info
    bool fullscreen;
    bool vsync;
    bool force_aspect;
-   unsigned viwidth;
    bool smooth;
    unsigned input_scale; // Maximum input size: RARCH_SCALE_BASE * input_scale
    bool rgb32; // Use 32-bit RGBA rather than native XBGR1555.
@@ -601,7 +600,6 @@ extern const audio_driver_t audio_xa;
 extern const audio_driver_t audio_pulse;
 extern const audio_driver_t audio_dsound;
 extern const audio_driver_t audio_ps3;
-extern const audio_driver_t audio_gx;
 extern const audio_driver_t audio_psp1;
 extern const audio_driver_t audio_rwebaudio;
 extern const audio_driver_t audio_null;
@@ -609,7 +607,6 @@ extern const video_driver_t video_gl;
 extern const video_driver_t video_psp1;
 extern const video_driver_t video_vita;
 extern const video_driver_t video_d3d;
-extern const video_driver_t video_gx;
 extern const video_driver_t video_xvideo;
 extern const video_driver_t video_sdl;
 extern const video_driver_t video_sdl2;
@@ -623,7 +620,6 @@ extern const input_driver_t input_x;
 extern const input_driver_t input_wayland;
 extern const input_driver_t input_ps3;
 extern const input_driver_t input_psp;
-extern const input_driver_t input_gx;
 extern const input_driver_t input_xinput;
 extern const input_driver_t input_linuxraw;
 extern const input_driver_t input_udev;

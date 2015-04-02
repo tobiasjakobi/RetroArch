@@ -40,8 +40,6 @@
 #include <netex/net.h>
 #include <netex/errno.h>
 #define NETWORK_COMPAT_HEADERS 1
-#elif defined(GEKKO)
-#include <network.h>
 #else
 #define NETWORK_COMPAT_HEADERS 1
 #endif
@@ -107,21 +105,6 @@ static int init_count = 0;
 #define net_shutdown(a,b) shutdown(a,b)
 #define net_socketclose(x) socketclose(x)
 #define net_recv(a,b,c,d) recv(a,b,c,d)
-#elif defined(GEKKO)
-#define SHUT_RD 0
-
-#define socketpoll(x, y, z)  net_poll(x, y, z)
-#define pollfd pollsd
-#define pollfd_fd(x) x.socket
-#define gethostbyname net_gethostbyname
-#define getsockopt net_getsockopt
-#define setsockopt net_setsockopt
-#define net_send(a,b,c,d) net_send(a,b,c,d)
-#define net_socket(a,b,c) net_socket(a,b,c)
-#define net_connect(a,b,c) net_connect(a,b,c)
-#define net_shutdown(a,b) net_shutdown(a,b)
-#define net_socketclose(x) net_close(x)
-#define net_recv(a,b,c,d) net_recv(a,b,c,d)
 #else
 #define pollfd_fd(x) x.fd
 #define net_socket(a,b,c) socket(a,b,c)
@@ -722,8 +705,6 @@ static int64_t rsnd_get_time_usec(void)
    return count.QuadPart * 1000000 / freq.QuadPart;
 #elif defined(__CELLOS_LV2__)
    return sys_time_get_system_time();
-#elif defined(GEKKO)
-   return ticks_to_microsecs(gettime());
 #elif defined(_POSIX_MONOTONIC_CLOCK)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)
@@ -744,7 +725,7 @@ static void rsnd_sleep(int msec)
    sceKernelDelayThread(1000 * msec);
 #elif defined(_WIN32)
    Sleep(msec);
-#elif defined(GEKKO) || defined(__PSL1GHT__)
+#elif defined(__PSL1GHT__)
    usleep(1000 * msec);
 #else
    struct timespec tv = {0};

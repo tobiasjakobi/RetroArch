@@ -25,8 +25,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#elif defined(GEKKO)
-#include <network.h>
 #endif
 
 #include <stdio.h>
@@ -34,9 +32,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-#ifndef GEKKO
 #include "../../netplay_compat.h"
-#endif
 
 #include "logger.h"
 
@@ -52,19 +48,6 @@ static int g_sid;
 static int sock;
 static struct sockaddr_in target;
 static char sendbuf[4096];
-
-#ifdef GEKKO
-#define sendto(s, msg, len, flags, addr, tolen) net_sendto(s, msg, len, 0, addr, 8)
-#define socket(domain, type, protocol) net_socket(domain, type, protocol)
-
-static int inet_pton(int af, const char *src, void *dst)
-{
-   if (af != AF_INET)
-      return -1;
-
-   return inet_aton (src, dst);
-}
-#endif
 
 static int if_up_with(int index)
 {
@@ -100,21 +83,12 @@ static int if_up_with(int index)
          return 0;
       }
    }
-#elif defined(GEKKO)
-   char t[16];
-   if (if_config(t, NULL, NULL, TRUE) < 0)
-   {
-      return -1;
-   }
 #endif
 
    sock=socket(AF_INET, SOCK_DGRAM, 0);
 
    target.sin_family = AF_INET;
    target.sin_port = htons(PC_DEVELOPMENT_UDP_PORT);
-#ifdef GEKKO
-   target.sin_len = 8;
-#endif
 
    inet_pton(AF_INET, PC_DEVELOPMENT_IP_ADDRESS, &target.sin_addr);
 
@@ -126,8 +100,6 @@ static int if_down(int sid)
    (void)sid;
 #ifdef __CELLOS_LV2__
    cellNetCtlTerm();
-#elif defined(GEKKO) && !defined(HW_DOL)
-   net_deinit();
 #endif
    return 0;
 }

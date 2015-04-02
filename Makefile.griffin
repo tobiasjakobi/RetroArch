@@ -49,67 +49,12 @@ ifeq ($(WHOLE_ARCHIVE_LINK), 1)
    WHOLE_END := -Wl,--no-whole-archive
 endif
 
-ifeq ($(platform), ngc)
-  CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
-  CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
-  LD = $(DEVKITPPC)/bin/powerpc-eabi-ld$(EXE_EXT)
-  ELF2DOL = $(DEVKITPPC)/bin/elf2dol$(EXE_EXT)
-  EXT_TARGET := $(TARGET_NAME)_ngc.dol
-  EXT_INTER_TARGET := $(TARGET_NAME)_ngc.elf
-  INCLUDE += -I. -I$(DEVKITPRO)/libogc/include -Ideps/rzlib
-  LIBDIRS += -L$(DEVKITPRO)/libogc/lib/cube -L.
-  MACHDEP := -DGEKKO -DHW_DOL -mogc -mcpu=750 -meabi -mhard-float -DMSB_FIRST
-  LDFLAGS += $(MACHDEP) -Wl,-Map,$(notdir $(EXT_INTER_TARGET)).map
-ifeq ($(BIG_STACK), 1)
-   LDFLAGS += -T gx/ld/ogc.ld
-endif
-  LIBS := -lfat $(WHOLE_START) -lretro_ngc $(WHOLE_END) -logc
-ifeq ($(HAVE_LOGGER), 1)
-  LIBS += -lbba
-endif
-  PLATCFLAGS := -DGEKKO
-
-  HAVE_FILTERS_BUILTIN     := 1
-  HAVE_THREADS             := 1
-  HAVE_ZLIB                := 1
-  HAVE_RPNG                := 1
-  HAVE_OVERLAY             := 1
-  HAVE_BUILTIN_AUTOCONFIG  := 1
-else ifeq ($(platform), ps3)
+ifeq ($(platform), ps3)
 	#TODO
   MEDIA_SHADER_DIR := ps3/pkg/USRDIR/cores/shaders
 else ifeq ($(platform), ps3-cobra)
 	#TODO
   MEDIA_SHADER_DIR := ps3/iso/PS3_GAME/USRDIR/cores/shaders
-else ifeq ($(platform), wii)
-  CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
-  CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
-  LD = $(DEVKITPPC)/bin/powerpc-eabi-ld$(EXE_EXT)
-  ELF2DOL = $(DEVKITPPC)/bin/elf2dol$(EXE_EXT)
-  EXT_TARGET := $(TARGET_NAME)_wii.dol
-  EXT_INTER_TARGET := $(TARGET_NAME)_wii.elf
-  INCLUDE += -I. -I$(DEVKITPRO)/libogc/include -Ideps/rzlib
-  LIBDIRS += -L$(DEVKITPRO)/libogc/lib/wii -L.
-  MACHDEP := -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST
-  LDFLAGS += $(MACHDEP) -Wl,-Map,$(notdir $(EXT_INTER_TARGET)).map,-wrap,malloc,-wrap,free,-wrap,memalign,-wrap,calloc,-wrap,realloc,-wrap,strdup,-wrap,strndup,-wrap,malloc_usable_size
-ifeq ($(BIG_STACK), 1)
-   LDFLAGS += -T gx/ld/rvl.ld
-endif
-  LIBS := -lfat $(WHOLE_START) -lretro_wii $(WHOLE_END) -logc -lwiiuse -lbte 
-  APP_BOOTER_DIR = wii/app_booter
-  PLATOBJS := $(APP_BOOTER_DIR)/app_booter.binobj
-  PLATCFLAGS := -DGEKKO
-
-  HAVE_FILTERS_BUILTIN     := 1
-  HAVE_RARCH_EXEC          := 1
-  HAVE_THREADS             := 1
-  HAVE_RSOUND              := 1
-  HAVE_LIBRETRO_MANAGEMENT := 1
-  HAVE_ZLIB                := 1
-  HAVE_RPNG                := 1
-  HAVE_OVERLAY             := 1
-  HAVE_LIBSICKSAXIS			:= 0
-  HAVE_BUILTIN_AUTOCONFIG  := 1
 else ifeq ($(platform), psp1)
   CC = psp-gcc$(EXE_EXT)
   CXX = psp-g++$(EXE_EXT)
@@ -212,11 +157,7 @@ $(APP_BOOTER_DIR)/app_booter.bin:
 	$(MAKE) -C $(APP_BOOTER_DIR)
 
 pkg: all
-ifeq ($(platform), wii)
-	cp -r $(EXT_TARGET) wii/pkg/CORE.dol
-else ifeq ($(platform), ngc)
-	cp -r $(EXT_TARGET) ngc/pkg/CORE.dol
-else ifeq ($(platform), psp1)
+ifeq ($(platform), psp1)
 	psp-fixup-imports$(EXT) $(EXT_TARGET)
 endif
 
@@ -269,8 +210,5 @@ clean:
 	rm -f $(EXT_TARGET)
 	rm -f $(EXT_INTER_TARGET)
 	rm -f $(OBJ)
-ifeq ($(platform), wii)
-	$(MAKE) -C $(APP_BOOTER_DIR) clean
-endif
 
 .PHONY: clean

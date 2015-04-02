@@ -76,7 +76,7 @@ static uint16_t gray_filler(unsigned x, unsigned y)
    x >>= 1;
    y >>= 1;
    unsigned col = ((x + y) & 1) + 1;
-#if defined(GEKKO) || defined(PSP)
+#if defined(PSP)
    return (6 << 12) | (col << 8) | (col << 4) | (col << 0);
 #else
    return (col << 13) | (col << 9) | (col << 5) | (12 << 0);
@@ -88,7 +88,7 @@ static uint16_t green_filler(unsigned x, unsigned y)
    x >>= 1;
    y >>= 1;
    unsigned col = ((x + y) & 1) + 1;
-#if defined(GEKKO) || defined(PSP)
+#if defined(PSP)
    return (6 << 12) | (col << 8) | (col << 5) | (col << 0);
 #else
    return (col << 13) | (col << 10) | (col << 5) | (12 << 0);
@@ -126,7 +126,7 @@ static void blit_line(int x, int y, const char *message, bool green)
             if (col)
             {
                driver.menu->frame_buf[(y + j) * (driver.menu->frame_buf_pitch >> 1) + (x + i)] = green ?
-#if defined(GEKKO)|| defined(PSP)
+#if defined(PSP)
                (3 << 0) | (10 << 4) | (3 << 8) | (7 << 12) : 0x7FFF;
 #else
                (15 << 0) | (7 << 4) | (15 << 8) | (7 << 12) : 0xFFFF;
@@ -561,20 +561,6 @@ static void rgui_render(void)
 
       blit_line(x, y, message, selected);
    }
-
-#ifdef GEKKO
-   const char *message_queue;
-
-   if (driver.menu->msg_force)
-   {
-      message_queue = msg_queue_pull(g_extern.msg_queue);
-      driver.menu->msg_force = false;
-   }
-   else
-      message_queue = driver.current_msg;
-
-   rgui_render_messagebox(message_queue);
-#endif
 
    if (driver.menu->keyboard.display)
    {

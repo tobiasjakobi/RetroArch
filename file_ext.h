@@ -32,14 +32,6 @@
 #define EXT_EXECUTABLES "pbp|PBP"
 #define SALAMANDER_FILE "EBOOT.PBP"
 #define PLATFORM_NAME   "psp"
-#elif defined(GEKKO)
-#define EXT_EXECUTABLES "dol|DOL"
-#define SALAMANDER_FILE "boot.dol"
-#ifdef HW_RVL
-#define PLATFORM_NAME   "wii"
-#else
-#define PLATFORM_NAME   "ngc"
-#endif
 #elif defined(EMSCRIPTEN)
 #define EXT_EXECUTABLES ""
 #endif

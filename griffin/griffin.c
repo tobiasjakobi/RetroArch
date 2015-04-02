@@ -34,10 +34,6 @@ CONSOLE EXTENSIONS
 #include "../logger/netlogger/logger.c"
 #endif
 
-#ifdef HW_DOL
-#include "../ngc/ssaram.c"
-#endif
-
 #endif
 
 #ifdef HAVE_ZLIB
@@ -154,11 +150,6 @@ VIDEO DRIVER
 
 #if defined(HAVE_OPENGL)
 #include "../gfx/math/matrix.c"
-#elif defined(GEKKO)
-#ifdef HW_RVL
-#include "../wii/vi_encoder.c"
-#include "../wii/mem2_manager.c"
-#endif
 #endif
 
 #ifdef HAVE_VG
@@ -191,9 +182,7 @@ VIDEO DRIVER
 #include "../gfx/xvideo.c"
 #endif
 
-#if defined(GEKKO)
-#include "../gx/gx_video.c"
-#elif defined(PSP)
+#if defined(PSP)
 #include "../psp1/psp1_video.c"
 #endif
 
@@ -248,12 +237,6 @@ INPUT
 #elif defined(SN_TARGET_PSP2) || defined(PSP)
 #include "../input/psp_input.c"
 #include "../input/autoconf/builtin_psp.c"
-#elif defined(GEKKO)
-#ifdef HAVE_LIBSICKSAXIS
-#include "../gx/sicksaxis.c"
-#endif
-#include "../input/gx_input.c"
-#include "../input/autoconf/builtin_gx.c"
 #elif defined(EMSCRIPTEN)
 #include "../input/rwebinput_input.c"
 #endif
@@ -329,8 +312,6 @@ AUDIO
 ============================================================ */
 #if defined(__CELLOS_LV2__)
 #include "../audio/ps3_audio.c"
-#elif defined(GEKKO)
-#include "../audio/gx_audio.c"
 #elif defined(EMSCRIPTEN)
 #include "../audio/rwebaudio.c"
 #elif defined(PSP)
@@ -444,11 +425,6 @@ FRONTEND
 
 #if defined(__CELLOS_LV2__)
 #include "../frontend/platform/platform_ps3.c"
-#elif defined(GEKKO)
-#include "../frontend/platform/platform_gx.c"
-#ifdef HW_RVL
-#include "../frontend/platform/platform_wii.c"
-#endif
 #elif defined(PSP)
 #include "../frontend/platform/platform_psp.c"
 #endif

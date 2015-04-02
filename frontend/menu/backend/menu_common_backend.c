@@ -148,23 +148,14 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
       case MENU_SETTINGS_VIDEO_OPTIONS:
          file_list_clear(menu->selection_buf);
          file_list_push(menu->selection_buf, "", "video_shared_context", MENU_SETTINGS_VIDEO_HW_SHARED_CONTEXT, 0);
-#if defined(GEKKO) || defined(__CELLOS_LV2__)
+#if defined(__CELLOS_LV2__)
          file_list_push(menu->selection_buf, "Screen Resolution", "", MENU_SETTINGS_VIDEO_RESOLUTION, 0);
-#endif
-#ifdef GEKKO
-         file_list_push(menu->selection_buf, "", "video_viwidth", MENU_SETTINGS_VIDEO_VIWIDTH, 0);
 #endif
          file_list_push(menu->selection_buf, "Software Filter", "", MENU_SETTINGS_VIDEO_SOFTFILTER, 0);
 #if defined(__CELLOS_LV2__)
          file_list_push(menu->selection_buf, "PAL60 Mode", "", MENU_SETTINGS_VIDEO_PAL60, 0);
 #endif
          file_list_push(menu->selection_buf, "", "video_smooth", MENU_SETTINGS_VIDEO_FILTER, 0);
-#ifdef HW_RVL
-         file_list_push(menu->selection_buf, "VI Trap filtering", "", MENU_SETTINGS_VIDEO_SOFT_FILTER, 0);
-#endif
-#if defined(HW_RVL)
-         file_list_push(menu->selection_buf, "Gamma", "", MENU_SETTINGS_VIDEO_GAMMA, 0);
-#endif
          file_list_push(menu->selection_buf, "", "video_scale_integer", MENU_SETTINGS_VIDEO_INTEGER_SCALE, 0);
          file_list_push(menu->selection_buf, "", "aspect_ratio_index", MENU_SETTINGS_VIDEO_ASPECT_RATIO, 0);
          file_list_push(menu->selection_buf, "Custom Ratio", "", MENU_SETTINGS_CUSTOM_VIEWPORT, 0);
@@ -1803,14 +1794,7 @@ static void menu_parse_and_resolve(unsigned menu_type)
 
             if (!*dir)
             {
-#if defined(GEKKO)
-#ifdef HW_RVL
-               file_list_push(driver.menu->selection_buf, "sd:/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "usb:/", "", menu_type, 0);
-#endif
-               file_list_push(driver.menu->selection_buf, "carda:/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "cardb:/", "", menu_type, 0);
-#elif defined(_WIN32)
+#if defined(_WIN32)
                unsigned drives = GetLogicalDrives();
                char drive[] = " :\\";
                for (i = 0; i < 32; i++)
@@ -1840,15 +1824,6 @@ static void menu_parse_and_resolve(unsigned menu_type)
 #endif
                return;
             }
-#if defined(GEKKO) && defined(HW_RVL)
-            LWP_MutexLock(gx_device_mutex);
-            int dev = gx_get_device_from_path(dir);
-
-            if (dev != -1 && !gx_devices[dev].mounted && gx_devices[dev].interface->isInserted())
-               fatMountSimple(gx_devices[dev].name, gx_devices[dev].interface);
-
-            LWP_MutexUnlock(gx_device_mutex);
-#endif
 
             const char *exts;
             char ext_buf[1024];
@@ -2401,10 +2376,6 @@ static int menu_common_iterate(unsigned action)
                // Core selection on non-console just updates directory listing.
                // Will take effect on new content load.
 #elif defined(RARCH_CONSOLE)
-#if defined(GEKKO) && defined(HW_RVL)
-               fill_pathname_join(g_extern.fullpath, g_defaults.core_dir,
-                     SALAMANDER_FILE, sizeof(g_extern.fullpath));
-#endif
                g_extern.lifecycle_state &= ~(1ULL << MODE_GAME);
                g_extern.lifecycle_state |= (1ULL << MODE_EXITSPAWN);
                ret = -1;
@@ -3160,54 +3131,7 @@ static int menu_common_core_setting_toggle(unsigned setting, unsigned action)
    return 0;
 }
 
-#ifdef GEKKO
-#define MAX_GAMMA_SETTING 2
-
-static unsigned menu_gx_resolutions[GX_RESOLUTIONS_LAST][2] = {
-   { 512, 192 },
-   { 598, 200 },
-   { 640, 200 },
-   { 384, 224 },
-   { 448, 224 },
-   { 480, 224 },
-   { 512, 224 },
-   { 576, 224 },
-   { 608, 224 },
-   { 640, 224 },
-   { 340, 232 },
-   { 512, 232 },
-   { 512, 236 },
-   { 336, 240 },
-   { 352, 240 },
-   { 384, 240 },
-   { 512, 240 },
-   { 530, 240 },
-   { 640, 240 },
-   { 512, 384 },
-   { 598, 400 },
-   { 640, 400 },
-   { 384, 448 },
-   { 448, 448 },
-   { 480, 448 },
-   { 512, 448 },
-   { 576, 448 },
-   { 608, 448 },
-   { 640, 448 },
-   { 340, 464 },
-   { 512, 464 },
-   { 512, 472 },
-   { 352, 480 },
-   { 384, 480 },
-   { 512, 480 },
-   { 530, 480 },
-   { 608, 480 },
-   { 640, 480 },
-};
-
-static unsigned menu_current_gx_resolution = GX_RESOLUTIONS_640_480;
-#else
 #define MAX_GAMMA_SETTING 1
-#endif
 
 
 #ifdef HAVE_OSK
@@ -3455,10 +3379,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
          case MENU_SETTINGS_RESTART_EMULATOR:
             if (action == MENU_ACTION_OK)
             {
-#if defined(GEKKO) && defined(HW_RVL)
-               fill_pathname_join(g_extern.fullpath, g_defaults.core_dir, SALAMANDER_FILE,
-                     sizeof(g_extern.fullpath));
-#endif
                g_extern.lifecycle_state &= ~(1ULL << MODE_GAME);
                g_extern.lifecycle_state |= (1ULL << MODE_EXITSPAWN);
                return -1;
@@ -3885,36 +3805,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             }
             break;
 
-
-
-#if defined(GEKKO)
-         case MENU_SETTINGS_VIDEO_RESOLUTION:
-            if (action == MENU_ACTION_LEFT)
-            {
-               if (menu_current_gx_resolution > 0)
-                  menu_current_gx_resolution--;
-            }
-            else if (action == MENU_ACTION_RIGHT)
-            {
-               if (menu_current_gx_resolution < GX_RESOLUTIONS_LAST - 1)
-               {
-#ifdef HW_RVL
-                  if ((menu_current_gx_resolution + 1) > GX_RESOLUTIONS_640_480)
-                     if (CONF_GetVideo() != CONF_VIDEO_PAL)
-                        return 0;
-#endif
-
-                  menu_current_gx_resolution++;
-               }
-            }
-            else if (action == MENU_ACTION_OK)
-            {
-               if (driver.video_data)
-                  gx_set_video_mode(driver.video_data, menu_gx_resolutions[menu_current_gx_resolution][0],
-                        menu_gx_resolutions[menu_current_gx_resolution][1]);
-            }
-            break;
-#elif defined(__CELLOS_LV2__)
+#if defined(__CELLOS_LV2__)
          case MENU_SETTINGS_VIDEO_RESOLUTION:
             if (action == MENU_ACTION_LEFT)
             {
@@ -3976,17 +3867,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
                   }
                   break;
             }
-            break;
-#endif
-#ifdef HW_RVL
-         case MENU_SETTINGS_VIDEO_SOFT_FILTER:
-            if (g_extern.lifecycle_state & (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE))
-               g_extern.lifecycle_state &= ~(1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE);
-            else
-               g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE);
-
-            if (driver.video_data && driver.video_poke && driver.video_poke->apply_state_changes)
-               driver.video_poke->apply_state_changes(driver.video_data);
             break;
 #endif
 
@@ -4197,15 +4077,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
             strlcpy(type_str, rotation_lut[g_settings.video.rotation],
                   type_str_size);
             break;
-         case MENU_SETTINGS_VIDEO_VIWIDTH:
-#ifdef GEKKO
-            snprintf(type_str, type_str_size, "%d", g_settings.video.viwidth);
-#endif
-            break;
-         case MENU_SETTINGS_VIDEO_SOFT_FILTER:
-            snprintf(type_str, type_str_size,
-                  (g_extern.lifecycle_state & (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE)) ? "ON" : "OFF");
-            break;
          case MENU_SETTINGS_VIDEO_FILTER:
             if (g_settings.video.smooth)
                strlcpy(type_str, "Bilinear filtering", type_str_size);
@@ -4299,11 +4170,7 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
          case MENU_SETTINGS_VIDEO_ASPECT_RATIO:
             strlcpy(type_str, aspectratio_lut[g_settings.video.aspect_ratio_idx].name, type_str_size);
             break;
-#if defined(GEKKO)
-         case MENU_SETTINGS_VIDEO_RESOLUTION:
-            strlcpy(type_str, gx_get_video_mode(), type_str_size);
-            break;
-#elif defined(__CELLOS_LV2__)
+#if defined(__CELLOS_LV2__)
          case MENU_SETTINGS_VIDEO_RESOLUTION:
             {
                unsigned width = gfx_ctx_get_resolution_width(g_extern.console.screen.resolutions.list[g_extern.console.screen.resolutions.current.idx]);

@@ -114,10 +114,6 @@ static void salamander_init(char *libretro_path, size_t sizeof_libretro_path)
          config_file_free(conf);
          strlcpy(libretro_path, tmp_str, sizeof_libretro_path);
       }
-#ifdef GEKKO
-      else // stupid libfat bug or something; somtimes it says the file is there when it doesn't
-         config_file_exists = false;
-#endif
    }
 
    if (!config_file_exists || !strcmp(libretro_path, ""))

@@ -52,11 +52,6 @@
 #include <windows.h>
 #endif
 
-// Wii and PSL1GHT - for usleep (among others)
-#if defined(GEKKO) || defined(__PSL1GHT__)
-#include <unistd.h>
-#endif
-
 // PSP
 #if defined(PSP)
 #include <pspthreadman.h>
@@ -183,9 +178,6 @@ struct settings
       bool black_frame_insertion;
       unsigned swap_interval;
       unsigned hard_sync_frames;
-#ifdef GEKKO
-      unsigned viwidth;
-#endif
       bool smooth;
       bool force_aspect;
       bool crop_overscan;

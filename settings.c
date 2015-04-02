@@ -61,8 +61,6 @@ const char *config_get_default_audio(void)
          return "ext";
       case AUDIO_PS3:
          return "ps3";
-      case AUDIO_WII:
-         return "gx";
       case AUDIO_PSP1:
          return "psp1";
       case AUDIO_RWEBAUDIO:
@@ -92,8 +90,6 @@ const char *config_get_default_video(void)
    {
       case VIDEO_GL:
          return "gl";
-      case VIDEO_WII:
-         return "gx";
       case VIDEO_D3D9:
          return "d3d";
       case VIDEO_PSP1:
@@ -137,8 +133,6 @@ const char *config_get_default_input(void)
          return "wayland";
       case INPUT_XINPUT:
          return "xinput";
-      case INPUT_WII:
-         return "gx";
       case INPUT_LINUXRAW:
          return "linuxraw";
       case INPUT_UDEV:
@@ -273,9 +267,6 @@ void config_set_defaults(void)
       g_settings.video.threaded = g_defaults.settings.video_threaded_enable;
 
    g_settings.video.shared_context = video_shared_context;
-#ifdef GEKKO
-   g_settings.video.viwidth = video_viwidth;
-#endif
    g_settings.video.smooth = video_smooth;
    g_settings.video.force_aspect = force_aspect;
    g_settings.video.scale_integer = scale_integer;
@@ -765,9 +756,6 @@ bool config_load_file(const char *path, bool set_defaults)
    g_settings.video.swap_interval = min(g_settings.video.swap_interval, 4);
    CONFIG_GET_BOOL(video.threaded, "video_threaded");
    CONFIG_GET_BOOL(video.shared_context, "video_shared_context");
-#ifdef GEKKO
-   CONFIG_GET_INT(video.viwidth, "video_viwidth");
-#endif
    CONFIG_GET_BOOL(video.smooth, "video_smooth");
    CONFIG_GET_BOOL(video.force_aspect, "video_force_aspect");
    CONFIG_GET_BOOL(video.scale_integer, "video_scale_integer");
@@ -1305,9 +1293,6 @@ bool config_save_file(const char *path)
    config_set_int(conf,   "autosave_interval", g_settings.autosave_interval);
    config_set_bool(conf,  "video_crop_overscan", g_settings.video.crop_overscan);
    config_set_bool(conf,  "video_scale_integer", g_settings.video.scale_integer);
-#ifdef GEKKO
-   config_set_int(conf,   "video_viwidth", g_settings.video.viwidth);
-#endif
    config_set_bool(conf,  "video_smooth", g_settings.video.smooth);
    config_set_bool(conf,  "video_threaded", g_settings.video.threaded);
    config_set_bool(conf,  "video_shared_context", g_settings.video.shared_context);
