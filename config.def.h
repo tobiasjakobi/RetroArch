@@ -37,8 +37,6 @@ enum
    VIDEO_SDL,
    VIDEO_EXT,
    VIDEO_WII,
-   VIDEO_XENON360,
-   VIDEO_XDK_D3D,
    VIDEO_PSP1,
    VIDEO_VITA,
    VIDEO_D3D9,
@@ -62,7 +60,6 @@ enum
    AUDIO_DSOUND,
    AUDIO_COREAUDIO,
    AUDIO_PS3,
-   AUDIO_XENON360,
    AUDIO_WII,
    AUDIO_RWEBAUDIO,
    AUDIO_PSP1,
@@ -78,7 +75,6 @@ enum
    INPUT_DINPUT,
    INPUT_PS3,
    INPUT_PSP,
-   INPUT_XENON360,
    INPUT_WII,
    INPUT_XINPUT,
    INPUT_UDEV,
@@ -110,10 +106,6 @@ enum
 #define VIDEO_DEFAULT_DRIVER VIDEO_GL
 #elif defined(GEKKO)
 #define VIDEO_DEFAULT_DRIVER VIDEO_WII
-#elif defined(XENON)
-#define VIDEO_DEFAULT_DRIVER VIDEO_XENON360
-#elif (defined(_XBOX1) || defined(_XBOX360)) && (defined(HAVE_D3D8) || defined(HAVE_D3D9))
-#define VIDEO_DEFAULT_DRIVER VIDEO_XDK_D3D
 #elif defined(HAVE_WIN32_D3D9)
 #define VIDEO_DEFAULT_DRIVER VIDEO_D3D9
 #elif defined(HAVE_VG)
@@ -134,8 +126,6 @@ enum
 
 #if defined(__CELLOS_LV2__)
 #define AUDIO_DEFAULT_DRIVER AUDIO_PS3
-#elif defined(XENON)
-#define AUDIO_DEFAULT_DRIVER AUDIO_XENON360
 #elif defined(GEKKO)
 #define AUDIO_DEFAULT_DRIVER AUDIO_WII
 #elif defined(PSP)
@@ -180,9 +170,7 @@ enum
 #define AUDIO_DEFAULT_RESAMPLER_DRIVER  AUDIO_RESAMPLER_SINC
 #endif
 
-#if defined(XENON)
-#define INPUT_DEFAULT_DRIVER INPUT_XENON360
-#elif defined(_XBOX360) || defined(_XBOX) || defined(HAVE_XINPUT2) || defined(HAVE_XINPUT_XBOX1)
+#if defined(HAVE_XINPUT2)
 #define INPUT_DEFAULT_DRIVER INPUT_XINPUT
 #elif defined(ANDROID)
 #define INPUT_DEFAULT_DRIVER INPUT_ANDROID
@@ -246,9 +234,9 @@ enum
 #define MENU_DEFAULT_DRIVER MENU_RGUI
 #endif
 
-#if defined(XENON) || defined(_XBOX360) || defined(__CELLOS_LV2__)
+#if defined(__CELLOS_LV2__)
 #define DEFAULT_ASPECT_RATIO 1.7778f
-#elif defined(_XBOX1) || defined(GEKKO) || defined(ANDROID) || defined(__QNX__)
+#elif defined(GEKKO) || defined(ANDROID) || defined(__QNX__)
 #define DEFAULT_ASPECT_RATIO 1.3333f
 #else
 #define DEFAULT_ASPECT_RATIO -1.0f
@@ -258,11 +246,7 @@ enum
 // Video
 ////////////////
 
-#if defined(_XBOX360)
-#define DEFAULT_GAMMA 1
-#else
 #define DEFAULT_GAMMA 0
-#endif
 
 static const unsigned int def_user_language = 0;
 
@@ -337,7 +321,7 @@ static const bool scale_integer = false;
 static const float aspect_ratio = DEFAULT_ASPECT_RATIO; // Automatic
 static const bool aspect_ratio_auto = false; // 1:1 PAR
 
-#if defined(__CELLOS_LV2) || defined(_XBOX360)
+#if defined(__CELLOS_LV2)
 static unsigned aspect_ratio_idx = ASPECT_RATIO_16_9;
 #elif defined(RARCH_CONSOLE)
 static unsigned aspect_ratio_idx = ASPECT_RATIO_4_3;

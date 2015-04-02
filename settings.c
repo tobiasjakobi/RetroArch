@@ -63,8 +63,6 @@ const char *config_get_default_audio(void)
          return "pulse";
       case AUDIO_EXT:
          return "ext";
-      case AUDIO_XENON360:
-         return "xenon360";
       case AUDIO_PS3:
          return "ps3";
       case AUDIO_WII:
@@ -100,9 +98,6 @@ const char *config_get_default_video(void)
          return "gl";
       case VIDEO_WII:
          return "gx";
-      case VIDEO_XENON360:
-         return "xenon360";
-      case VIDEO_XDK_D3D:
       case VIDEO_D3D9:
          return "d3d";
       case VIDEO_PSP1:
@@ -146,8 +141,6 @@ const char *config_get_default_input(void)
          return "x";
       case INPUT_WAYLAND:
          return "wayland";
-      case INPUT_XENON360:
-         return "xenon360";
       case INPUT_XINPUT:
          return "xinput";
       case INPUT_WII:
@@ -588,7 +581,7 @@ static config_file_t *open_default_config_file(void)
 {
    config_file_t *conf = NULL;
 
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined(_WIN32)
    char conf_path[PATH_MAX];
 
    char app_path[PATH_MAX];
@@ -666,7 +659,7 @@ static config_file_t *open_default_config_file(void)
    if (conf)
       strlcpy(g_extern.config_path, conf_path, sizeof(g_extern.config_path));
 
-#elif !defined(__CELLOS_LV2__) && !defined(_XBOX)
+#elif !defined(__CELLOS_LV2__)
    char conf_path[PATH_MAX];
    const char *xdg  = getenv("XDG_CONFIG_HOME");
    const char *home = getenv("HOME");

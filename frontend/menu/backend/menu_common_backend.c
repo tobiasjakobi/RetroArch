@@ -162,12 +162,8 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
 #ifdef HW_RVL
          file_list_push(menu->selection_buf, "VI Trap filtering", "", MENU_SETTINGS_VIDEO_SOFT_FILTER, 0);
 #endif
-#if defined(HW_RVL) || defined(_XBOX360)
+#if defined(HW_RVL)
          file_list_push(menu->selection_buf, "Gamma", "", MENU_SETTINGS_VIDEO_GAMMA, 0);
-#endif
-#ifdef _XBOX1
-         file_list_push(menu->selection_buf, "Soft filtering", "", MENU_SETTINGS_SOFT_DISPLAY_FILTER, 0);
-         file_list_push(menu->selection_buf, "Flicker filtering", "", MENU_SETTINGS_FLICKER_FILTER, 0);
 #endif
          file_list_push(menu->selection_buf, "", "video_scale_integer", MENU_SETTINGS_VIDEO_INTEGER_SCALE, 0);
          file_list_push(menu->selection_buf, "", "aspect_ratio_index", MENU_SETTINGS_VIDEO_ASPECT_RATIO, 0);
@@ -1814,14 +1810,6 @@ static void menu_parse_and_resolve(unsigned menu_type)
 #endif
                file_list_push(driver.menu->selection_buf, "carda:/", "", menu_type, 0);
                file_list_push(driver.menu->selection_buf, "cardb:/", "", menu_type, 0);
-#elif defined(_XBOX1)
-               file_list_push(driver.menu->selection_buf, "C:", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "D:", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "E:", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "F:", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "G:", "", menu_type, 0);
-#elif defined(_XBOX360)
-               file_list_push(driver.menu->selection_buf, "game:", "", menu_type, 0);
 #elif defined(_WIN32)
                unsigned drives = GetLogicalDrives();
                char drive[] = " :\\";
@@ -4117,40 +4105,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             }
             break;
 #endif
-#ifdef _XBOX1
-         case MENU_SETTINGS_FLICKER_FILTER:
-            switch (action)
-            {
-               case MENU_ACTION_LEFT:
-                  if (g_extern.console.screen.flicker_filter_index > 0)
-                     g_extern.console.screen.flicker_filter_index--;
-                  break;
-               case MENU_ACTION_RIGHT:
-                  if (g_extern.console.screen.flicker_filter_index < 5)
-                     g_extern.console.screen.flicker_filter_index++;
-                  break;
-               case MENU_ACTION_START:
-                  g_extern.console.screen.flicker_filter_index = 0;
-                  break;
-            }
-            break;
-         case MENU_SETTINGS_SOFT_DISPLAY_FILTER:
-            switch (action)
-            {
-               case MENU_ACTION_LEFT:
-               case MENU_ACTION_RIGHT:
-               case MENU_ACTION_OK:
-                  if (g_extern.lifecycle_state & (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE))
-                     g_extern.lifecycle_state &= ~(1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE);
-                  else
-                     g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE);
-                  break;
-               case MENU_ACTION_START:
-                  g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE);
-                  break;
-            }
-            break;
-#endif
          case MENU_SETTINGS_CUSTOM_BGM_CONTROL_ENABLE:
             switch (action)
             {
@@ -4665,15 +4619,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
          case MENU_SETTINGS_AUDIO_VOLUME:
             snprintf(type_str, type_str_size, "%.1f dB", g_extern.audio_data.volume_db);
             break;
-#ifdef _XBOX1
-         case MENU_SETTINGS_FLICKER_FILTER:
-            snprintf(type_str, type_str_size, "%d", g_extern.console.screen.flicker_filter_index);
-            break;
-         case MENU_SETTINGS_SOFT_DISPLAY_FILTER:
-            snprintf(type_str, type_str_size,
-                  (g_extern.lifecycle_state & (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE)) ? "ON" : "OFF");
-            break;
-#endif
          case MENU_SETTINGS_CUSTOM_BGM_CONTROL_ENABLE:
             strlcpy(type_str, (g_extern.lifecycle_state & (1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE)) ? "ON" : "OFF", type_str_size);
             break;

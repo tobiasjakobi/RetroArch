@@ -27,7 +27,7 @@
 #include <unistd.h>
 #endif
 
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined(_WIN32)
 #include <windows.h>
 #include <intrin.h>
 #endif
@@ -36,8 +36,6 @@
 #ifndef _PPU_INTRINSICS_H
 #include <ppu_intrinsics.h>
 #endif
-#elif defined(_XBOX360)
-#include <PPCIntrinsics.h>
 #elif defined(_POSIX_MONOTONIC_CLOCK) || defined(ANDROID) || defined(__QNX__)
 // POSIX_MONOTONIC_CLOCK is not being defined in Android headers despite support being present.
 #include <time.h>
@@ -163,7 +161,7 @@ retro_perf_tick_t rarch_get_perf_counter(void)
 
 #elif defined(__ARM_ARCH_6__)
    asm volatile( "mrc p15, 0, %0, c9, c13, 0" : "=r"(time) );
-#elif defined(__CELLOS_LV2__) || defined(GEKKO) || defined(_XBOX360) || defined(__powerpc__) || defined(__ppc__) || defined(__POWERPC__)
+#elif defined(__CELLOS_LV2__) || defined(GEKKO) || defined(__powerpc__) || defined(__ppc__) || defined(__POWERPC__)
    time = __mftb();
 #elif defined(__mips__)
    struct timeval tv;
@@ -232,7 +230,7 @@ retro_time_t rarch_get_time_usec(void)
 #define CPU_X86
 #endif
 
-#if defined(_MSC_VER) && !defined(_XBOX)
+#if defined(_MSC_VER)
 #include <intrin.h>
 #endif
 
@@ -304,7 +302,7 @@ static void arm_enable_runfast_mode(void)
 
 unsigned rarch_get_cpu_cores(void)
 {
-#if defined(_WIN32) && !defined(_XBOX) // Win32
+#if defined(_WIN32) // Win32
    SYSTEM_INFO sysinfo;
    GetSystemInfo(&sysinfo);
    return sysinfo.dwNumberOfProcessors;
@@ -334,8 +332,6 @@ unsigned rarch_get_cpu_cores(void)
          num_cpu = 1;
    }
    return num_cpu;
-#elif defined(_XBOX360)
-   return 3;
 #else
    // No idea, assume single core.
    return 1;
@@ -439,9 +435,6 @@ uint64_t rarch_get_cpu_features(void)
 #elif defined(__ALTIVEC__)
    cpu |= RETRO_SIMD_VMX;
    RARCH_LOG("[CPUID]: VMX: %u\n", !!(cpu & RETRO_SIMD_VMX));
-#elif defined(XBOX360)
-   cpu |= RETRO_SIMD_VMX128;
-   RARCH_LOG("[CPUID]: VMX128: %u\n", !!(cpu & RETRO_SIMD_VMX128));
 #elif defined(PSP)
    cpu |= RETRO_SIMD_VFPU;
    RARCH_LOG("[CPUID]: VFPU: %u\n", !!(cpu & RETRO_SIMD_VFPU));

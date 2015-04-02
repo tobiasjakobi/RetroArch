@@ -18,12 +18,8 @@
 #include <stdlib.h>
 
 #if defined(_WIN32)
-#ifdef _XBOX
-#include <xtl.h>
-#else
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#endif
 #elif defined(GEKKO)
 #include "thread/gx_pthread.h"
 #elif defined(PSP)

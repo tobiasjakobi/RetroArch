@@ -253,10 +253,6 @@ bool renderchain_render(void *chain_data, const void *data,
    unsigned out_height = 0;
    renderchain_convert_geometry(chain, &chain->passes[0].info, out_width, out_height,
          current_width, current_height, chain->final_viewport);
-#ifdef _XBOX1
-   d3dr->SetFlickerFilter(g_extern.console.screen.flicker_filter_index);
-   d3dr->SetSoftDisplayFilter(g_extern.lifecycle_state & (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE));
-#endif
    renderchain_blit_to_texture(chain, data, width, height, pitch);
 
    // Grab back buffer.
@@ -540,11 +536,7 @@ void renderchain_render_pass(void *data, Pass &pass, unsigned pass_index)
    D3DDevice_SetSamplerState_MinFilter(d3dr, 0, translate_filter(pass.info.pass->filter));
    D3DDevice_SetSamplerState_MagFilter(d3dr, 0, translate_filter(pass.info.pass->filter));
 
-#ifdef _XBOX1
-   d3dr->SetVertexShader(D3DFVF_XYZ | D3DFVF_TEX1);
-#else
    d3dr->SetVertexDeclaration(pass.vertex_decl);
-#endif
    for (unsigned i = 0; i < 4; i++)
    {
       D3DDevice_SetStreamSources(d3dr, i, pass.vertex_buf, 0, sizeof(Vertex));

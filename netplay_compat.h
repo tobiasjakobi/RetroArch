@@ -20,7 +20,7 @@
 #include "config.h"
 #endif
 
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined(_WIN32)
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0501
 #endif
@@ -28,10 +28,6 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <ws2tcpip.h>
-#elif defined(_XBOX)
-#define NOD3D
-#include <xtl.h>
-#include <io.h>
 #else
 #include <sys/select.h>
 #include <sys/types.h>
@@ -52,17 +48,9 @@
 #endif
 #endif
 
-#ifdef _XBOX
-#define socklen_t int
-#endif
-
 #if defined(_WIN32)
 // Woohoo, Winsock has headers from the STONE AGE. :D
-#ifndef _XBOX360
 #define close(x) closesocket(x)
-#endif
-#define CONST_CAST (const char*)
-#define NONCONST_CAST (char*)
 #else
 #define CONST_CAST
 #define NONCONST_CAST

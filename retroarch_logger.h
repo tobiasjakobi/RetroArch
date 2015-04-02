@@ -31,8 +31,6 @@
 #include <logger_override.h>
 #elif defined(IOS)
 #include "logger/ios_logger_override.h"
-#elif defined(_XBOX1)
-#include "logger/xdk1_logger_override.h"
 #elif defined(IS_SALAMANDER)
 #include "logger/salamander_logger_override.h"
 #elif defined(ANDROID) && defined(HAVE_LOGGER)

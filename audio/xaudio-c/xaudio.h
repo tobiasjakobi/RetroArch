@@ -24,21 +24,6 @@
 #pragma pack(push, 1)
 #define X2DEFAULT(x) = (x)
 
-#ifdef _XBOX
-
-#define DEFINE_CLSID(className, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-	DEFINE_GUID(CLSID_##className, 0x##l, 0x##w1, 0x##w2, 0x##b1, 0x##b2, 0x##b3, 0x##b4, 0x##b5, 0x##b6, 0x##b7, 0x##b8)
-#define DEFINE_IID(interfaceName, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
-	DEFINE_GUID(IID_##interfaceName, 0x##l, 0x##w1, 0x##w2, 0x##b1, 0x##b2, 0x##b3, 0x##b4, 0x##b5, 0x##b6, 0x##b7, 0x##b8)
-
-DEFINE_CLSID(XAudio2, 3eda9b49, 2085, 498b, 9b, b2, 39, a6, 77, 84, 93, de);
-DEFINE_CLSID(XAudio2_Debug, 47199894, 7cc2, 444d, 98, 73, ce, d2, 56, 2c, c6, 0e);
-DEFINE_IID(IXAudio2, 8bcf1f58, 9fe7, 4583, 8a, c6, e2, ad, c4, 65, c8, bb);
-
-#include <audiodefs.h>      // Basic audio data types and constants
-
-#else
-
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <basetyps.h>
@@ -55,13 +40,7 @@ DEFINE_IID(IXAudio2, 8bcf1f58, 9fe7, 4583, 8a, c6, e2, ad, c4, 65, c8, bb);
 DEFINE_CLSID_X(XAudio2, 5a508685, a254, 4fba, 9b, 82, 9a, 24, b0, 03, 06, af); // 2.7
 DEFINE_IID_X(IXAudio2, 8bcf1f58, 9fe7, 4583, 8a, c6, e2, ad, c4, 65, c8, bb);
 
-#endif
-
-#ifdef _XBOX
-#define XAUDIO2_DEFAULT_FREQ_RATIO      2.0f
-#else
 #define XAUDIO2_DEFAULT_FREQ_RATIO      4.0f
-#endif
 
 #define XAUDIO2_COMMIT_NOW              0
 #define XAUDIO2_DEFAULT_CHANNELS        0
@@ -81,25 +60,11 @@ typedef enum XAUDIO2_DEVICE_ROLE
    InvalidDeviceRole           = ~GlobalDefaultDevice
 } XAUDIO2_DEVICE_ROLE;
 
-#ifdef _XBOX
-typedef enum XAUDIO2_XBOX_HWTHREAD_SPECIFIER
-{
-	XboxThread0 = 0x01,
-	XboxThread1 = 0x02,
-	XboxThread2 = 0x04,
-	XboxThread3 = 0x08,
-	XboxThread4 = 0x10,
-	XboxThread5 = 0x20,
-	XAUDIO2_ANY_PROCESSOR = XboxThread4,
-	XAUDIO2_DEFAULT_PROCESSOR = XAUDIO2_ANY_PROCESSOR
-} XAUDIO2_XBOX_HWTHREAD_SPECIFIER, XAUDIO2_PROCESSOR;
-#else
 typedef enum XAUDIO2_WINDOWS_PROCESSOR_SPECIFIER
 {
    XAUDIO2_ANY_PROCESSOR       = 0xffffffff,
    XAUDIO2_DEFAULT_PROCESSOR   = XAUDIO2_ANY_PROCESSOR
 } XAUDIO2_WINDOWS_PROCESSOR_SPECIFIER, XAUDIO2_PROCESSOR;
-#endif
 
 typedef enum XAUDIO2_FILTER_TYPE {
    LowPassFilter,
@@ -250,10 +215,6 @@ DECLARE_INTERFACE_(IXAudio2, IUnknown)
          void *pReserved X2DEFAULT(NULL)) PURE;
 };
 
-#ifdef _XBOX
-STDAPI XAudio2Create(__deref_out IXAudio2** ppXAudio2, UINT32 Flags X2DEFAULT(0),
-		XAUDIO2_PROCESSOR XAudio2Processor X2DEFAULT(XAUDIO2_DEFAULT_PROCESSOR));
-#else
 static inline HRESULT XAudio2Create(IXAudio2 **ppXAudio2, UINT32, XAUDIO2_PROCESSOR)
 {
    IXAudio2 *pXAudio2;
@@ -272,7 +233,6 @@ static inline HRESULT XAudio2Create(IXAudio2 **ppXAudio2, UINT32, XAUDIO2_PROCES
    }
    return hr;
 }
-#endif
 
 // Undo the #pragma pack(push, 1) directive at the top of this file
 #pragma pack(pop)

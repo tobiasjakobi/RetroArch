@@ -19,23 +19,11 @@
 #include <stdint.h>
 #include "../../boolean.h"
 
-#ifdef _XBOX1
-#include <xtl.h>
-#include "../../xdk/xdk_defines.h"
-#endif
-
 struct texture_image
 {
    unsigned width;
    unsigned height;
-#ifdef _XBOX1
-   unsigned x;
-   unsigned y;
-   LPDIRECT3DTEXTURE pixels;
-   LPDIRECT3DVERTEXBUFFER vertex_buf;
-#else
    uint32_t *pixels;
-#endif
 };
 
 bool texture_image_load(struct texture_image *img, const char *path);

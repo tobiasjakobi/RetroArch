@@ -53,12 +53,8 @@
 // Platform-specific headers
 // Windows
 #ifdef _WIN32
-#ifdef _XBOX
-#include <xtl.h>
-#else
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#endif
 #endif
 
 // Wii and PSL1GHT - for usleep (among others)

@@ -18,11 +18,6 @@
 #define HAVE_SHADERS
 #endif
 
-#ifdef _XBOX
-#define DONT_HAVE_BITMAPFONTS
-#define DONT_HAVE_STATE_TRACKER
-#endif
-
 #ifdef __CELLOS_LV2__
 #include "../mem/altivec/altivec_mem.c"
 #endif
@@ -81,12 +76,6 @@ COMPATIBILITY
 /*============================================================
 CONFIG FILE
 ============================================================ */
-#ifdef _XBOX
-#undef __RARCH_POSIX_STRING_H
-#undef __RARCH_MSVC_COMPAT_H
-#undef strcasecmp
-#endif
-
 #include "../conf/config_file.c"
 #include "../core_options.c"
 
@@ -104,8 +93,6 @@ VIDEO CONTEXT
 
 #if defined(__CELLOS_LV2__)
 #include "../gfx/context/ps3_ctx.c"
-#elif defined(_XBOX)
-#include "../gfx/context/d3d_ctx.cpp"
 #elif defined(ANDROID)
 #include "../gfx/context/androidegl_ctx.c"
 #elif defined(__QNX__)
@@ -164,8 +151,6 @@ VIDEO IMAGE
 
 #if defined(__CELLOS_LV2__)
 #include "../gfx/image/image_ps3.c"
-#elif defined(_XBOX1)
-#include "../gfx/image/image_xdk1.c"
 #else
 #include "../gfx/image/image_rpng.c"
 #endif
@@ -197,10 +182,6 @@ VIDEO DRIVER
 
 #include "../gfx/gfx_common.c"
 
-#ifdef _XBOX
-#include "../xdk/xdk_resources.cpp"
-#endif
-
 #ifdef HAVE_OPENGL
 #include "../gfx/gl.c"
 
@@ -219,16 +200,10 @@ VIDEO DRIVER
 #include "../gfx/xvideo.c"
 #endif
 
-#ifdef _XBOX
-#include "../xdk/xdk_d3d.cpp"
-#endif
-
 #if defined(GEKKO)
 #include "../gx/gx_video.c"
 #elif defined(PSP)
 #include "../psp1/psp1_video.c"
-#elif defined(XENON)
-#include "../xenon/xenon360_video.c"
 #endif
 
 #if defined(HAVE_NULLVIDEO)
@@ -258,18 +233,10 @@ FONTS
 #include "../gfx/fonts/gl_font.c"
 #endif
 
-#ifdef _XBOX
-#include "../gfx/fonts/d3d_font.c"
-#endif
-
 #if defined(HAVE_LIBDBGFONT)
 #include "../gfx/fonts/ps_libdbgfont.c"
 #elif defined(HAVE_OPENGL)
 #include "../gfx/fonts/gl_raster_font.c"
-#elif defined(_XBOX1)
-#include "../gfx/fonts/xdk1_xfonts.c"
-#elif defined(_XBOX360)
-#include "../gfx/fonts/xdk360_fonts.cpp"
 #endif
 
 #endif
@@ -296,11 +263,6 @@ INPUT
 #endif
 #include "../input/gx_input.c"
 #include "../input/autoconf/builtin_gx.c"
-#elif defined(_XBOX)
-#include "../input/xdk_xinput_input.c"
-#include "../input/autoconf/builtin_xdk.c"
-#elif defined(XENON)
-#include "../xenon/xenon360_input.c"
 #elif defined(ANDROID)
 #include "../input/android_input.c"
 #include "../input/autoconf/builtin_android.c"
@@ -335,10 +297,6 @@ INPUT
 /*============================================================
 STATE TRACKER
 ============================================================ */
-#ifdef _XBOX
-#define DONT_HAVE_STATE_TRACKER
-#endif
-
 #ifndef DONT_HAVE_STATE_TRACKER
 #include "../gfx/state_tracker.c"
 #endif
@@ -401,8 +359,6 @@ AUDIO
 ============================================================ */
 #if defined(__CELLOS_LV2__)
 #include "../audio/ps3_audio.c"
-#elif defined(XENON)
-#include "../xenon/xenon360_audio.c"
 #elif defined(GEKKO)
 #include "../audio/gx_audio.c"
 #elif defined(EMSCRIPTEN)
@@ -531,8 +487,6 @@ FRONTEND
 #ifdef HW_RVL
 #include "../frontend/platform/platform_wii.c"
 #endif
-#elif defined(_XBOX)
-#include "../frontend/platform/platform_xdk.c"
 #elif defined(PSP)
 #include "../frontend/platform/platform_psp.c"
 #elif defined(__QNX__)
@@ -549,11 +503,7 @@ FRONTEND
 /*============================================================
 MAIN
 ============================================================ */
-#if defined(XENON)
-#include "../frontend/frontend_xenon.c"
-#else
 #include "../frontend/frontend.c"
-#endif
 
 /*============================================================
 RETROARCH
@@ -568,9 +518,7 @@ RECORDING
 /*============================================================
 THREAD
 ============================================================ */
-#if defined(HAVE_THREADS) && defined(XENON)
-#include "../thread/xenon_sdl_threads.c"
-#elif defined(HAVE_THREADS)
+#if defined(HAVE_THREADS)
 #include "../thread.c"
 #include "../gfx/video_thread_wrapper.c"
 #include "../audio/thread_wrapper.c"
@@ -588,11 +536,7 @@ NETPLAY
 /*============================================================
 SCREENSHOTS
 ============================================================ */
-#if defined(_XBOX1)
-#include "../xdk/screenshot_xdk1.c"
-#else
 #include "../screenshot.c"
-#endif
 
 
 /*============================================================

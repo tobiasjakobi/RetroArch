@@ -39,15 +39,10 @@
 #ifdef _MSC_VER
 #define setmode _setmode
 #endif
-#ifdef _XBOX
-#include <xtl.h>
-#define INVALID_FILE_ATTRIBUTES -1
-#else
 #include <io.h>
 #include <fcntl.h>
 #include <direct.h>
 #include <windows.h>
-#endif
 #else
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -40,16 +40,7 @@
 #define HAVE_SHADER_MANAGER
 #endif
 
-#if defined(_XBOX1)
-#define ENTRIES_HEIGHT 9
-#define POSITION_EDGE_MAX (480)
-#define POSITION_EDGE_MIN 6
-#define POSITION_EDGE_CENTER (425)
-#define POSITION_OFFSET 30
-#define POSITION_RENDER_OFFSET 128
-#define RMENU_TERM_WIDTH 45
-#define FONT_SIZE_NORMAL 21
-#elif defined(__CELLOS_LV2__)
+#if defined(__CELLOS_LV2__)
 #define ENTRIES_HEIGHT 20
 #define POSITION_MIDDLE 0.50f
 #define POSITION_EDGE_MAX 1.00f

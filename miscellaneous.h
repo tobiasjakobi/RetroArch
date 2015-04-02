@@ -19,8 +19,6 @@
 
 #if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
 #include <sys/timer.h>
-#elif defined(XENON)
-#include <time/time.h>
 #elif defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__)
 #include <unistd.h>
 #elif defined(PSP)
@@ -29,11 +27,9 @@
 #include <time.h>
 #endif
 
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#elif defined(_WIN32) && defined(_XBOX)
-#include <Xtl.h>
 #endif
 
 #include "retroarch_logger.h"
@@ -70,8 +66,6 @@ static inline void rarch_sleep(unsigned msec)
    sceKernelDelayThread(1000 * msec);
 #elif defined(_WIN32)
    Sleep(msec);
-#elif defined(XENON)
-   udelay(1000 * msec);
 #elif defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__)
    usleep(1000 * msec);
 #else

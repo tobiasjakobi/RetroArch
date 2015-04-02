@@ -45,12 +45,8 @@
 #endif
 
 #ifdef _WIN32
-#ifdef _XBOX
-#include <xtl.h>
-#else
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#endif
 #endif
 
 // To avoid continous switching if we hold the button down, we require that the button must go from pressed,
@@ -1260,7 +1256,7 @@ static void parse_input(int argc, char *argv[])
             break;
 
          case 'D':
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined(_WIN32)
             FreeConsole();
 #endif
             break;

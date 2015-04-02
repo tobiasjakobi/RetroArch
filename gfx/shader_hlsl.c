@@ -16,10 +16,6 @@
 
 #include "shader_hlsl.h"
 #include "shader_parse.h"
-#ifdef _XBOX
-#include <xtl.h>
-#include "../xdk/xdk_d3d.h"
-#endif
 
 static const char *stock_hlsl_program =
       "void main_vertex\n"
@@ -376,13 +372,8 @@ static void hlsl_use(void *data, unsigned index)
    if (hlsl_active && prg[index].vprg && prg[index].fprg)
    {
       active_index = index;
-#ifdef _XBOX
-      D3DDevice_SetVertexShader(d3dr, prg[index].vprg);
-      D3DDevice_SetPixelShader(d3dr, prg[index].fprg);
-#else
       d3dr->SetVertexShader(prg[index].vprg);
       d3dr->SetPixelShader(prg[index].fprg);
-#endif
    }
 }
 

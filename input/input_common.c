@@ -56,9 +56,6 @@ static const rarch_joypad_driver_t *joypad_drivers[] = {
 #ifdef GEKKO
    &gx_joypad,
 #endif
-#ifdef _XBOX
-   &xdk_joypad,
-#endif
 #ifdef PSP
    &psp_joypad,
 #endif

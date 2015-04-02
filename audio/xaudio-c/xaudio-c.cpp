@@ -66,8 +66,6 @@ struct xaudio2 : public IXAudio2VoiceCallback
 
 void xaudio2_enumerate_devices(xaudio2_t *xa)
 {
-   (void)xa;
-#ifndef _XBOX
    UINT32 dev_count;
    xa->pXAudio2->GetDeviceCount(&dev_count);
    fprintf(stderr, "XAudio2 devices:\n");
@@ -77,7 +75,6 @@ void xaudio2_enumerate_devices(xaudio2_t *xa)
       xa->pXAudio2->GetDeviceDetails(i, &dev_detail);
       fwprintf(stderr, L"\t%u: %s\n", i, dev_detail.DisplayName);
    }
-#endif
 }
 
 static void xaudio2_set_wavefmt(WAVEFORMATEX *wfx,
@@ -96,9 +93,7 @@ static void xaudio2_set_wavefmt(WAVEFORMATEX *wfx,
 xaudio2_t *xaudio2_new(unsigned samplerate, unsigned channels,
       size_t size, unsigned device)
 {
-#ifndef _XBOX
    CoInitializeEx(0, COINIT_MULTITHREADED);
-#endif
 
    xaudio2_t *handle = new xaudio2;
 

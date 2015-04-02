@@ -169,9 +169,7 @@ struct platform_bind
    char desc[64];
 };
 
-#if defined(_XBOX360)
-#define DEFAULT_SHADER_TYPE RARCH_SHADER_HLSL
-#elif defined(__PSL1GHT__)
+#if defined(__PSL1GHT__)
 #define DEFAULT_SHADER_TYPE RARCH_SHADER_GLSL
 #elif defined(__CELLOS_LV2__)
 #define DEFAULT_SHADER_TYPE RARCH_SHADER_CG
@@ -605,7 +603,6 @@ extern const audio_driver_t audio_xa;
 extern const audio_driver_t audio_pulse;
 extern const audio_driver_t audio_dsound;
 extern const audio_driver_t audio_coreaudio;
-extern const audio_driver_t audio_xenon360;
 extern const audio_driver_t audio_ps3;
 extern const audio_driver_t audio_gx;
 extern const audio_driver_t audio_psp1;
@@ -616,9 +613,7 @@ extern const video_driver_t video_psp1;
 extern const video_driver_t video_vita;
 extern const video_driver_t video_d3d;
 extern const video_driver_t video_gx;
-extern const video_driver_t video_xenon360;
 extern const video_driver_t video_xvideo;
-extern const video_driver_t video_xdk_d3d;
 extern const video_driver_t video_sdl;
 extern const video_driver_t video_sdl2;
 extern const video_driver_t video_vg;
@@ -632,7 +627,6 @@ extern const input_driver_t input_x;
 extern const input_driver_t input_wayland;
 extern const input_driver_t input_ps3;
 extern const input_driver_t input_psp;
-extern const input_driver_t input_xenon360;
 extern const input_driver_t input_gx;
 extern const input_driver_t input_xinput;
 extern const input_driver_t input_linuxraw;

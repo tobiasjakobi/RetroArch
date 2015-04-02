@@ -64,7 +64,7 @@ bool gfx_get_fps(char *buf, size_t size, char *buf_fps, size_t size_fps)
    return ret;
 }
 
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined(_WIN32)
 #include <windows.h>
 #include "../dynamic.h"
 // We only load this library once, so we let it be unloaded at application shutdown,
