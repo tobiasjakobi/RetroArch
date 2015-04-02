@@ -17,7 +17,6 @@
 #include <string.h>
 #include "shader_parse.h"
 #include "../compat/posix_string.h"
-#include "../msvc/msvc_compat.h"
 #include "../file.h"
 #include "../compat/strl.h"
 #include "../general.h"

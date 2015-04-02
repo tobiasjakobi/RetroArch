@@ -19,7 +19,6 @@
 #include "file_list.h"
 #include "driver.h"
 #include "compat/strcasestr.h"
-#include "msvc/msvc_compat.h"
 #include "settings_data.h"
 #include "general.h"
 

@@ -22,8 +22,6 @@
 #endif
 #include <stdarg.h>
 
-#include "msvc/msvc_compat.h"
-
 // FIXME: Using arbitrary string as fmt argument is unsafe.
 static inline void RARCH_LOG_V(const char *tag, const char *fmt, va_list ap)
 {

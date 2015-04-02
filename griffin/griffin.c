@@ -23,10 +23,6 @@
 #define DONT_HAVE_STATE_TRACKER
 #endif
 
-#if defined(_XBOX)
-#include "../msvc/msvc_compat.h"
-#endif
-
 #ifdef __CELLOS_LV2__
 #include "../mem/altivec/altivec_mem.c"
 #endif

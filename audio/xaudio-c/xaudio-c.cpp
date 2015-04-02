@@ -20,7 +20,6 @@
 #include "xaudio-c.h"
 #include <stdint.h>
 #include <stdio.h>
-#include "../../msvc/msvc_compat.h"
 #include "../../boolean.h"
 
 #define MAX_BUFFERS 16

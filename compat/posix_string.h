@@ -18,8 +18,6 @@
 
 #ifdef _WIN32
 
-#include "../msvc/msvc_compat.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
