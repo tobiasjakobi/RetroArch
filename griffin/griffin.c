@@ -88,8 +88,6 @@ VIDEO CONTEXT
 
 #if defined(__CELLOS_LV2__)
 #include "../gfx/context/ps3_ctx.c"
-#elif defined(__QNX__)
-#include "../gfx/context/bbqnx_ctx.c"
 #elif defined(EMSCRIPTEN)
 #include "../gfx/context/emscriptenegl_ctx.c"
 #endif
@@ -256,8 +254,6 @@ INPUT
 #endif
 #include "../input/gx_input.c"
 #include "../input/autoconf/builtin_gx.c"
-#elif defined(__QNX__)
-#include "../input/qnx_input.c"
 #elif defined(EMSCRIPTEN)
 #include "../input/rwebinput_input.c"
 #endif
@@ -455,8 +451,6 @@ FRONTEND
 #endif
 #elif defined(PSP)
 #include "../frontend/platform/platform_psp.c"
-#elif defined(__QNX__)
-#include "../frontend/platform/platform_qnx.c"
 #endif
 #include "../frontend/platform/platform_null.c"
 

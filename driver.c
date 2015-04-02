@@ -44,9 +44,7 @@
 static const audio_driver_t *audio_drivers[] = {
 #ifdef HAVE_ALSA
    &audio_alsa,
-#ifndef __QNX__
    &audio_alsathread,
-#endif
 #endif
 #if defined(HAVE_OSS) || defined(HAVE_OSS_BSD)
    &audio_oss,
@@ -157,9 +155,6 @@ static const input_driver_t *input_drivers[] = {
 #endif
 #if defined(__linux__)
    &input_linuxraw,
-#endif
-#ifdef __QNX__
-   &input_qnx,
 #endif
 #ifdef EMSCRIPTEN
    &input_rwebinput,

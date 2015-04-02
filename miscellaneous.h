@@ -19,7 +19,7 @@
 
 #if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
 #include <sys/timer.h>
-#elif defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__)
+#elif defined(GEKKO) || defined(__PSL1GHT__)
 #include <unistd.h>
 #elif defined(PSP)
 #include <pspthreadman.h>
@@ -66,7 +66,7 @@ static inline void rarch_sleep(unsigned msec)
    sceKernelDelayThread(1000 * msec);
 #elif defined(_WIN32)
    Sleep(msec);
-#elif defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__)
+#elif defined(GEKKO) || defined(__PSL1GHT__)
    usleep(1000 * msec);
 #else
    struct timespec tv = {0};

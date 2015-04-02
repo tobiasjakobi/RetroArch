@@ -20,10 +20,6 @@ ifeq ($(platform), unix)
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
-else ifeq ($(platform), qnx)
-	TARGET := $(TARGET_NAME)_libretro_qnx.so
-   fpic := -fPIC
-   SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
 else ifeq ($(platform), emscripten)
    TARGET := $(TARGET_NAME)_libretro_emscripten.so
    fpic := -fPIC
@@ -43,11 +39,7 @@ endif
 OBJECTS := libretro-test.o
 CFLAGS += -Wall -pedantic $(fpic)
 
-ifeq ($(platform), qnx)
-CFLAGS += -Wc,-std=gnu99
-else
 CFLAGS += -std=gnu99
-endif
 
 all: $(TARGET)
 

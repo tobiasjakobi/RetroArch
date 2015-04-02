@@ -42,12 +42,7 @@
 #endif
 
 #ifndef PACKAGE_VERSION
-#ifdef __QNX__
-/* FIXME - avoid too many decimal points in number error */
-#define PACKAGE_VERSION "1002"
-#else
 #define PACKAGE_VERSION "1.0.0.2"
-#endif
 #endif
 
 // Platform-specific headers
@@ -58,7 +53,7 @@
 #endif
 
 // Wii and PSL1GHT - for usleep (among others)
-#if defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__)
+#if defined(GEKKO) || defined(__PSL1GHT__)
 #include <unistd.h>
 #endif
 

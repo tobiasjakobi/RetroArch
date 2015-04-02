@@ -724,7 +724,7 @@ static int64_t rsnd_get_time_usec(void)
    return sys_time_get_system_time();
 #elif defined(GEKKO)
    return ticks_to_microsecs(gettime());
-#elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__)
+#elif defined(_POSIX_MONOTONIC_CLOCK)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)
       return 0;
@@ -744,7 +744,7 @@ static void rsnd_sleep(int msec)
    sceKernelDelayThread(1000 * msec);
 #elif defined(_WIN32)
    Sleep(msec);
-#elif defined(GEKKO) || defined(__PSL1GHT__) || defined(__QNX__)
+#elif defined(GEKKO) || defined(__PSL1GHT__)
    usleep(1000 * msec);
 #else
    struct timespec tv = {0};

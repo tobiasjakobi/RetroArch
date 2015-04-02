@@ -33,7 +33,7 @@
 #include "../config.def.h"
 #endif
 
-#if defined(HAVE_BB10) || defined(EMSCRIPTEN)
+#if defined(EMSCRIPTEN)
 #define main_entry rarch_main
 #else
 #define main_entry main

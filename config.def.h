@@ -76,7 +76,6 @@ enum
    INPUT_XINPUT,
    INPUT_UDEV,
    INPUT_LINUXRAW,
-   INPUT_QNX,
    INPUT_RWEBINPUT,
    INPUT_NULL,
 
@@ -177,8 +176,6 @@ enum
 #define INPUT_DEFAULT_DRIVER INPUT_X
 #elif defined(HAVE_WAYLAND)
 #define INPUT_DEFAULT_DRIVER INPUT_WAYLAND
-#elif defined(__QNX__)
-#define INPUT_DEFAULT_DRIVER INPUT_QNX
 #elif defined(HAVE_SDL)
 #define INPUT_DEFAULT_DRIVER INPUT_SDL
 #else
@@ -209,7 +206,7 @@ enum
 
 #if defined(__CELLOS_LV2__)
 #define DEFAULT_ASPECT_RATIO 1.7778f
-#elif defined(GEKKO) || defined(__QNX__)
+#elif defined(GEKKO)
 #define DEFAULT_ASPECT_RATIO 1.3333f
 #else
 #define DEFAULT_ASPECT_RATIO -1.0f

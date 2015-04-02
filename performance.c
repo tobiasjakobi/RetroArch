@@ -32,12 +32,8 @@
 #ifndef _PPU_INTRINSICS_H
 #include <ppu_intrinsics.h>
 #endif
-#elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__)
+#elif defined(_POSIX_MONOTONIC_CLOCK)
 #include <time.h>
-#endif
-
-#if defined(__QNX__) && !defined(CLOCK_MONOTONIC)
-#define CLOCK_MONOTONIC 2
 #endif
 
 #if defined(__mips__)
@@ -126,7 +122,7 @@ void retro_perf_log(void)
 retro_perf_tick_t rarch_get_perf_counter(void)
 {
    retro_perf_tick_t time = 0;
-#if defined(__linux__) || defined(__QNX__)
+#if defined(__linux__)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) == 0)
       time = (retro_perf_tick_t)tv.tv_sec * 1000000000 + (retro_perf_tick_t)tv.tv_nsec;
@@ -187,7 +183,7 @@ retro_time_t rarch_get_time_usec(void)
    return sys_time_get_system_time();
 #elif defined(GEKKO)
    return ticks_to_microsecs(gettime());
-#elif defined(_POSIX_MONOTONIC_CLOCK) || defined(__QNX__)
+#elif defined(_POSIX_MONOTONIC_CLOCK)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)
       return 0;

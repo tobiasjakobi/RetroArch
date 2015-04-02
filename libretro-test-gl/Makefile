@@ -24,16 +24,6 @@ else ifeq ($(platform), pi)
    CFLAGS += -I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/vmcs_host/linux
    GLES := 1
    LIBS += -L/opt/vc/lib
-else ifeq ($(platform), qnx)
-   TARGET := $(TARGET_NAME)_libretro_qnx.so
-   fpic := -fPIC
-   SHARED := -shared -Wl,--version-script=link.T
-   GL_LIB := -lGL
-
-   CC = qcc -Vgcc_ntoarmv7le
-   AR = qcc -Vgcc_ntoarmv7le
-   CFLAGS += -DGLES
-   GL_LIB := -lGLESv2
 else ifneq (,$(findstring armv,$(platform)))
    CC = gcc
    TARGET := $(TARGET_NAME)_libretro.so
@@ -74,11 +64,7 @@ else
    CFLAGS += -O3
 endif
 
-ifeq ($(platform), qnx)
-   CFLAGS += -Wc,-std=gnu99
-else
-   CFLAGS += -std=gnu99
-endif
+CFLAGS += -std=gnu99
 
 OBJECTS := libretro-test.o ../gfx/glsym/rglgen.o
 CFLAGS += -Wall -pedantic $(fpic)

@@ -52,7 +52,6 @@ typedef struct frontend_ctx_driver
 
 extern const frontend_ctx_driver_t frontend_ctx_gx;
 extern const frontend_ctx_driver_t frontend_ctx_ps3;
-extern const frontend_ctx_driver_t frontend_ctx_qnx;
 extern const frontend_ctx_driver_t frontend_ctx_psp;
 extern const frontend_ctx_driver_t frontend_ctx_null;
 

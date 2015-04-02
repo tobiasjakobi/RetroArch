@@ -40,8 +40,6 @@
 #else
 #define PLATFORM_NAME   "ngc"
 #endif
-#elif defined(__QNX__)
-#define PLATFORM_NAME   "qnx"
 #elif defined(EMSCRIPTEN)
 #define EXT_EXECUTABLES ""
 #endif
