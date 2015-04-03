@@ -76,10 +76,6 @@ VIDEO CONTEXT
 
 #include "../gfx/gfx_context.c"
 
-#if defined(EMSCRIPTEN)
-#include "../gfx/context/emscriptenegl_ctx.c"
-#endif
-
 
 #if defined(HAVE_OPENGL)
 
@@ -213,10 +209,6 @@ INPUT
 #include "../input/overlay.c"
 #endif
 
-#if defined(EMSCRIPTEN)
-#include "../input/rwebinput_input.c"
-#endif
-
 #if defined(__linux__)
 #include "../input/linuxraw_input.c"
 #include "../input/linuxraw_joypad.c"
@@ -259,9 +251,6 @@ AUDIO RESAMPLER
 CAMERA
 ============================================================ */
 #ifdef HAVE_CAMERA
-#if defined(EMSCRIPTEN)
-#include "../camera/rwebcam.c"
-#endif
 
 #ifdef HAVE_V4L2
 #include "../camera/video4linux2.c"
@@ -280,10 +269,6 @@ RSOUND
 /*============================================================
 AUDIO
 ============================================================ */
-#if defined(EMSCRIPTEN)
-#include "../audio/rwebaudio.c"
-#endif
-
 #ifdef HAVE_XAUDIO
 #include "../audio/xaudio.c"
 #include "../audio/xaudio-c/xaudio-c.cpp"

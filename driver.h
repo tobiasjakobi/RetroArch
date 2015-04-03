@@ -595,7 +595,6 @@ extern const audio_driver_t audio_sdl;
 extern const audio_driver_t audio_xa;
 extern const audio_driver_t audio_pulse;
 extern const audio_driver_t audio_dsound;
-extern const audio_driver_t audio_rwebaudio;
 extern const audio_driver_t audio_null;
 extern const video_driver_t video_gl;
 extern const video_driver_t video_d3d;
@@ -613,10 +612,8 @@ extern const input_driver_t input_wayland;
 extern const input_driver_t input_xinput;
 extern const input_driver_t input_linuxraw;
 extern const input_driver_t input_udev;
-extern const input_driver_t input_rwebinput;
 extern const input_driver_t input_null;
 extern const camera_driver_t camera_v4l2;
-extern const camera_driver_t camera_rwebcam;
 
 extern const menu_ctx_driver_t menu_ctx_rmenu;
 extern const menu_ctx_driver_t menu_ctx_rmenu_xui;

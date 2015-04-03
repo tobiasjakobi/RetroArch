@@ -6,10 +6,6 @@ BIG_STACK		            = 0
 PC_DEVELOPMENT_IP_ADDRESS	= 255.255.255.255
 PC_DEVELOPMENT_UDP_PORT		= 3490
 
-ifneq ($(EMSCRIPTEN),)
-   platform = emscripten
-endif
-
 ifeq ($(platform),)
 platform = unix
 ifeq ($(shell uname -a),)

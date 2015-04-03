@@ -23,10 +23,6 @@
 #else
 #define EXT_EXECUTABLES "so"
 #endif
-#else
-#if defined(EMSCRIPTEN)
-#define EXT_EXECUTABLES ""
-#endif
 #endif
 
 #endif

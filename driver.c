@@ -73,9 +73,6 @@ static const audio_driver_t *audio_drivers[] = {
 #ifdef HAVE_PULSE
    &audio_pulse,
 #endif
-#ifdef EMSCRIPTEN
-   &audio_rwebaudio,
-#endif 
 #ifdef HAVE_NULLAUDIO
    &audio_null,
 #endif
@@ -128,9 +125,6 @@ static const input_driver_t *input_drivers[] = {
 #endif
 #if defined(__linux__)
    &input_linuxraw,
-#endif
-#ifdef EMSCRIPTEN
-   &input_rwebinput,
 #endif
 #ifdef HAVE_NULLINPUT
    &input_null,

@@ -33,11 +33,7 @@
 #include "../config.def.h"
 #endif
 
-#if defined(EMSCRIPTEN)
-#define main_entry rarch_main
-#else
 #define main_entry main
-#endif
 
 #define returntype int
 #define signature_expand() argc, argv
@@ -48,9 +44,7 @@
 #define declare_argv()
 #define args_initial_ptr() NULL
 
-#if !defined(EMSCRIPTEN)
 #define HAVE_MAIN_LOOP
-#endif
 
 static retro_keyboard_event_t key_event;
 

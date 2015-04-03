@@ -59,8 +59,6 @@ const char *config_get_default_audio(void)
          return "pulse";
       case AUDIO_EXT:
          return "ext";
-      case AUDIO_RWEBAUDIO:
-         return "rwebaudio";
       case AUDIO_NULL:
          return "null";
       default:
@@ -125,8 +123,6 @@ const char *config_get_default_input(void)
          return "linuxraw";
       case INPUT_UDEV:
          return "udev";
-      case INPUT_RWEBINPUT:
-      	 return "rwebinput";
       case INPUT_NULL:
          return "null";
       default:
@@ -173,8 +169,6 @@ const char *config_get_default_camera(void)
    {
       case CAMERA_V4L2:
          return "video4linux2";
-      case CAMERA_RWEBCAM:
-         return "rwebcam";
       case CAMERA_NULL:
          return "null";
       default:

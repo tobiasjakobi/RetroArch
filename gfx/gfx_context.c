@@ -50,9 +50,6 @@ static const gfx_ctx_driver_t *gfx_ctx_drivers[] = {
 #if defined(HAVE_KMS)
    &gfx_ctx_drm_egl,
 #endif
-#ifdef EMSCRIPTEN
-   &gfx_ctx_emscripten,
-#endif
    NULL
 };
 
