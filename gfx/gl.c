@@ -665,7 +665,6 @@ void gl_init_fbo(gl_t *gl, unsigned width, unsigned height)
    gl->fbo_inited = true;
 }
 
-#ifndef HAVE_GCMGL
 static void gl_deinit_hw_render(gl_t *gl)
 {
    if (!gl)
@@ -764,7 +763,6 @@ static bool gl_init_hw_render(gl_t *gl, unsigned width, unsigned height)
    context_bind_hw_render(gl, false);
    return true;
 }
-#endif
 #endif
 
 void gl_set_projection(gl_t *gl, struct gl_ortho *ortho, bool allow_rotate)
@@ -995,10 +993,8 @@ static void gl_frame_fbo(gl_t *gl, const struct gl_tex_info *tex_info)
          gl->shader->use(gl, i + 1);
       glBindTexture(GL_TEXTURE_2D, gl->fbo_texture[i - 1]);
 
-#ifndef HAVE_GCMGL
       if (gl_shader_mipmap_input(gl, i + 1))
          glGenerateMipmap(GL_TEXTURE_2D);
-#endif
 
       glClear(GL_COLOR_BUFFER_BIT);
 
@@ -1044,10 +1040,8 @@ static void gl_frame_fbo(gl_t *gl, const struct gl_tex_info *tex_info)
 
    glBindTexture(GL_TEXTURE_2D, gl->fbo_texture[gl->fbo_pass - 1]);
 
-#ifndef HAVE_GCMGL
    if (gl_shader_mipmap_input(gl, gl->fbo_pass + 1))
       glGenerateMipmap(GL_TEXTURE_2D);
-#endif
 
    glClear(GL_COLOR_BUFFER_BIT);
    gl_set_viewport(gl, gl->win_width, gl->win_height, false, true);
@@ -1518,10 +1512,8 @@ static bool gl_frame(void *data, const void *frame, unsigned width, unsigned hei
    else
       glBindTexture(GL_TEXTURE_2D, gl->texture[gl->tex_index]);
 
-#ifndef HAVE_GCMGL
    if (frame && gl->tex_mipmap) // No point regenerating mipmaps if there are no new frames.
       glGenerateMipmap(GL_TEXTURE_2D);
-#endif
 
    // Have to reset rendering state which libretro core could easily have overridden.
 #ifdef HAVE_FBO
@@ -1750,9 +1742,7 @@ static void gl_free(void *data)
 
 #ifdef HAVE_FBO
    gl_deinit_fbo(gl);
-#ifndef HAVE_GCMGL
    gl_deinit_hw_render(gl);
-#endif
 #endif
 
 #ifndef HAVE_OPENGLES
@@ -1849,11 +1839,7 @@ static bool resolve_extensions(gl_t *gl)
 #else
 #ifdef HAVE_FBO
    // Float FBO is core in 3.2.
-#ifdef HAVE_GCMGL
-   gl->has_fp_fbo = false; // FIXME - rewrite GL implementation
-#else
    gl->has_fp_fbo = gl->core_context || gl_query_extension(gl, "ARB_texture_float");
-#endif
    gl->has_srgb_fbo = gl->core_context || (gl_query_extension(gl, "EXT_texture_sRGB") && gl_query_extension(gl, "ARB_framebuffer_sRGB"));
 #endif
 #endif
@@ -2298,14 +2284,12 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
    // Set up render to texture.
    gl_init_fbo(gl, gl->tex_w, gl->tex_h);
 
-#ifndef HAVE_GCMGL
    if (gl->hw_render_use && !gl_init_hw_render(gl, gl->tex_w, gl->tex_h))
    {
       context_destroy_func(gl);
       free(gl);
       return NULL;
    }
-#endif
 #endif
 
    if (input && input_data)
@@ -2462,7 +2446,7 @@ static bool gl_set_shader(void *data, enum rarch_shader_type type, const char *p
 
       if (textures > gl->textures) // Have to reinit a bit.
       {
-#if defined(HAVE_FBO) && !defined(HAVE_GCMGL)
+#if defined(HAVE_FBO)
          gl_deinit_hw_render(gl);
 #endif
 
@@ -2477,7 +2461,7 @@ static bool gl_set_shader(void *data, enum rarch_shader_type type, const char *p
          gl_init_textures(gl, &gl->video_info);
          gl_init_textures_data(gl);
 
-#if defined(HAVE_FBO) && !defined(HAVE_GCMGL)
+#if defined(HAVE_FBO)
          if (gl->hw_render_use)
             gl_init_hw_render(gl, gl->tex_w, gl->tex_h);
 #endif

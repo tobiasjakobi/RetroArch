@@ -14,19 +14,6 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#if defined(__CELLOS_LV2__)
-#include "../../ps3/sdk_defines.h"
-#ifndef __PSL1GHT__
-#include <netex/net.h>
-#include <cell/sysmodule.h>
-#include <netex/libnetctl.h>
-#include <sys/timer.h>
-#endif
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -52,38 +39,6 @@ static char sendbuf[4096];
 static int if_up_with(int index)
 {
    (void)index;
-#ifdef __CELLOS_LV2__
-   int timeout_count = 10;
-   int state;
-   int ret;
-
-   ret = cellNetCtlInit();
-   if (ret < 0)
-   {
-      printf("cellNetCtlInit() failed(%x)\n", ret);
-      return -1;
-   }
-
-   for (;;)
-   {
-      ret = cellNetCtlGetState(&state);
-      if (ret < 0)
-      {
-         printf("cellNetCtlGetState() failed(%x)\n", ret);
-         return -1;
-      }
-      if (state == CELL_NET_CTL_STATE_IPObtained)
-         break;
-
-      sys_timer_usleep(500 * 1000);
-      timeout_count--;
-      if (index && timeout_count < 0)
-      {
-         printf("if_up_with(%d) timeout\n", index);
-         return 0;
-      }
-   }
-#endif
 
    sock=socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -98,9 +53,6 @@ static int if_up_with(int index)
 static int if_down(int sid)
 {
    (void)sid;
-#ifdef __CELLOS_LV2__
-   cellNetCtlTerm();
-#endif
    return 0;
 }
 

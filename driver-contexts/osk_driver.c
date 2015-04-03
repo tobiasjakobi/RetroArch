@@ -15,9 +15,6 @@
  */
 
 static const input_osk_driver_t *osk_drivers[] = {
-#ifdef __CELLOS_LV2__
-   &input_ps3_osk,
-#endif
    NULL,
 };
 

@@ -54,11 +54,7 @@ int scond_broadcast(scond_t *cond);
 void scond_signal(scond_t *cond);
 
 #ifndef RARCH_INTERNAL
-#if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
-#include <sys/timer.h>
-#elif defined(__PSL1GHT__)
-#include <unistd.h>
-#elif defined(PSP)
+#if defined(PSP)
 #include <pspthreadman.h>
 #include <psputils.h>
 #elif defined(_WIN32)
@@ -69,14 +65,10 @@ void scond_signal(scond_t *cond);
 
 static inline void retro_sleep(unsigned msec)
 {
-#if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
-   sys_timer_usleep(1000 * msec);
-#elif defined(PSP)
+#if defined(PSP)
    sceKernelDelayThread(1000 * msec);
 #elif defined(_WIN32)
    Sleep(msec);
-#elif defined(__PSL1GHT__)
-   usleep(1000 * msec);
 #else
    struct timespec tv = {0};
    tv.tv_sec = msec / 1000;

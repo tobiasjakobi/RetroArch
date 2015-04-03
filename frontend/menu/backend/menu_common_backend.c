@@ -37,14 +37,6 @@
 #include "../../../config.h"
 #endif
 
-#if defined(__CELLOS_LV2__)
-#include <sdk_version.h>
-
-#if (CELL_SDK_VERSION > 0x340000)
-#include <sysutil/sysutil_bgmplayback.h>
-#endif
-#endif
-
 #ifdef HAVE_SHADER_MANAGER
 static inline struct gfx_shader *shader_manager_get_current_shader(menu_handle_t *menu, unsigned type)
 {
@@ -148,13 +140,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
       case MENU_SETTINGS_VIDEO_OPTIONS:
          file_list_clear(menu->selection_buf);
          file_list_push(menu->selection_buf, "", "video_shared_context", MENU_SETTINGS_VIDEO_HW_SHARED_CONTEXT, 0);
-#if defined(__CELLOS_LV2__)
-         file_list_push(menu->selection_buf, "Screen Resolution", "", MENU_SETTINGS_VIDEO_RESOLUTION, 0);
-#endif
          file_list_push(menu->selection_buf, "Software Filter", "", MENU_SETTINGS_VIDEO_SOFTFILTER, 0);
-#if defined(__CELLOS_LV2__)
-         file_list_push(menu->selection_buf, "PAL60 Mode", "", MENU_SETTINGS_VIDEO_PAL60, 0);
-#endif
          file_list_push(menu->selection_buf, "", "video_smooth", MENU_SETTINGS_VIDEO_FILTER, 0);
          file_list_push(menu->selection_buf, "", "video_scale_integer", MENU_SETTINGS_VIDEO_INTEGER_SCALE, 0);
          file_list_push(menu->selection_buf, "", "aspect_ratio_index", MENU_SETTINGS_VIDEO_ASPECT_RATIO, 0);
@@ -386,9 +372,6 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          file_list_push(menu->selection_buf, "", "audio_latency", MENU_SETTINGS_AUDIO_LATENCY, 0);
          file_list_push(menu->selection_buf, "", "audio_sync", MENU_SETTINGS_AUDIO_SYNC, 0);
          file_list_push(menu->selection_buf, "", "audio_rate_control_delta", MENU_SETTINGS_AUDIO_CONTROL_RATE_DELTA, 0);
-#ifdef __CELLOS_LV2__
-         file_list_push(menu->selection_buf, "System BGM Control", "", MENU_SETTINGS_CUSTOM_BGM_CONTROL_ENABLE, 0);
-#endif
          file_list_push(menu->selection_buf, "", "audio_volume", MENU_SETTINGS_AUDIO_VOLUME, 0);
          file_list_push(menu->selection_buf, "Audio Device", "", MENU_SETTINGS_DRIVER_AUDIO_DEVICE, 0);
          break;
@@ -1803,18 +1786,6 @@ static void menu_parse_and_resolve(unsigned menu_type)
                   if (drives & (1 << i))
                      file_list_push(driver.menu->selection_buf, drive, "", menu_type, 0);
                }
-#elif defined(__CELLOS_LV2__)
-               file_list_push(driver.menu->selection_buf, "/app_home/",   "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/dev_hdd0/",   "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/dev_hdd1/",   "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/host_root/",  "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/dev_usb000/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/dev_usb001/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/dev_usb002/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/dev_usb003/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/dev_usb004/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/dev_usb005/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "/dev_usb006/", "", menu_type, 0);
 #elif defined(PSP)
                file_list_push(driver.menu->selection_buf, "ms0:/", "", menu_type, 0);
                file_list_push(driver.menu->selection_buf, "ef0:/", "", menu_type, 0);
@@ -3805,71 +3776,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             }
             break;
 
-#if defined(__CELLOS_LV2__)
-         case MENU_SETTINGS_VIDEO_RESOLUTION:
-            if (action == MENU_ACTION_LEFT)
-            {
-               if (g_extern.console.screen.resolutions.current.idx)
-               {
-                  g_extern.console.screen.resolutions.current.idx--;
-                  g_extern.console.screen.resolutions.current.id =
-                     g_extern.console.screen.resolutions.list[g_extern.console.screen.resolutions.current.idx];
-               }
-            }
-            else if (action == MENU_ACTION_RIGHT)
-            {
-               if (g_extern.console.screen.resolutions.current.idx + 1 <
-                     g_extern.console.screen.resolutions.count)
-               {
-                  g_extern.console.screen.resolutions.current.idx++;
-                  g_extern.console.screen.resolutions.current.id =
-                     g_extern.console.screen.resolutions.list[g_extern.console.screen.resolutions.current.idx];
-               }
-            }
-            else if (action == MENU_ACTION_OK)
-            {
-               if (g_extern.console.screen.resolutions.list[g_extern.console.screen.resolutions.current.idx] == CELL_VIDEO_OUT_RESOLUTION_576)
-               {
-                  if (g_extern.console.screen.pal_enable)
-                     g_extern.lifecycle_state |= (1ULL<< MODE_VIDEO_PAL_ENABLE);
-               }
-               else
-               {
-                  g_extern.lifecycle_state &= ~(1ULL << MODE_VIDEO_PAL_ENABLE);
-                  g_extern.lifecycle_state &= ~(1ULL << MODE_VIDEO_PAL_TEMPORAL_ENABLE);
-               }
-
-               rarch_main_command(RARCH_CMD_REINIT);
-            }
-            break;
-         case MENU_SETTINGS_VIDEO_PAL60:
-            switch (action)
-            {
-               case MENU_ACTION_LEFT:
-               case MENU_ACTION_RIGHT:
-               case MENU_ACTION_OK:
-                  if (g_extern.lifecycle_state & (1ULL << MODE_VIDEO_PAL_ENABLE))
-                  {
-                     if (g_extern.lifecycle_state & (1ULL << MODE_VIDEO_PAL_TEMPORAL_ENABLE))
-                        g_extern.lifecycle_state &= ~(1ULL << MODE_VIDEO_PAL_TEMPORAL_ENABLE);
-                     else
-                        g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_PAL_TEMPORAL_ENABLE);
-
-                     rarch_main_command(RARCH_CMD_REINIT);
-                  }
-                  break;
-               case MENU_ACTION_START:
-                  if (g_extern.lifecycle_state & (1ULL << MODE_VIDEO_PAL_ENABLE))
-                  {
-                     g_extern.lifecycle_state &= ~(1ULL << MODE_VIDEO_PAL_TEMPORAL_ENABLE);
-
-                     rarch_main_command(RARCH_CMD_REINIT);
-                  }
-                  break;
-            }
-            break;
-#endif
-
          case MENU_SETTINGS_VIDEO_REFRESH_RATE_AUTO:
             switch (action)
             {
@@ -4170,21 +4076,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
          case MENU_SETTINGS_VIDEO_ASPECT_RATIO:
             strlcpy(type_str, aspectratio_lut[g_settings.video.aspect_ratio_idx].name, type_str_size);
             break;
-#if defined(__CELLOS_LV2__)
-         case MENU_SETTINGS_VIDEO_RESOLUTION:
-            {
-               unsigned width = gfx_ctx_get_resolution_width(g_extern.console.screen.resolutions.list[g_extern.console.screen.resolutions.current.idx]);
-               unsigned height = gfx_ctx_get_resolution_height(g_extern.console.screen.resolutions.list[g_extern.console.screen.resolutions.current.idx]);
-               snprintf(type_str, type_str_size, "%dx%d", width, height);
-            }
-            break;
-         case MENU_SETTINGS_VIDEO_PAL60:
-            if (g_extern.lifecycle_state & (1ULL << MODE_VIDEO_PAL_TEMPORAL_ENABLE))
-               strlcpy(type_str, "ON", type_str_size);
-            else
-               strlcpy(type_str, "OFF", type_str_size);
-            break;
-#endif
          case MENU_FILE_PLAIN:
             strlcpy(type_str, "(FILE)", type_str_size);
             *w = 6;

@@ -18,19 +18,13 @@
 #define HAVE_SHADERS
 #endif
 
-#ifdef __CELLOS_LV2__
-#include "../mem/altivec/altivec_mem.c"
-#endif
-
 
 /*============================================================
 CONSOLE EXTENSIONS
 ============================================================ */
 #ifdef RARCH_CONSOLE
 
-#if defined(HAVE_LOGGER) && defined(__PSL1GHT__)
-#include "../logger/netlogger/psl1ght_logger.c"
-#elif defined(HAVE_LOGGER)
+#if defined(HAVE_LOGGER)
 #include "../logger/netlogger/logger.c"
 #endif
 
@@ -82,9 +76,7 @@ VIDEO CONTEXT
 
 #include "../gfx/gfx_context.c"
 
-#if defined(__CELLOS_LV2__)
-#include "../gfx/context/ps3_ctx.c"
-#elif defined(EMSCRIPTEN)
+#if defined(EMSCRIPTEN)
 #include "../gfx/context/emscriptenegl_ctx.c"
 #endif
 
@@ -135,13 +127,7 @@ VIDEO SHADERS
 /*============================================================
 VIDEO IMAGE
 ============================================================ */
-
-#if defined(__CELLOS_LV2__)
-#include "../gfx/image/image_ps3.c"
-#else
 #include "../gfx/image/image_rpng.c"
-#endif
-
 #include "../gfx/rpng/rpng.c"
 
 /*============================================================
@@ -231,20 +217,11 @@ INPUT
 #include "../input/overlay.c"
 #endif
 
-#if defined(__CELLOS_LV2__)
-#include "../input/ps3_input.c"
-#include "../input/autoconf/builtin_ps3.c"
-#elif defined(SN_TARGET_PSP2) || defined(PSP)
+#if defined(SN_TARGET_PSP2) || defined(PSP)
 #include "../input/psp_input.c"
 #include "../input/autoconf/builtin_psp.c"
 #elif defined(EMSCRIPTEN)
 #include "../input/rwebinput_input.c"
-#endif
-
-#ifdef HAVE_OSK
-#if defined(__CELLOS_LV2__)
-#include "../input/ps3_input_osk.c"
-#endif
 #endif
 
 #if defined(__linux__)
@@ -310,9 +287,7 @@ RSOUND
 /*============================================================
 AUDIO
 ============================================================ */
-#if defined(__CELLOS_LV2__)
-#include "../audio/ps3_audio.c"
-#elif defined(EMSCRIPTEN)
+#if defined(EMSCRIPTEN)
 #include "../audio/rwebaudio.c"
 #elif defined(PSP)
 #include "../audio/psp1_audio.c"
@@ -423,9 +398,7 @@ FRONTEND
 
 #include "../frontend/frontend_context.c"
 
-#if defined(__CELLOS_LV2__)
-#include "../frontend/platform/platform_ps3.c"
-#elif defined(PSP)
+#if defined(PSP)
 #include "../frontend/platform/platform_psp.c"
 #endif
 #include "../frontend/platform/platform_null.c"

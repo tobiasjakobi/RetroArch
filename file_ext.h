@@ -24,11 +24,7 @@
 #define EXT_EXECUTABLES "so"
 #endif
 #else
-#if defined(__CELLOS_LV2__)
-#define EXT_EXECUTABLES "self|SELF|bin|BIN"
-#define SALAMANDER_FILE "EBOOT.BIN"
-#define PLATFORM_NAME   "ps3"
-#elif defined(PSP)
+#if defined(PSP)
 #define EXT_EXECUTABLES "pbp|PBP"
 #define SALAMANDER_FILE "EBOOT.PBP"
 #define PLATFORM_NAME   "psp"

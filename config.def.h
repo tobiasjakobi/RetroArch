@@ -56,7 +56,6 @@ enum
    AUDIO_PULSE,
    AUDIO_EXT,
    AUDIO_DSOUND,
-   AUDIO_PS3,
    AUDIO_RWEBAUDIO,
    AUDIO_PSP1,
    AUDIO_NULL,
@@ -68,7 +67,6 @@ enum
    INPUT_X,
    INPUT_WAYLAND,
    INPUT_DINPUT,
-   INPUT_PS3,
    INPUT_PSP,
    INPUT_XINPUT,
    INPUT_UDEV,
@@ -80,7 +78,6 @@ enum
    CAMERA_RWEBCAM,
    CAMERA_NULL,
 
-   OSK_PS3,
    OSK_NULL,
 
    MENU_RGUI,
@@ -89,7 +86,7 @@ enum
    MENU_LAKKA,
 };
 
-#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) || defined(__CELLOS_LV2__)
+#if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 #define VIDEO_DEFAULT_DRIVER VIDEO_GL
 #elif defined(HAVE_WIN32_D3D9)
 #define VIDEO_DEFAULT_DRIVER VIDEO_D3D9
@@ -109,9 +106,7 @@ enum
 #define VIDEO_DEFAULT_DRIVER VIDEO_NULL
 #endif
 
-#if defined(__CELLOS_LV2__)
-#define AUDIO_DEFAULT_DRIVER AUDIO_PS3
-#elif defined(PSP)
+#if defined(PSP)
 #define AUDIO_DEFAULT_DRIVER AUDIO_PSP1
 #elif defined(HAVE_ALSA) && defined(HAVE_VIDEOCORE)
 #define AUDIO_DEFAULT_DRIVER AUDIO_ALSATHREAD
@@ -155,8 +150,6 @@ enum
 #define INPUT_DEFAULT_DRIVER INPUT_DINPUT
 #elif defined(EMSCRIPTEN)
 #define INPUT_DEFAULT_DRIVER INPUT_RWEBINPUT
-#elif defined(__CELLOS_LV2__)
-#define INPUT_DEFAULT_DRIVER INPUT_PS3
 #elif (defined(SN_TARGET_PSP2) || defined(PSP))
 #define INPUT_DEFAULT_DRIVER INPUT_PSP
 #elif defined(HAVE_UDEV)
@@ -181,11 +174,7 @@ enum
 #define CAMERA_DEFAULT_DRIVER CAMERA_NULL
 #endif
 
-#if defined(__CELLOS_LV2__)
-#define OSK_DEFAULT_DRIVER OSK_PS3
-#else
 #define OSK_DEFAULT_DRIVER OSK_NULL
-#endif
 
 #if defined(HAVE_RMENU)
 #define MENU_DEFAULT_DRIVER MENU_RMENU
@@ -195,11 +184,7 @@ enum
 #define MENU_DEFAULT_DRIVER MENU_RGUI
 #endif
 
-#if defined(__CELLOS_LV2__)
-#define DEFAULT_ASPECT_RATIO 1.7778f
-#else
 #define DEFAULT_ASPECT_RATIO -1.0f
-#endif
 
 ////////////////
 // Video
@@ -277,9 +262,7 @@ static const bool scale_integer = false;
 static const float aspect_ratio = DEFAULT_ASPECT_RATIO; // Automatic
 static const bool aspect_ratio_auto = false; // 1:1 PAR
 
-#if defined(__CELLOS_LV2)
-static unsigned aspect_ratio_idx = ASPECT_RATIO_16_9;
-#elif defined(RARCH_CONSOLE)
+#if defined(RARCH_CONSOLE)
 static unsigned aspect_ratio_idx = ASPECT_RATIO_4_3;
 #else
 static unsigned aspect_ratio_idx = ASPECT_RATIO_CONFIG; // Use g_settings.video.aspect_ratio.

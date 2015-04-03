@@ -40,18 +40,6 @@
 #define HAVE_SHADER_MANAGER
 #endif
 
-#if defined(__CELLOS_LV2__)
-#define ENTRIES_HEIGHT 20
-#define POSITION_MIDDLE 0.50f
-#define POSITION_EDGE_MAX 1.00f
-#define POSITION_EDGE_MIN 0.00f
-#define POSITION_EDGE_CENTER 0.70f
-#define POSITION_RENDER_OFFSET 0.20f
-#define POSITION_OFFSET 0.03f
-#define FONT_SIZE_NORMAL 0.95f
-#define RMENU_TERM_WIDTH 60
-#endif
-
 struct texture_image *menu_texture;
 static bool render_normal = true;
 static bool menu_texture_inited =false;

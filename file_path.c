@@ -23,16 +23,8 @@
 #include "compat/posix_string.h"
 #include "miscellaneous.h"
 
-#if (defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)) || defined(PSP)
+#if defined(PSP)
 #include <unistd.h> //stat() is defined here
-#endif
-
-#if defined(__CELLOS_LV2__)
-
-#ifndef S_ISDIR
-#define S_ISDIR(x) (x & 0040000)
-#endif
-
 #endif
 
 #if defined(_WIN32)

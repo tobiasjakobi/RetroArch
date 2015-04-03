@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 #ifndef __cplusplus
-#if defined(_MSC_VER) && !defined(SN_TARGET_PS3)
+#if defined(_MSC_VER)
 /* Hack applied for MSVC when compiling in C89 mode as it isn't C99 compliant. */
 #define bool unsigned char
 #define true 1

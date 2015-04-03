@@ -59,8 +59,6 @@ const char *config_get_default_audio(void)
          return "pulse";
       case AUDIO_EXT:
          return "ext";
-      case AUDIO_PS3:
-         return "ps3";
       case AUDIO_PSP1:
          return "psp1";
       case AUDIO_RWEBAUDIO:
@@ -119,8 +117,6 @@ const char *config_get_default_input(void)
 {
    switch (INPUT_DEFAULT_DRIVER)
    {
-      case INPUT_PS3:
-         return "ps3";
       case INPUT_PSP:
          return "psp";
       case INPUT_SDL:
@@ -170,8 +166,6 @@ const char *config_get_default_osk(void)
 {
    switch (OSK_DEFAULT_DRIVER)
    {
-      case OSK_PS3:
-         return "ps3osk";
       case OSK_NULL:
          return "null";
       default:
@@ -592,7 +586,7 @@ static config_file_t *open_default_config_file(void)
 
    if (conf)
       strlcpy(g_extern.config_path, conf_path, sizeof(g_extern.config_path));
-#elif !defined(__CELLOS_LV2__)
+#endif
    char conf_path[PATH_MAX];
    const char *xdg  = getenv("XDG_CONFIG_HOME");
    const char *home = getenv("HOME");
@@ -662,7 +656,6 @@ static config_file_t *open_default_config_file(void)
 
    if (conf)
       strlcpy(g_extern.config_path, conf_path, sizeof(g_extern.config_path));
-#endif
    
    return conf;
 }

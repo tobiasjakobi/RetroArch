@@ -142,8 +142,6 @@ static void dump_to_file_desperate(const void *data, size_t size, unsigned type)
 {
 #if defined(_WIN32)
    const char *base = getenv("APPDATA");
-#elif defined(__CELLOS_LV2__)
-   const char *base = NULL;
 #else
    const char *base = getenv("HOME");
 #endif

@@ -812,10 +812,10 @@ static bool gl_cg_init(void *data, const char *path)
       RARCH_ERR("Invalid profile type\n");
       goto error;
    }
-#ifndef HAVE_GCMGL
+
    RARCH_LOG("[Cg]: Vertex profile: %s\n", cgGetProfileString(cgVProf));
    RARCH_LOG("[Cg]: Fragment profile: %s\n", cgGetProfileString(cgFProf));
-#endif
+
    cgGLSetOptimalOptions(cgFProf);
    cgGLSetOptimalOptions(cgVProf);
    cgGLEnableProfile(cgFProf);

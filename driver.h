@@ -169,11 +169,7 @@ struct platform_bind
    char desc[64];
 };
 
-#if defined(__PSL1GHT__)
-#define DEFAULT_SHADER_TYPE RARCH_SHADER_GLSL
-#elif defined(__CELLOS_LV2__)
-#define DEFAULT_SHADER_TYPE RARCH_SHADER_CG
-#elif defined(HAVE_OPENGLES2)
+#if defined(HAVE_OPENGLES2)
 #define DEFAULT_SHADER_TYPE RARCH_SHADER_GLSL
 #else
 #define DEFAULT_SHADER_TYPE RARCH_SHADER_NONE
@@ -599,7 +595,6 @@ extern const audio_driver_t audio_sdl;
 extern const audio_driver_t audio_xa;
 extern const audio_driver_t audio_pulse;
 extern const audio_driver_t audio_dsound;
-extern const audio_driver_t audio_ps3;
 extern const audio_driver_t audio_psp1;
 extern const audio_driver_t audio_rwebaudio;
 extern const audio_driver_t audio_null;
@@ -618,7 +613,6 @@ extern const input_driver_t input_sdl;
 extern const input_driver_t input_dinput;
 extern const input_driver_t input_x;
 extern const input_driver_t input_wayland;
-extern const input_driver_t input_ps3;
 extern const input_driver_t input_psp;
 extern const input_driver_t input_xinput;
 extern const input_driver_t input_linuxraw;
@@ -627,7 +621,6 @@ extern const input_driver_t input_rwebinput;
 extern const input_driver_t input_null;
 extern const camera_driver_t camera_v4l2;
 extern const camera_driver_t camera_rwebcam;
-extern const input_osk_driver_t input_ps3_osk;
 
 extern const menu_ctx_driver_t menu_ctx_rmenu;
 extern const menu_ctx_driver_t menu_ctx_rmenu_xui;

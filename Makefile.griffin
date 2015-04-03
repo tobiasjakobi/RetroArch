@@ -49,13 +49,7 @@ ifeq ($(WHOLE_ARCHIVE_LINK), 1)
    WHOLE_END := -Wl,--no-whole-archive
 endif
 
-ifeq ($(platform), ps3)
-	#TODO
-  MEDIA_SHADER_DIR := ps3/pkg/USRDIR/cores/shaders
-else ifeq ($(platform), ps3-cobra)
-	#TODO
-  MEDIA_SHADER_DIR := ps3/iso/PS3_GAME/USRDIR/cores/shaders
-else ifeq ($(platform), psp1)
+ifeq ($(platform), psp1)
   CC = psp-gcc$(EXE_EXT)
   CXX = psp-g++$(EXE_EXT)
   LD = psp-ld$(EXE_EXT)
@@ -171,25 +165,6 @@ shaders-checkout:
 	echo "[SHADER CHECKOUT::] Git cloning common-shaders first..."; \
       $(GIT) clone git://github.com/libretro/common-shaders.git $(SHADER_DIR); \
 	fi
-
-shaders-deploy:
-ifeq ($(platform), ps3)
-	@if test -d $(MEDIA_SHADER_DIR); then \
-		cp -r $(SHADER_DIR)/* $(MEDIA_SHADER_DIR); \
-	else \
-	echo "[DEPLOY PS3::] Creating PS3 shader directory first..."; \
-		mkdir -p $(MEDIA_SHADER_DIR) || bin/true; \
-	fi
-	@echo "[DEPLOY PS3::] Copied shaders to PS3 shaders directory."
-else ifeq ($(platform), ps3-cobra)
-	@if test -d $(MEDIA_SHADER_DIR); then \
-		cp -r $(SHADER_DIR)/* $(MEDIA_SHADER_DIR); \
-	else \
-	echo "[DEPLOY PS3::] Creating PS3 shader directory first..."; \
-		mkdir -p $(MEDIA_SHADER_DIR) || bin/true; \
-	fi
-	@echo "[DEPLOY PS3::] Copied shaders to PS3 shaders directory."
-endif
 
 shaders-convert-glsl:
 	$(PYTHON3) tools/cg2glsl.py $(SHADER_DIR) $(SHADER_GLSL_DIR)

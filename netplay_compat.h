@@ -33,19 +33,12 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#ifndef __PSL1GHT__
 #include <netinet/tcp.h>
-#endif
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <fcntl.h>
 
-#if defined(__CELLOS_LV2__) && !defined(__PSL1GHT__)
-#include <cell/sysmodule.h>
-#include <netex/net.h>
-#else
 #include <signal.h>
-#endif
 #endif
 
 #if defined(_WIN32)
@@ -56,11 +49,6 @@
 #define NONCONST_CAST
 #include <sys/time.h>
 #include <unistd.h>
-
-#if defined(__CELLOS_LV2__)
-#define close(x) socketclose(x)
-#define select(nfds, readfds, writefds, errorfds, timeout) socketselect(nfds, readfds, writefds, errorfds, timeout)
-#endif
 #endif
 
 // Compatibility layer for legacy or incomplete BSD socket implementations.
