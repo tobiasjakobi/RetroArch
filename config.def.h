@@ -418,8 +418,6 @@ static const unsigned turbo_duty_cycle = 3;
 // gamepads, plug-and-play style.
 static const bool input_autodetect_enable = true;
 
-#ifndef IS_SALAMANDER
-
 #define RETRO_DEF_JOYPAD_B NO_BTN
 #define RETRO_DEF_JOYPAD_Y NO_BTN
 #define RETRO_DEF_JOYPAD_SELECT NO_BTN
@@ -593,8 +591,6 @@ static const struct retro_keybind retro_keybinds_rest[] = {
    { true, RARCH_ANALOG_RIGHT_Y_MINUS,    RETRO_LBL_ANALOG_RIGHT_Y_MINUS,  RETROK_UNKNOWN, NO_BTN, 0, AXIS_NONE },
    { true, RARCH_TURBO_ENABLE,            RETRO_LBL_TURBO_ENABLE,          RETROK_UNKNOWN, NO_BTN, 0, AXIS_NONE },
 };
-
-#endif
 
 #endif
 

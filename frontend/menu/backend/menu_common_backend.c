@@ -427,7 +427,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
       case MENU_SETTINGS:
          file_list_clear(menu->selection_buf);
 
-#if defined(HAVE_DYNAMIC) || defined(HAVE_LIBRETRO_MANAGEMENT)
+#if defined(HAVE_DYNAMIC)
          file_list_push(menu->selection_buf, "Core", "", MENU_SETTINGS_CORE, 0);
 #endif
          if (g_extern.history)
@@ -1840,11 +1840,6 @@ static void menu_parse_and_resolve(unsigned menu_type)
                const char *path = list->elems[i].data;
                if (*dir)
                   path = path_basename(path);
-
-#ifdef HAVE_LIBRETRO_MANAGEMENT
-               if (menu_type == MENU_SETTINGS_CORE && (is_dir || strcasecmp(path, SALAMANDER_FILE) == 0))
-                  continue;
-#endif
 
                // Push menu_type further down in the chain.
                // Needed for shader manager currently.

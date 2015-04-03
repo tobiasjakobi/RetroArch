@@ -19,46 +19,6 @@
 #if defined(HAVE_LOGGER)
 #include "logger.h"
 
-#ifdef IS_SALAMANDER
-
-#define RARCH_LOG(...) do { \
-   logger_send("RetroArch Salamander: " __VA_ARGS__); \
-} while(0)
-
-#define RARCH_LOG_V(tag, fmt, vp) do { \
-   logger_send("RetroArch Salamander: " tag); \
-   logger_send_v(fmt, vp); \
-} while (0)
-
-#define RARCH_LOG_OUTPUT(...) do { \
-   logger_send("RetroArch Salamander [OUTPUT] :: " __VA_ARGS__); \
-} while(0)
-
-#define RARCH_LOG_OUTPUT_V(tag, fmt, vp) do { \
-   logger_send("RetroArch Salamander [OUTPUT] :: " tag); \
-   logger_send_v(fmt, vp); \
-} while (0)
-
-#define RARCH_ERR(...) do { \
-   logger_send("RetroArch Salamander [ERROR] :: " __VA_ARGS__); \
-} while(0)
-
-#define RARCH_ERR_V(tag, fmt, vp) do { \
-   logger_send("RetroArch Salamander [ERROR] :: " tag); \
-   logger_send_v(fmt, vp); \
-} while (0)
-
-#define RARCH_WARN(...) do { \
-   logger_send("RetroArch Salamander [WARN] :: " __VA_ARGS__); \
-} while(0)
-
-#define RARCH_WARN_V(tag, fmt, vp) do { \
-   logger_send("RetroArch Salamander [WARN] :: " tag); \
-   logger_send_v(fmt, vp); \
-} while (0)
-
-#else
-
 #define RARCH_LOG(...) do { \
    logger_send("RetroArch: " __VA_ARGS__); \
 } while(0)
@@ -94,8 +54,6 @@
    logger_send("RetroArch [OUTPUT] :: " tag); \
    logger_send_v(fmt, vp); \
 } while (0)
-
-#endif
 
 #endif
 
