@@ -1,5 +1,4 @@
 HAVE_RGUI=yes           # Disable RGUI
-HAVE_LAKKA=no           # Enable Lakka menu
 HAVE_DYNAMIC=yes        # Disable dynamic loading of libretro library
 HAVE_SDL=auto           # SDL support
 HAVE_SDL2=auto          # SDL2 support (disables SDL 1.x)

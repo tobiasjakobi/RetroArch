@@ -98,10 +98,6 @@ ifeq ($(HAVE_RGUI), 1)
    OBJ += frontend/menu/disp/rgui.o
    DEFINES += -DHAVE_MENU -DHAVE_RGUI
    HAVE_MENU_COMMON = 1
-ifeq ($(HAVE_LAKKA), 1)
-   OBJ += frontend/menu/backend/menu_lakka_backend.o frontend/menu/disp/lakka.o
-   DEFINES += -DHAVE_LAKKA
-endif
 endif
 
 OBJ += history.o

@@ -76,7 +76,6 @@ enum
    MENU_RGUI,
    MENU_RMENU,
    MENU_RMENU_XUI,
-   MENU_LAKKA,
 };
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)

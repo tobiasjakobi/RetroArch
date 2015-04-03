@@ -618,10 +618,8 @@ extern const camera_driver_t camera_v4l2;
 extern const menu_ctx_driver_t menu_ctx_rmenu;
 extern const menu_ctx_driver_t menu_ctx_rmenu_xui;
 extern const menu_ctx_driver_t menu_ctx_rgui;
-extern const menu_ctx_driver_t menu_ctx_lakka;
 
 extern const menu_ctx_driver_backend_t menu_ctx_backend_common;
-extern const menu_ctx_driver_backend_t menu_ctx_backend_lakka;
 
 #ifdef HAVE_FILTERS_BUILTIN
 extern const struct softfilter_implementation *blargg_ntsc_snes_rf_get_implementation(softfilter_simd_mask_t simd);
