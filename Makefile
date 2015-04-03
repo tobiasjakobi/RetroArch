@@ -135,12 +135,6 @@ ifeq ($(HAVE_OSS_LIB), 1)
    LIBS += -lossaudio
 endif
 
-ifeq ($(HAVE_RSOUND), 1)
-   OBJ += audio/rsound.o
-   DEFINES += $(RSOUND_CFLAGS)
-   LIBS += $(RSOUND_LIBS)
-endif
-
 ifeq ($(HAVE_ALSA), 1)
    OBJ += audio/alsa.o audio/alsathread.o
    LIBS += $(ALSA_LIBS)

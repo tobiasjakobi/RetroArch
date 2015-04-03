@@ -837,11 +837,6 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                "JACK wants portnames (e.g. system:playback1\n"
                ",system:playback_2)."
 #endif
-#ifdef HAVE_RSOUND
-               " \n"
-               "RSound wants an IP address to an RSound \n"
-               "server."
-#endif
                );
          break;
       case MENU_ASSETS_DIR_PATH:

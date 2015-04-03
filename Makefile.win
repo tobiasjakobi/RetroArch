@@ -91,7 +91,6 @@ ifeq ($(SLIM),)
    HAVE_LIBXML2 = 1
    HAVE_FREETYPE = 1
    HAVE_ZLIB = 1
-   HAVE_RSOUND = 1
    HAVE_CG = 1
    HAVE_PYTHON = 1
    HAVE_FFMPEG = 1
@@ -177,12 +176,6 @@ ifeq ($(HAVE_DSOUND), 1)
    OBJ += audio/dsound.o
    DEFINES += -DHAVE_DSOUND
    LIBS += -ldxguid -ldsound
-endif
-
-ifeq ($(HAVE_RSOUND), 1)
-   OBJ += audio/rsound.o
-   DEFINES += -DHAVE_RSOUND
-   LIBS += -lrsound
 endif
 
 ifeq ($(HAVE_ZLIB), 1)

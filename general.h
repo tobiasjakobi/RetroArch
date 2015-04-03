@@ -121,9 +121,6 @@ enum menu_enums
 enum sound_mode_enums
 {
    SOUND_MODE_NORMAL = 0,
-#ifdef HAVE_RSOUND
-   SOUND_MODE_RSOUND,
-#endif
 #ifdef HAVE_HEADSET
    SOUND_MODE_HEADSET,
 #endif
