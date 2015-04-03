@@ -111,7 +111,7 @@ static const input_driver_t *input_drivers[] = {
 };
 
 #ifdef HAVE_MENU
-#include "driver-contexts/menu_driver.c"
+#include "menu_driver.c"
 #endif
 
 static int find_audio_driver_index(const char *driver)
