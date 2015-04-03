@@ -95,7 +95,6 @@ extern const rarch_joypad_driver_t linuxraw_joypad;
 extern const rarch_joypad_driver_t udev_joypad;
 extern const rarch_joypad_driver_t winxinput_joypad; // Named as such to avoid confusion with xb1/360 port code
 extern const rarch_joypad_driver_t sdl_joypad;
-extern const rarch_joypad_driver_t psp_joypad;
 
 struct rarch_key_map
 {

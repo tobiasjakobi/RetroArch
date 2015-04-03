@@ -1786,11 +1786,6 @@ static void menu_parse_and_resolve(unsigned menu_type)
                   if (drives & (1 << i))
                      file_list_push(driver.menu->selection_buf, drive, "", menu_type, 0);
                }
-#elif defined(PSP)
-               file_list_push(driver.menu->selection_buf, "ms0:/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "ef0:/", "", menu_type, 0);
-               file_list_push(driver.menu->selection_buf, "host0:/", "", menu_type, 0);
-#else
                file_list_push(driver.menu->selection_buf, "/", "", menu_type, 0);
 #endif
                return;

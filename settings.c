@@ -59,8 +59,6 @@ const char *config_get_default_audio(void)
          return "pulse";
       case AUDIO_EXT:
          return "ext";
-      case AUDIO_PSP1:
-         return "psp1";
       case AUDIO_RWEBAUDIO:
          return "rwebaudio";
       case AUDIO_NULL:
@@ -90,10 +88,6 @@ const char *config_get_default_video(void)
          return "gl";
       case VIDEO_D3D9:
          return "d3d";
-      case VIDEO_PSP1:
-         return "psp1";
-      case VIDEO_VITA:
-         return "vita";
       case VIDEO_XVIDEO:
          return "xvideo";
       case VIDEO_SDL:
@@ -117,8 +111,6 @@ const char *config_get_default_input(void)
 {
    switch (INPUT_DEFAULT_DRIVER)
    {
-      case INPUT_PSP:
-         return "psp";
       case INPUT_SDL:
          return "sdl";
       case INPUT_DINPUT:

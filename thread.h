@@ -54,10 +54,7 @@ int scond_broadcast(scond_t *cond);
 void scond_signal(scond_t *cond);
 
 #ifndef RARCH_INTERNAL
-#if defined(PSP)
-#include <pspthreadman.h>
-#include <psputils.h>
-#elif defined(_WIN32)
+#if defined(_WIN32)
 #include <windows.h>
 #else
 #include <time.h>
@@ -65,9 +62,7 @@ void scond_signal(scond_t *cond);
 
 static inline void retro_sleep(unsigned msec)
 {
-#if defined(PSP)
-   sceKernelDelayThread(1000 * msec);
-#elif defined(_WIN32)
+#if defined(_WIN32)
    Sleep(msec);
 #else
    struct timespec tv = {0};

@@ -168,10 +168,6 @@ VIDEO DRIVER
 #include "../gfx/xvideo.c"
 #endif
 
-#if defined(PSP)
-#include "../psp1/psp1_video.c"
-#endif
-
 #if defined(HAVE_NULLVIDEO)
 #include "../gfx/null.c"
 #endif
@@ -217,10 +213,7 @@ INPUT
 #include "../input/overlay.c"
 #endif
 
-#if defined(SN_TARGET_PSP2) || defined(PSP)
-#include "../input/psp_input.c"
-#include "../input/autoconf/builtin_psp.c"
-#elif defined(EMSCRIPTEN)
+#if defined(EMSCRIPTEN)
 #include "../input/rwebinput_input.c"
 #endif
 
@@ -289,8 +282,6 @@ AUDIO
 ============================================================ */
 #if defined(EMSCRIPTEN)
 #include "../audio/rwebaudio.c"
-#elif defined(PSP)
-#include "../audio/psp1_audio.c"
 #endif
 
 #ifdef HAVE_XAUDIO
@@ -397,10 +388,6 @@ FRONTEND
 ============================================================ */
 
 #include "../frontend/frontend_context.c"
-
-#if defined(PSP)
-#include "../frontend/platform/platform_psp.c"
-#endif
 #include "../frontend/platform/platform_null.c"
 
 #include "../core_info.c"

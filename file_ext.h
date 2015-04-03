@@ -24,11 +24,7 @@
 #define EXT_EXECUTABLES "so"
 #endif
 #else
-#if defined(PSP)
-#define EXT_EXECUTABLES "pbp|PBP"
-#define SALAMANDER_FILE "EBOOT.PBP"
-#define PLATFORM_NAME   "psp"
-#elif defined(EMSCRIPTEN)
+#if defined(EMSCRIPTEN)
 #define EXT_EXECUTABLES ""
 #endif
 #endif

@@ -20,8 +20,6 @@
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#elif defined(PSP)
-#include "thread/psp_pthread.h"
 #else
 #include <pthread.h>
 #include <time.h>

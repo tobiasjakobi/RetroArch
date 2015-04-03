@@ -18,14 +18,6 @@
 #include "../gfx_common.h"
 #include "../gl_common.h"
 
-#if defined(SN_TARGET_PSP2)
-#include <libdbgfont.h>
-#define DbgFontPrint(x, y, scale, color, msg) sceDbgFontPrint(x, y, color, msg)
-#define DbgFontConfig SceDbgFontConfig
-#define DbgFontInit sceDbgFontInit
-#define DbgFontExit sceDbgFontExit
-#endif
-
 static void *gl_init_font(void *gl_data, const char *font_path, float font_size)
 {
    (void)font_path;
@@ -33,10 +25,6 @@ static void *gl_init_font(void *gl_data, const char *font_path, float font_size)
    gl_t *gl = (gl_t*)gl_data;
 
    DbgFontConfig cfg;
-#if defined(SN_TARGET_PSP2)
-   cfg.fontSize     = SCE_DBGFONT_FONTSIZE_LARGE;
-#endif
-
    DbgFontInit(&cfg);
 
    // Doesn't need any state.
@@ -74,11 +62,6 @@ static void gl_render_msg(void *data, const char *msg, const struct font_params 
 
    if (!params)
       DbgFontPrint(x, y, scale - 0.01f, WHITE, msg);
-
-#ifdef SN_TARGET_PSP2
-   /* FIXME - if we ever get around to this port, move this out to some better place */
-   sceDbgFontFlush();
-#endif
 }
 
 const gl_font_renderer_t libdbg_font = {

@@ -17,11 +17,7 @@
 #ifndef __RARCH_MISCELLANEOUS_H
 #define __RARCH_MISCELLANEOUS_H
 
-#if defined(PSP)
-#include <pspthreadman.h>
-#else
 #include <time.h>
-#endif
 
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
@@ -56,9 +52,7 @@
 
 static inline void rarch_sleep(unsigned msec)
 {
-#if defined(PSP)
-   sceKernelDelayThread(1000 * msec);
-#elif defined(_WIN32)
+#if defined(_WIN32)
    Sleep(msec);
 #else
    struct timespec tv = {0};

@@ -52,10 +52,6 @@
 #include <windows.h>
 #endif
 
-// PSP
-#if defined(PSP)
-#include <pspthreadman.h>
-#endif
 //////////////
 
 #ifdef HAVE_NETPLAY

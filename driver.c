@@ -75,10 +75,7 @@ static const audio_driver_t *audio_drivers[] = {
 #endif
 #ifdef EMSCRIPTEN
    &audio_rwebaudio,
-#endif
-#ifdef PSP
-   &audio_psp1,
-#endif   
+#endif 
 #ifdef HAVE_NULLAUDIO
    &audio_null,
 #endif
@@ -88,12 +85,6 @@ static const audio_driver_t *audio_drivers[] = {
 static const video_driver_t *video_drivers[] = {
 #ifdef HAVE_OPENGL
    &video_gl,
-#endif
-#ifdef SN_TARGET_PSP2
-   &video_vita,
-#endif
-#ifdef PSP
-   &video_psp1,
 #endif
 #ifdef HAVE_SDL
    &video_sdl,
@@ -120,9 +111,6 @@ static const video_driver_t *video_drivers[] = {
 };
 
 static const input_driver_t *input_drivers[] = {
-#if defined(SN_TARGET_PSP2) || defined(PSP)
-   &input_psp,
-#endif
 #if defined(HAVE_SDL) || defined(HAVE_SDL2)
    &input_sdl,
 #endif

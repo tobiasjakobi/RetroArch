@@ -50,7 +50,6 @@ typedef struct frontend_ctx_driver
    const char *ident;
 } frontend_ctx_driver_t;
 
-extern const frontend_ctx_driver_t frontend_ctx_psp;
 extern const frontend_ctx_driver_t frontend_ctx_null;
 
 const frontend_ctx_driver_t *frontend_ctx_find_driver(const char *ident); // Finds driver with ident. Does not initialize.

@@ -23,10 +23,6 @@
 #include "compat/posix_string.h"
 #include "miscellaneous.h"
 
-#if defined(PSP)
-#include <unistd.h> //stat() is defined here
-#endif
-
 #if defined(_WIN32)
 #ifdef _MSC_VER
 #define setmode _setmode
@@ -399,9 +395,7 @@ error:
 #else
 static bool dirent_is_directory(const char *path, const struct dirent *entry)
 {
-#if defined(PSP)
-   return (entry->d_stat.st_attr & FIO_SO_IFDIR) == FIO_SO_IFDIR;
-#elif defined(DT_DIR)
+#if defined(DT_DIR)
    if (entry->d_type == DT_DIR)
       return true;
    else if (entry->d_type == DT_UNKNOWN // This can happen on certain file systems.

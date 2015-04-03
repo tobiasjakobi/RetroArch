@@ -49,19 +49,6 @@ ifeq ($(WHOLE_ARCHIVE_LINK), 1)
    WHOLE_END := -Wl,--no-whole-archive
 endif
 
-ifeq ($(platform), psp1)
-  CC = psp-gcc$(EXE_EXT)
-  CXX = psp-g++$(EXE_EXT)
-  LD = psp-ld$(EXE_EXT)
-  INCLUDE += -I$(PSPSDK)/psp/sdk/include
-  EXT_TARGET := $(TARGET_NAME)_psp1.elf
-  EXT_INTER_TARGET := $(TARGET_NAME)_psp1.elf
-  PLATCFLAGS := -DPSP -D_PSP_FW_VERSION=150 -G0
-
-  HAVE_LIBRETRO_MANAGEMENT := 1
-  HAVE_RPNG                := 1
-endif
-
 CFLAGS += -Wall -std=gnu99 $(MACHDEP) $(INCLUDE)
 
 OBJ = griffin/griffin.o  $(PLATOBJS)
@@ -113,9 +100,6 @@ endif
 
 ifeq ($(HAVE_THREADS), 1)
 CFLAGS += -DHAVE_THREADS
-ifeq ($(platform), psp1)
-LIBS += -lpthread-psp
-endif
 endif
 
 ifeq ($(HAVE_RSOUND), 1)
@@ -124,8 +108,6 @@ endif
 
 ifeq ($(DEBUG), 1)
    CFLAGS += -O0 -g -DDEBUG
-else ifeq ($(platform), psp1)
-   CFLAGS += -O2
 else
    CFLAGS += -O3
 endif
@@ -151,9 +133,6 @@ $(APP_BOOTER_DIR)/app_booter.bin:
 	$(MAKE) -C $(APP_BOOTER_DIR)
 
 pkg: all
-ifeq ($(platform), psp1)
-	psp-fixup-imports$(EXT) $(EXT_TARGET)
-endif
 
 shaders-checkout:
 	@if test -d $(SHADER_DIR); then \

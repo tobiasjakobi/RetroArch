@@ -373,9 +373,6 @@ uint64_t rarch_get_cpu_features(void)
 #elif defined(__ALTIVEC__)
    cpu |= RETRO_SIMD_VMX;
    RARCH_LOG("[CPUID]: VMX: %u\n", !!(cpu & RETRO_SIMD_VMX));
-#elif defined(PSP)
-   cpu |= RETRO_SIMD_VFPU;
-   RARCH_LOG("[CPUID]: VFPU: %u\n", !!(cpu & RETRO_SIMD_VFPU));
 #endif
 
    return cpu;

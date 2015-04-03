@@ -689,9 +689,7 @@ static int64_t rsnd_get_time_usec(void)
 
 static void rsnd_sleep(int msec)
 {
-#if defined(PSP)
-   sceKernelDelayThread(1000 * msec);
-#elif defined(_WIN32)
+#if defined(_WIN32)
    Sleep(msec);
 #else
    struct timespec tv = {0};
