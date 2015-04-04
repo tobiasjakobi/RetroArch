@@ -555,7 +555,6 @@ extern const input_driver_t input_xinput;
 extern const input_driver_t input_linuxraw;
 extern const input_driver_t input_udev;
 extern const input_driver_t input_null;
-extern const camera_driver_t camera_v4l2;
 
 extern const menu_ctx_driver_t menu_ctx_rmenu;
 extern const menu_ctx_driver_t menu_ctx_rmenu_xui;

@@ -15,9 +15,6 @@
  */
 
 static const camera_driver_t *camera_drivers[] = {
-#ifdef HAVE_V4L2
-   &camera_v4l2,
-#endif
    NULL,
 };
 

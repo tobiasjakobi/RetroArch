@@ -148,8 +148,6 @@ const char *config_get_default_camera(void)
 {
    switch (CAMERA_DEFAULT_DRIVER)
    {
-      case CAMERA_V4L2:
-         return "video4linux2";
       case CAMERA_NULL:
          return "null";
       default:
