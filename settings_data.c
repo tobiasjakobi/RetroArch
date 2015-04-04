@@ -732,10 +732,6 @@ void setting_data_get_description(const void *data, char *msg, size_t sizeof_msg
                " \n"
                "Will attempt to auto-configure \n"
                "joypads, Plug-and-Play style.");
-    else if (!strcmp(setting->name, "camera_allow"))
-         snprintf(msg, sizeof_msg,
-               " -- Allow or disallow camera access by \n"
-               "cores.");
     else if (!strcmp(setting->name, "savestate_auto_save"))
          snprintf(msg, sizeof_msg,
                " -- Automatically saves a savestate at the \n"
@@ -963,10 +959,6 @@ static void general_read_handler(const void *data)
         *setting->value.boolean = g_settings.video.aspect_ratio_auto;
     else if (!strcmp(setting->name, "video_filter"))
         strlcpy(setting->value.string, g_settings.video.filter_path, setting->size);
-#ifdef HAVE_CAMERA
-    else if (!strcmp(setting->name, "camera_allow"))
-        *setting->value.boolean = g_settings.camera.allow;
-#endif
     else if (!strcmp(setting->name, "video_shared_context"))
        *setting->value.boolean = g_settings.video.shared_context;
 #ifdef HAVE_NETPLAY
@@ -1301,10 +1293,6 @@ static void general_write_handler(const void *data)
       strlcpy(g_settings.video.filter_path, setting->value.string, sizeof(g_settings.video.filter_path));
       has_set_reinit = true;
    }
-#ifdef HAVE_CAMERA
-   else if (!strcmp(setting->name, "camera_allow"))
-      g_settings.camera.allow = *setting->value.boolean;
-#endif
    else if (!strcmp(setting->name, "video_shared_context"))
       g_settings.video.shared_context = *setting->value.boolean;
 #ifdef HAVE_NETPLAY
@@ -1429,9 +1417,6 @@ rarch_setting_t* setting_data_get_list(void)
 #endif
          CONFIG_STRING(g_settings.audio.driver,             "audio_driver",               "Audio Driver",               config_get_default_audio(), GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
          CONFIG_STRING(g_settings.audio.resampler,             "audio_driver",               "Audio Resampler Driver",     config_get_default_audio_resampler(), GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
-#ifdef HAVE_CAMERA
-         CONFIG_STRING(g_settings.camera.device,            "camera_device",              "Camera Driver",              config_get_default_camera(), GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
-#endif
          CONFIG_STRING(g_settings.input.joypad_driver,      "input_joypad_driver",        "Joypad Driver",              "", GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
          CONFIG_STRING(g_settings.input.keyboard_layout,    "input_keyboard_layout",      "Keyboard Layout",            "", GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
 
@@ -1716,17 +1701,6 @@ rarch_setting_t* setting_data_get_list(void)
        CONFIG_DIR(g_settings.extraction_directory, "extraction_directory", "Extraction Directory", "", GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
          END_SUB_GROUP()
          END_GROUP()
-       
-       /***********/
-       /* PRIVACY */
-       /***********/
-       START_GROUP("Privacy Options")
-       START_SUB_GROUP("State")
-#ifdef HAVE_CAMERA
-         CONFIG_BOOL(g_settings.camera.allow,     "camera_allow",     "Allow Camera",          false, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
-#endif
-       END_SUB_GROUP()
-       END_GROUP()
    }
 
    return list;

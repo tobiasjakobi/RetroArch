@@ -126,10 +126,6 @@ static const input_driver_t *input_drivers[] = {
    NULL,
 };
 
-#ifdef HAVE_CAMERA
-#include "driver-contexts/camera_driver.c"
-#endif
-
 #ifdef HAVE_MENU
 #include "driver-contexts/menu_driver.c"
 #endif
@@ -294,9 +290,6 @@ void init_drivers_pre(void)
    find_audio_driver();
    find_video_driver();
    find_input_driver();
-#ifdef HAVE_CAMERA
-   find_camera_driver();
-#endif
 #ifdef HAVE_MENU
    find_menu_driver();
 #endif
@@ -452,9 +445,6 @@ void init_drivers(void)
    driver.video_data_own = false;
    driver.audio_data_own = false;
    driver.input_data_own = false;
-#ifdef HAVE_CAMERA
-   driver.camera_data_own = false;
-#endif
 #ifdef HAVE_MENU
    // By default, we want the menu to persist through driver reinits.
    driver.menu_data_own = true;
@@ -471,12 +461,6 @@ void init_drivers(void)
    driver.video_cache_context_ack = false;
 
    init_audio();
-
-#ifdef HAVE_CAMERA
-   // Only initialize camera driver if we're ever going to use it.
-   if (g_extern.camera_active)
-      init_camera();
-#endif
 
 #ifdef HAVE_MENU
    init_menu();
@@ -562,14 +546,6 @@ void uninit_drivers(void)
 
    if (!driver.video_data_own)
       driver.video_data = NULL;
-
-#ifdef HAVE_CAMERA
-   if (!driver.camera_data_own)
-   {
-      uninit_camera();
-      driver.camera_data = NULL;
-   }
-#endif
 
    if (!driver.input_data_own)
       driver.input_data = NULL;

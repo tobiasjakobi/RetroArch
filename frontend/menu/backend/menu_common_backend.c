@@ -285,9 +285,6 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          break;
       case MENU_SETTINGS_PRIVACY_OPTIONS:
          file_list_clear(menu->selection_buf);
-#ifdef HAVE_CAMERA
-         file_list_push(menu->selection_buf, "", "camera_allow", MENU_SETTINGS_PRIVACY_CAMERA_ALLOW, 0);
-#endif
          break;
       case MENU_SETTINGS_DISK_OPTIONS:
          file_list_clear(menu->selection_buf);
@@ -375,9 +372,6 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          file_list_push(menu->selection_buf, "Audio Driver", "", MENU_SETTINGS_DRIVER_AUDIO, 0);
          file_list_push(menu->selection_buf, "Audio Resampler", "", MENU_SETTINGS_DRIVER_AUDIO_RESAMPLER, 0);
          file_list_push(menu->selection_buf, "Input Driver", "", MENU_SETTINGS_DRIVER_INPUT, 0);
-#ifdef HAVE_CAMERA
-         file_list_push(menu->selection_buf, "Camera Driver", "", MENU_SETTINGS_DRIVER_CAMERA, 0);
-#endif
 #ifdef HAVE_MENU
          file_list_push(menu->selection_buf, "Menu Driver", "", MENU_SETTINGS_DRIVER_MENU, 0);
 #endif
@@ -601,10 +595,6 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
          break;
       case MENU_SETTINGS_BLOCK_SRAM_OVERWRITE:
          if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "block_sram_overwrite")))
-            setting_data_get_description(current_setting, msg, sizeof(msg));
-         break;
-      case MENU_SETTINGS_PRIVACY_CAMERA_ALLOW:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "camera_allow")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_REWIND_ENABLE:
@@ -3574,14 +3564,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             else if (action == MENU_ACTION_RIGHT)
                find_next_input_driver();
             break;
-#ifdef HAVE_CAMERA
-         case MENU_SETTINGS_DRIVER_CAMERA:
-            if (action == MENU_ACTION_LEFT)
-               find_prev_camera_driver();
-            else if (action == MENU_ACTION_RIGHT)
-               find_next_camera_driver();
-            break;
-#endif
 #ifdef HAVE_MENU
          case MENU_SETTINGS_DRIVER_MENU:
             if (action == MENU_ACTION_LEFT)
@@ -3867,11 +3849,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
          case MENU_SETTINGS_DRIVER_INPUT:
             strlcpy(type_str, g_settings.input.driver, type_str_size);
             break;
-#ifdef HAVE_CAMERA
-         case MENU_SETTINGS_DRIVER_CAMERA:
-            strlcpy(type_str, g_settings.camera.driver, type_str_size);
-            break;
-#endif
 #ifdef HAVE_MENU
          case MENU_SETTINGS_DRIVER_MENU:
             strlcpy(type_str, g_settings.menu.driver, type_str_size);
@@ -4251,11 +4228,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
             break;
          case MENU_SETTINGS_NETPLAY_SPECTATOR_MODE_ENABLE:
             snprintf(type_str, type_str_size, g_extern.netplay_is_spectate ? "ON" : "OFF");
-            break;
-#endif
-#ifdef HAVE_CAMERA
-         case MENU_SETTINGS_PRIVACY_CAMERA_ALLOW:
-            snprintf(type_str, type_str_size, g_settings.camera.allow ? "ON" : "OFF");
             break;
 #endif
          case MENU_SETTINGS_FONT_ENABLE:

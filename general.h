@@ -217,17 +217,6 @@ struct settings
    } menu;
 #endif
 
-#ifdef HAVE_CAMERA
-   struct
-   {
-      char driver[32];
-      char device[PATH_MAX];
-      bool allow;
-      unsigned width;
-      unsigned height;
-   } camera;
-#endif
-
    struct
    {
       char driver[32];
@@ -356,9 +345,6 @@ struct global
    bool perfcnt_enable;
    bool audio_active;
    bool video_active;
-#ifdef HAVE_CAMERA
-   bool camera_active;
-#endif
    bool force_fullscreen;
 
    struct string_list *temporary_content;
@@ -456,7 +442,6 @@ struct global
 
       struct retro_disk_control_callback disk_control; 
       struct retro_hw_render_callback hw_render_callback;
-      struct retro_camera_callback camera_callback;
 
       struct retro_frame_time_callback frame_time;
       retro_usec_t frame_time_last;
@@ -692,9 +677,6 @@ extern struct defaults g_defaults;
 // Public functions
 void config_load(void);
 void config_set_defaults(void);
-#ifdef HAVE_CAMERA
-const char *config_get_default_camera(void);
-#endif
 const char *config_get_default_video(void);
 const char *config_get_default_audio(void);
 const char *config_get_default_audio_resampler(void);

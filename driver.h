@@ -269,26 +269,6 @@ typedef struct input_driver
    const rarch_joypad_driver_t *(*get_joypad_driver)(void *data);
 } input_driver_t;
 
-typedef struct camera_driver
-{
-   // FIXME: params for initialization - queries for resolution, framerate, color format
-   // which might or might not be honored
-   void *(*init)(const char *device, uint64_t buffer_types, unsigned width, unsigned height);
-   void (*free)(void *data);
-
-   bool (*start)(void *data);
-   void (*stop)(void *data);
-
-   // Polls the camera driver.
-   // Will call the appropriate callback if a new frame is ready.
-   // Returns true if a new frame was handled.
-   bool (*poll)(void *data,
-         retro_camera_frame_raw_framebuffer_t frame_raw_cb,
-         retro_camera_frame_opengl_texture_t frame_gl_cb);
-
-   const char *ident;
-} camera_driver_t;
-
 struct rarch_viewport;
 
 #ifdef HAVE_OVERLAY
@@ -381,10 +361,6 @@ typedef struct driver
    const audio_driver_t *audio;
    const video_driver_t *video;
    const input_driver_t *input;
-#ifdef HAVE_CAMERA
-   const camera_driver_t *camera;
-   void *camera_data;
-#endif
    void *audio_data;
    void *video_data;
    void *input_data;
@@ -412,9 +388,6 @@ typedef struct driver
    bool video_data_own;
    bool audio_data_own;
    bool input_data_own;
-#ifdef HAVE_CAMERA
-   bool camera_data_own;
-#endif
 #ifdef HAVE_MENU
    bool menu_data_own;
 #endif
@@ -476,13 +449,6 @@ void find_next_audio_driver(void);
 void find_next_input_driver(void);
 void find_next_resampler_driver(void);
 
-#ifdef HAVE_CAMERA
-void init_camera(void);
-void uninit_camera(void);
-void find_prev_camera_driver(void);
-void find_next_camera_driver(void);
-#endif
-
 void driver_set_monitor_refresh_rate(float hz);
 bool driver_monitor_fps_statistics(double *refresh_rate, double *deviation, unsigned *sample_points);
 void driver_set_nonblock_state(bool nonblock);
@@ -507,13 +473,6 @@ unsigned dspfilter_get_last_idx(void);
 #endif
 
 const char *rarch_dspfilter_get_name(void *data);
-
-// Used by RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE
-#ifdef HAVE_CAMERA
-bool driver_camera_start(void);
-void driver_camera_stop(void);
-void driver_camera_poll(void);
-#endif
 
 #ifdef HAVE_MENU
 const void *menu_ctx_find_driver(const char *ident); // Finds driver with ident. Does not initialize.

@@ -377,9 +377,6 @@ void uninit_libretro_sym(void)
    free(g_extern.system.special);
    free(g_extern.system.ports);
    memset(&g_extern.system, 0, sizeof(g_extern.system));
-#ifdef HAVE_CAMERA
-   g_extern.camera_active = false;
-#endif
 
    // Performance counters no longer valid.
    retro_perf_clear();
@@ -814,19 +811,6 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          iface->get_sensor_input = driver_sensor_get_input;
          break;
       }
-
-#ifdef HAVE_CAMERA
-      case RETRO_ENVIRONMENT_GET_CAMERA_INTERFACE:
-      {
-         RARCH_LOG("Environ GET_CAMERA_INTERFACE.\n");
-         struct retro_camera_callback *cb = (struct retro_camera_callback*)data;
-         cb->start = driver_camera_start;
-         cb->stop = driver_camera_stop;
-         g_extern.system.camera_callback = *cb;
-         g_extern.camera_active = cb->caps != 0;
-         break;
-      }
-#endif
 
       case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
       {
