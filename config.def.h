@@ -70,8 +70,6 @@ enum
    CAMERA_V4L2,
    CAMERA_NULL,
 
-   OSK_NULL,
-
    MENU_RGUI,
    MENU_RMENU,
    MENU_RMENU_XUI,
@@ -144,8 +142,6 @@ enum
 #else
 #define CAMERA_DEFAULT_DRIVER CAMERA_NULL
 #endif
-
-#define OSK_DEFAULT_DRIVER OSK_NULL
 
 #if defined(HAVE_RMENU)
 #define MENU_DEFAULT_DRIVER MENU_RMENU

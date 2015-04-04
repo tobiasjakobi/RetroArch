@@ -145,19 +145,6 @@ const char *config_get_default_menu(void)
 }
 #endif
 
-#ifdef HAVE_OSK
-const char *config_get_default_osk(void)
-{
-   switch (OSK_DEFAULT_DRIVER)
-   {
-      case OSK_NULL:
-         return "null";
-      default:
-         return NULL;
-   }
-}
-#endif
-
 #ifdef HAVE_CAMERA
 const char *config_get_default_camera(void)
 {
@@ -204,12 +191,6 @@ void config_set_defaults(void)
       strlcpy(g_settings.location.driver, def_location, sizeof(g_settings.location.driver));
 #endif
 
-#ifdef HAVE_OSK
-   const char *def_osk = config_get_default_osk();
-
-   if (def_osk)
-      strlcpy(g_settings.osk.driver, def_osk, sizeof(g_settings.osk.driver));
-#endif
    if (def_video)
       strlcpy(g_settings.video.driver, def_video, sizeof(g_settings.video.driver));
    if (def_audio)

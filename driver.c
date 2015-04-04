@@ -129,10 +129,6 @@ static const input_driver_t *input_drivers[] = {
    NULL,
 };
 
-#ifdef HAVE_OSK
-#include "driver-contexts/osk_driver.c"
-#endif
-
 #ifdef HAVE_CAMERA
 #include "driver-contexts/camera_driver.c"
 #endif
@@ -311,9 +307,6 @@ void init_drivers_pre(void)
 #ifdef HAVE_LOCATION
    find_location_driver();
 #endif
-#ifdef HAVE_OSK
-   find_osk_driver();
-#endif
 #ifdef HAVE_MENU
    find_menu_driver();
 #endif
@@ -475,9 +468,6 @@ void init_drivers(void)
 #ifdef HAVE_LOCATION
    driver.location_data_own = false;
 #endif
-#ifdef HAVE_OSK
-   driver.osk_data_own = false;
-#endif
 #ifdef HAVE_MENU
    // By default, we want the menu to persist through driver reinits.
    driver.menu_data_own = true;
@@ -505,10 +495,6 @@ void init_drivers(void)
    // Only initialize location driver if we're ever going to use it.
    if (g_extern.location_active)
       init_location();
-#endif
-
-#ifdef HAVE_OSK
-   init_osk();
 #endif
 
 #ifdef HAVE_MENU
@@ -609,14 +595,6 @@ void uninit_drivers(void)
    {
       uninit_location();
       driver.location_data = NULL;
-   }
-#endif
-   
-#ifdef HAVE_OSK
-   if (!driver.osk_data_own)
-   {
-      uninit_osk();
-      driver.osk_data = NULL;
    }
 #endif
 

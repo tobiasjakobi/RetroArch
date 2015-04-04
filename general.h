@@ -113,8 +113,6 @@ enum menu_enums
    MODE_VIDEO_PAL_ENABLE,
    MODE_VIDEO_PAL_TEMPORAL_ENABLE,
    MODE_AUDIO_CUSTOM_BGM_ENABLE,
-   MODE_OSK_ENTRY_SUCCESS,
-   MODE_OSK_ENTRY_FAIL,
    MODE_CLEAR_INPUT,
 };
 
@@ -238,14 +236,6 @@ struct settings
       int update_interval_ms;
       int update_interval_distance;
    } location;
-#endif
-
-#ifdef HAVE_OSK
-   struct
-   {
-      char driver[32];
-      bool enable;
-   } osk;
 #endif
 
    struct
@@ -381,9 +371,6 @@ struct global
 #endif
 #ifdef HAVE_LOCATION
    bool location_active;
-#endif
-#ifdef HAVE_OSK
-   bool osk_active;
 #endif
    bool force_fullscreen;
 
@@ -576,14 +563,6 @@ struct global
       bool movie_end;
    } bsv;
 
-#ifdef HAVE_OSK
-   struct
-   {
-      bool (*cb_init)(void *data);
-      bool (*cb_callback)(void *data);
-   } osk;
-#endif
-
    bool sram_load_disable;
    bool sram_save_disable;
    bool use_sram;
@@ -732,9 +711,6 @@ const char *config_get_default_camera(void);
 #endif
 #ifdef HAVE_LOCATION
 const char *config_get_default_location(void);
-#endif
-#ifdef HAVE_OSK
-const char *config_get_default_osk(void);
 #endif
 const char *config_get_default_video(void);
 const char *config_get_default_audio(void);

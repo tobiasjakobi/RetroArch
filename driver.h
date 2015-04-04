@@ -269,20 +269,6 @@ typedef struct input_driver
    const rarch_joypad_driver_t *(*get_joypad_driver)(void *data);
 } input_driver_t;
 
-typedef struct input_osk_driver
-{
-   void *(*init)(size_t size);
-   void (*free)(void *data);
-   bool (*enable_key_layout)(void *data);
-   void (*oskutil_create_activation_parameters)(void *data);
-   void (*write_msg)(void *data, const void *msg);
-   void (*write_initial_msg)(void *data, const void *msg);
-   bool (*start)(void *data);
-   void (*lifecycle)(void *data, uint64_t status);
-   void *(*get_text_buf)(void *data);
-   const char *ident;
-} input_osk_driver_t;
-
 typedef struct camera_driver
 {
    // FIXME: params for initialization - queries for resolution, framerate, color format
@@ -408,10 +394,6 @@ typedef struct driver
    const audio_driver_t *audio;
    const video_driver_t *video;
    const input_driver_t *input;
-#ifdef HAVE_OSK
-   const input_osk_driver_t *osk;
-   void *osk_data;
-#endif
 #ifdef HAVE_CAMERA
    const camera_driver_t *camera;
    void *camera_data;
@@ -452,9 +434,6 @@ typedef struct driver
 #endif
 #ifdef HAVE_LOCATION
    bool location_data_own;
-#endif
-#ifdef HAVE_OSK
-   bool osk_data_own;
 #endif
 #ifdef HAVE_MENU
    bool menu_data_own;
