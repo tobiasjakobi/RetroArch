@@ -810,16 +810,12 @@ static void xv_viewport_info(void *data, struct rarch_viewport *vp)
 }
 
 const video_driver_t video_xvideo = {
-   xv_init,
-   xv_frame,
-   xv_set_nonblock_state,
-   xv_alive,
-   xv_focus,
-   NULL,
-   xv_free,
-   "xvideo",
-
-   NULL,
-   xv_viewport_info,
+   .init = xv_init,
+   .frame = xv_frame,
+   .set_nonblock_state = xv_set_nonblock_state,
+   .alive = xv_alive,
+   .focus = xv_focus,
+   .free = xv_free,
+   .ident = "xvideo",
+   .viewport_info = xv_viewport_info,
 };
-
