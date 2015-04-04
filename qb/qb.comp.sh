@@ -10,7 +10,6 @@ case "$(uname)" in
 	'Linux') OS='Linux';;
 	*'BSD') OS='BSD';;
 	'Darwin') OS='Darwin';;
-	'MINGW32'*) OS='MinGW';;
 	'CYGWIN'*) OS='Cygwin';;
 	'Haiku') OS='Haiku';;
 	*) OS="Win32";;

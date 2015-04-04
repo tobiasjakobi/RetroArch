@@ -8,8 +8,6 @@ ifeq ($(platform),)
    platform = unix
    ifeq ($(shell uname -a),)
       platform = win
-   else ifneq ($(findstring MINGW,$(shell uname -a)),)
-      platform = win
    else ifneq ($(findstring win,$(shell uname -a)),)
       platform = win
    endif

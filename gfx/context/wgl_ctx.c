@@ -16,11 +16,6 @@
 
 // Win32/WGL context.
 
-// necessary for mingw32 multimon defines:
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0500 //_WIN32_WINNT_WIN2K
-#endif
-
 #include "../../driver.h"
 #include "../gfx_context.h"
 #include "../gl_common.h"
