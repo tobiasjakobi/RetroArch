@@ -23,7 +23,6 @@ OBJ = frontend/frontend.o \
 		gfx/gfx_common.o \
 		input/input_common.o \
 		input/keyboard_line.o \
-		input/autoconf/builtin_win.o \
 		core_options.o \
 		patch.o \
 		compat/compat.o \
@@ -55,8 +54,7 @@ JOBJ := conf/config_file.o \
 	tools/retroarch-joyconfig.o \
 	compat/compat.o \
 	file_path.o \
-	tools/input_common_joyconfig.o \
-	input/winxinput_joypad.o
+	tools/input_common_joyconfig.o
 
 HEADERS = $(wildcard */*/*.h) $(wildcard */*.h) $(wildcard *.h)
 
@@ -79,8 +77,6 @@ HAVE_STDIN_CMD = 1
 HAVE_THREADS = 1
 HAVE_RGUI = 1
 DYNAMIC = 1
-
-HAVE_WINXINPUT = 1
 
 ifeq ($(SLIM),)
    HAVE_SDL = 1
@@ -217,11 +213,6 @@ ifeq ($(HAVE_PYTHON), 1)
    LIBS += -lpython32
    DEFINES += -DHAVE_PYTHON -Ipython
    OBJ += gfx/py_state/py_state.o
-endif
-
-ifeq ($(HAVE_WINXINPUT), 1)
-   DEFINES += -DHAVE_WINXINPUT
-   OBJ += input/winxinput_joypad.o
 endif
 
 OBJ += record/ffemu.o 

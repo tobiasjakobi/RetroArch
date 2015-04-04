@@ -41,9 +41,6 @@
 
 static const rarch_joypad_driver_t *joypad_drivers[] = {
 #ifndef IS_RETROLAUNCH
-#ifdef HAVE_WINXINPUT
-   &winxinput_joypad,
-#endif
 #ifdef HAVE_UDEV
    &udev_joypad,
 #endif
