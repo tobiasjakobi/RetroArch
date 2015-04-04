@@ -37,16 +37,6 @@ void audio_convert_s16_to_float_SSE2(float *out,
 void audio_convert_float_to_s16_SSE2(int16_t *out,
       const float *in, size_t samples);
 
-#elif defined(__ALTIVEC__)
-#define audio_convert_s16_to_float audio_convert_s16_to_float_altivec
-#define audio_convert_float_to_s16 audio_convert_float_to_s16_altivec
-
-void audio_convert_s16_to_float_altivec(float *out,
-      const int16_t *in, size_t samples, float gain);
-
-void audio_convert_float_to_s16_altivec(int16_t *out,
-      const float *in, size_t samples);
-
 #elif defined(__ARM_NEON__)
 #define audio_convert_s16_to_float audio_convert_s16_to_float_arm
 #define audio_convert_float_to_s16 audio_convert_float_to_s16_arm

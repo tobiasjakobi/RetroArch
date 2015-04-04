@@ -22,8 +22,6 @@
 
 #if defined(__SSE2__)
 #include <emmintrin.h>
-#elif defined(__ALTIVEC__)
-#include <altivec.h>
 #endif
 
 void audio_convert_s16_to_float_C(float *out,
@@ -90,55 +88,6 @@ void audio_convert_float_to_s16_SSE2(int16_t *out,
    }
 
    audio_convert_float_to_s16_C(out, in, samples - i);
-}
-#elif defined(__ALTIVEC__)
-void audio_convert_s16_to_float_altivec(float *out,
-      const int16_t *in, size_t samples, float gain)
-{
-   const vector float gain_vec = { gain, gain , gain, gain };
-   const vector float zero_vec = { 0.0f, 0.0f, 0.0f, 0.0f};
-   // Unaligned loads/store is a bit expensive, so we optimize for the good path (very likely).
-   if (((uintptr_t)out & 15) + ((uintptr_t)in & 15) == 0)
-   {
-      size_t i;
-      for (i = 0; i + 8 <= samples; i += 8, in += 8, out += 8)
-      {
-         vector signed short input = vec_ld(0, in);
-         vector signed int hi = vec_unpackh(input);
-         vector signed int lo = vec_unpackl(input);
-         vector float out_hi = vec_madd(vec_ctf(hi, 15), gain_vec, zero_vec);
-         vector float out_lo = vec_madd(vec_ctf(lo, 15), gain_vec, zero_vec);
-
-         vec_st(out_hi,  0, out);
-         vec_st(out_lo, 16, out);
-      }
-
-      audio_convert_s16_to_float_C(out, in, samples - i, gain);
-   }
-   else
-      audio_convert_s16_to_float_C(out, in, samples, gain);
-}
-
-void audio_convert_float_to_s16_altivec(int16_t *out,
-      const float *in, size_t samples)
-{
-   // Unaligned loads/store is a bit expensive, so we optimize for the good path (very likely).
-   if (((uintptr_t)out & 15) + ((uintptr_t)in & 15) == 0)
-   {
-      size_t i;
-      for (i = 0; i + 8 <= samples; i += 8, in += 8, out += 8)
-      {
-         vector float input0 = vec_ld( 0, in);
-         vector float input1 = vec_ld(16, in);
-         vector signed int result0 = vec_cts(input0, 15);
-         vector signed int result1 = vec_cts(input1, 15);
-         vec_st(vec_packs(result0, result1), 0, out);
-      }
-
-      audio_convert_float_to_s16_C(out, in, samples - i);
-   }
-   else
-      audio_convert_float_to_s16_C(out, in, samples);
 }
 #elif defined(__ARM_NEON__)
 void audio_convert_s16_float_asm(float *out, const int16_t *in, size_t samples, const float *gain); // Avoid potential hard-float/soft-float ABI issues.
