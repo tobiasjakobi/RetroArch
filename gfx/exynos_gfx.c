@@ -501,7 +501,7 @@ static void put_glyph_rgba4444(struct exynos_data *pdata, const uint8_t *__restr
 }
 
 #if (EXYNOS_GFX_DEBUG_PERF == 1)
-void perf_init(struct exynos_perf *p) {
+static void perf_init(struct exynos_perf *p) {
   p->memcpy_calls = 0;
   p->g2d_calls = 0;
 
@@ -511,7 +511,7 @@ void perf_init(struct exynos_perf *p) {
   memset(&p->tspec, 0, sizeof(struct timespec));
 }
 
-void perf_finish(struct exynos_perf *p) {
+static void perf_finish(struct exynos_perf *p) {
   RARCH_LOG("video_exynos: debug: total memcpy calls: %u\n", p->memcpy_calls);
   RARCH_LOG("video_exynos: debug: total g2d calls: %u\n", p->g2d_calls);
 
@@ -526,7 +526,7 @@ void perf_finish(struct exynos_perf *p) {
             (double)p->g2d_time / (double)p->g2d_calls);
 }
 
-void perf_memcpy(struct exynos_perf *p, bool start) {
+static void perf_memcpy(struct exynos_perf *p, bool start) {
   if (start) {
     clock_gettime(CLOCK_MONOTONIC, &p->tspec);
   } else {
@@ -539,7 +539,7 @@ void perf_memcpy(struct exynos_perf *p, bool start) {
   }
 }
 
-void perf_g2d(struct exynos_perf *p, bool start) {
+static void perf_g2d(struct exynos_perf *p, bool start) {
   if (start) {
     clock_gettime(CLOCK_MONOTONIC, &p->tspec);
   } else {
