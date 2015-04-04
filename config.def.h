@@ -68,7 +68,6 @@ enum
 
    MENU_RGUI,
    MENU_RMENU,
-   MENU_RMENU_XUI,
 };
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
@@ -131,8 +130,6 @@ enum
 
 #if defined(HAVE_RMENU)
 #define MENU_DEFAULT_DRIVER MENU_RMENU
-#elif defined(HAVE_RMENU_XUI)
-#define MENU_DEFAULT_DRIVER MENU_RMENU_XUI
 #else
 #define MENU_DEFAULT_DRIVER MENU_RGUI
 #endif

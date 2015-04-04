@@ -516,7 +516,6 @@ extern const input_driver_t input_udev;
 extern const input_driver_t input_null;
 
 extern const menu_ctx_driver_t menu_ctx_rmenu;
-extern const menu_ctx_driver_t menu_ctx_rmenu_xui;
 extern const menu_ctx_driver_t menu_ctx_rgui;
 
 extern const menu_ctx_driver_backend_t menu_ctx_backend_common;
