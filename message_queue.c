@@ -18,7 +18,6 @@
 #include <stddef.h>
 #include "message_queue.h"
 #include "boolean.h"
-#include "compat/posix_string.h"
 
 struct queue_elem
 {

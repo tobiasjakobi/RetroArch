@@ -22,7 +22,6 @@
 #include "filters/dspfilter.h"
 #include "../file_path.h"
 #include "../file_ext.h"
-#include "../compat/posix_string.h"
 
 #include <stdlib.h>
 

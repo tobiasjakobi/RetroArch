@@ -20,7 +20,6 @@
 #include <ctype.h>
 #include <errno.h>
 #include "../compat/strl.h"
-#include "../compat/posix_string.h"
 #include "../file.h"
 #include "../miscellaneous.h"
 #include "../general.h"

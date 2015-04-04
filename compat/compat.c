@@ -16,7 +16,6 @@
 #include "getopt_rarch.h"
 #include "strl.h"
 #include "strcasestr.h"
-#include "posix_string.h"
 
 #ifndef HAVE_GETOPT_LONG
 

@@ -22,7 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "compat/posix_string.h"
 #include "audio/utils.h"
 #include "audio/resampler.h"
 #include "gfx/thread_wrapper.h"

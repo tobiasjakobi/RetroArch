@@ -16,7 +16,6 @@
  */
 
 #include "history.h"
-#include "compat/posix_string.h"
 #include "boolean.h"
 #include "general.h"
 #include "file.h"

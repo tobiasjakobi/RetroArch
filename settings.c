@@ -19,7 +19,6 @@
 #include "compat/strl.h"
 #include "config.def.h"
 #include "file.h"
-#include "compat/posix_string.h"
 #include "input/input_common.h"
 #include "frontend/frontend.h"
 

@@ -21,7 +21,6 @@
 #include <ctype.h>
 #include <stdint.h>
 #include "../../boolean.h"
-#include "../posix_string.h"
 
 #ifndef RXML_TEST
 #include "../../general.h"

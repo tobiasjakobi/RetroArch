@@ -35,7 +35,6 @@
 #include "screenshot.h"
 #include "cheats.h"
 #include "compat/getopt_rarch.h"
-#include "compat/posix_string.h"
 #include "input/keyboard_line.h"
 #include "input/input_common.h"
 #include "git_version.h"

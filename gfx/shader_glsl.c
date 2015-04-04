@@ -18,7 +18,6 @@
 #include "../general.h"
 #include "shader_glsl.h"
 #include "../compat/strl.h"
-#include "../compat/posix_string.h"
 #include "state_tracker.h"
 #include "../dynamic.h"
 #include "../file.h"

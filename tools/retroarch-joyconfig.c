@@ -25,7 +25,6 @@
 #include "../input/input_common.h"
 #include "../general.h"
 #include <assert.h>
-#include "../compat/posix_string.h"
 
 // Need to be present for build to work, but it's not *really* used.
 // Better than having to build special versions of lots of objects with special #ifdefs.
