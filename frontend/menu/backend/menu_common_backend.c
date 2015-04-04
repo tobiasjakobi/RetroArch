@@ -281,10 +281,6 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
             if (g_extern.system.disk_control.get_num_images)
                file_list_push(menu->selection_buf, "Disk Options", "", MENU_SETTINGS_DISK_OPTIONS, 0);
          }
-         file_list_push(menu->selection_buf, "Privacy Options", "", MENU_SETTINGS_PRIVACY_OPTIONS, 0);
-         break;
-      case MENU_SETTINGS_PRIVACY_OPTIONS:
-         file_list_clear(menu->selection_buf);
          break;
       case MENU_SETTINGS_DISK_OPTIONS:
          file_list_clear(menu->selection_buf);
@@ -1278,7 +1274,6 @@ static unsigned menu_common_type_is(unsigned type)
       type == MENU_SETTINGS_AUDIO_OPTIONS ||
       type == MENU_SETTINGS_DISK_OPTIONS ||
       type == MENU_SETTINGS_PATH_OPTIONS ||
-      type == MENU_SETTINGS_PRIVACY_OPTIONS ||
       type == MENU_SETTINGS_OVERLAY_OPTIONS ||
       type == MENU_SETTINGS_USER_OPTIONS ||
       type == MENU_SETTINGS_NETPLAY_OPTIONS ||
@@ -1491,7 +1486,6 @@ static int menu_settings_iterate(unsigned action, rarch_setting_t *setting)
             || menu_type == MENU_SETTINGS_CORE_OPTIONS
             || menu_type == MENU_SETTINGS_AUDIO_OPTIONS
             || menu_type == MENU_SETTINGS_DISK_OPTIONS
-            || menu_type == MENU_SETTINGS_PRIVACY_OPTIONS
             || menu_type == MENU_SETTINGS_GENERAL_OPTIONS
             || menu_type == MENU_SETTINGS_VIDEO_OPTIONS
             || menu_type == MENU_SETTINGS_FONT_OPTIONS
@@ -4070,7 +4064,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
          case MENU_SETTINGS_OVERLAY_OPTIONS:
          case MENU_SETTINGS_NETPLAY_OPTIONS:
          case MENU_SETTINGS_USER_OPTIONS:
-         case MENU_SETTINGS_PRIVACY_OPTIONS:
          case MENU_SETTINGS_OPTIONS:
          case MENU_SETTINGS_PERFORMANCE_COUNTERS:
          case MENU_SETTINGS_PERFORMANCE_COUNTERS_FRONTEND:

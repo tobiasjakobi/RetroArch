@@ -329,8 +329,6 @@ static void rgui_render(void)
       strlcpy(title, "CORE OPTIONS", sizeof(title));
    else if (menu_type == MENU_SETTINGS_CORE_INFO)
       strlcpy(title, "CORE INFO", sizeof(title));
-   else if (menu_type == MENU_SETTINGS_PRIVACY_OPTIONS)
-      strlcpy(title, "PRIVACY OPTIONS", sizeof(title));
 #ifdef HAVE_SHADER_MANAGER
    else if (menu_type_is == MENU_SETTINGS_SHADER_OPTIONS)
       snprintf(title, sizeof(title), "SHADER %s", dir);
