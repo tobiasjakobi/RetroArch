@@ -68,6 +68,8 @@ HEADERS = $(wildcard */*/*.h) $(wildcard */*.h) $(wildcard *.h)
 
 DEFINES = -DHAVE_CONFIG_H -DRARCH_INTERNAL -DHAVE_CC_RESAMPLER -DHAVE_OVERLAY
 
+LIBS += -lm
+
 ifeq ($(GLOBAL_CONFIG_DIR),)
    GLOBAL_CONFIG_DIR = /etc
 endif
