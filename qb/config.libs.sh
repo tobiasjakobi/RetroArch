@@ -129,13 +129,7 @@ fi
 check_pkgconf ALSA alsa
 check_header OSS sys/soundcard.h
 check_header OSS_BSD soundcard.h
-
-if [ "$OS" = 'Darwin' ]; then
-   check_lib AL "-framework OpenAL" alcOpenDevice
-   HAVE_SDL=no
-else
-   check_lib AL -lopenal alcOpenDevice
-fi
+check_lib AL -lopenal alcOpenDevice
 
 check_pkgconf JACK jack 0.120.1
 check_pkgconf PULSE libpulse
@@ -154,12 +148,8 @@ if [ "$HAVE_SDL2" = 'yes' ]; then
 fi
 
 if [ "$HAVE_OPENGL" != 'no' ] && [ "$HAVE_GLES" != 'yes' ]; then
-   if [ "$OS" = 'Darwin' ]; then
-      check_lib CG "-framework Cg" cgCreateContext
-   else
-      # On some distros, -lCg doesn't link against -lstdc++ it seems ...
-      check_lib_cxx CG -lCg cgCreateContext
-   fi
+   # On some distros, -lCg doesn't link against -lstdc++ it seems ...
+   check_lib_cxx CG -lCg cgCreateContext
 else
    echo "Ignoring Cg. Desktop OpenGL is not enabled."
    HAVE_CG='no'
@@ -213,14 +203,10 @@ else
    HAVE_GLES=no
 fi
 
-if [ "$OS" = 'Darwin' ]; then
-   check_lib FBO "-framework OpenGL" glFramebufferTexture2D
+if [ "$HAVE_GLES" = "yes" ]; then
+   [ $HAVE_FBO != "no" ] && HAVE_FBO=yes
 else
-   if [ "$HAVE_GLES" = "yes" ]; then
-      [ $HAVE_FBO != "no" ] && HAVE_FBO=yes
-   else
-      check_lib FBO -lGL glFramebufferTexture2D
-   fi
+   check_lib FBO -lGL glFramebufferTexture2D
 fi
 
 check_pkgconf FREETYPE freetype2

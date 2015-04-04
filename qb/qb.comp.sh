@@ -9,7 +9,6 @@ ECHOBUF="Checking operating system"
 case "$(uname)" in
 	'Linux') OS='Linux';;
 	*'BSD') OS='BSD';;
-	'Darwin') OS='Darwin';;
 	'CYGWIN'*) OS='Cygwin';;
 	'Haiku') OS='Haiku';;
 	*) OS="Win32";;
