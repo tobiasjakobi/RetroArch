@@ -106,7 +106,7 @@ ifeq ($(HAVE_THREADS), 1)
    LIBS += -lpthread
 endif
 
-   OBJ += movie.o
+OBJ += movie.o
 
 ifeq ($(HAVE_NETPLAY), 1)
    OBJ += netplay.o
