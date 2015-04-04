@@ -44,11 +44,6 @@
 #include "frontend/menu/menu_common.h"
 #endif
 
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
 // To avoid continous switching if we hold the button down, we require that the button must go from pressed,
 // unpressed back to pressed to be able to toggle between then.
 static void check_fast_forward_button(void)
@@ -791,14 +786,10 @@ static int16_t input_state(unsigned port, unsigned device, unsigned index, unsig
    return res;
 }
 
-#ifdef _WIN32
-#define RARCH_DEFAULT_CONF_PATH_STR "\n\t\tDefaults to retroarch.cfg in same directory as retroarch.exe.\n\t\tIf a default config is not found, RetroArch will attempt to create one."
-#else
 #ifndef GLOBAL_CONFIG_DIR
 #define GLOBAL_CONFIG_DIR "/etc"
 #endif
 #define RARCH_DEFAULT_CONF_PATH_STR "\n\t\tBy default looks for config in $XDG_CONFIG_HOME/retroarch/retroarch.cfg,\n\t\t$HOME/.config/retroarch/retroarch.cfg,\n\t\tand $HOME/.retroarch.cfg.\n\t\tIf a default config is not found, RetroArch will attempt to create one based on the skeleton config (" GLOBAL_CONFIG_DIR "/retroarch.cfg)."
-#endif
 
 #include "config.features.h"
 
@@ -1247,9 +1238,6 @@ static void parse_input(int argc, char *argv[])
             break;
 
          case 'D':
-#if defined(_WIN32)
-            FreeConsole();
-#endif
             break;
 
          case 0:

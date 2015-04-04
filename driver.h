@@ -30,9 +30,7 @@
 #include "audio/dsp_filter.h"
 #include "input/overlay.h"
 #include "frontend/frontend_context.h"
-#ifndef _WIN32
 #include "miscellaneous.h"
-#endif
 
 #include "driver_menu.h"
 
@@ -351,8 +349,7 @@ typedef struct video_driver
 enum rarch_display_type
 {
    RARCH_DISPLAY_NONE = 0, // Non-bindable types like consoles, KMS, etc.
-   RARCH_DISPLAY_X11, // video_display => Display*, video_window => Window
-   RARCH_DISPLAY_WIN32 // video_display => N/A, video_window => HWND
+   RARCH_DISPLAY_X11 // video_display => Display*, video_window => Window
 };
 
 typedef struct driver

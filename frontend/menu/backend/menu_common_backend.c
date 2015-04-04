@@ -132,7 +132,6 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
 #ifdef HAVE_THREADS
          file_list_push(menu->selection_buf, "", "autosave_interval", MENU_SETTINGS_SRAM_AUTOSAVE, 0);
 #endif
-         file_list_push(menu->selection_buf, "", "video_disable_composition", MENU_SETTINGS_WINDOW_COMPOSITING_ENABLE, 0);
          file_list_push(menu->selection_buf, "", "pause_nonactive", MENU_SETTINGS_PAUSE_IF_WINDOW_FOCUS_LOST, 0);
          file_list_push(menu->selection_buf, "", "savestate_auto_save", MENU_SETTINGS_SAVESTATE_AUTO_SAVE, 0);
          file_list_push(menu->selection_buf, "", "savestate_auto_load", MENU_SETTINGS_SAVESTATE_AUTO_LOAD, 0);
@@ -468,10 +467,6 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
 
    switch (driver.menu->info_selection)
    {
-      case MENU_SETTINGS_WINDOW_COMPOSITING_ENABLE:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_disable_composition")))
-            setting_data_get_description(current_setting, msg, sizeof(msg));
-         break;
       case MENU_SETTINGS_LIBRETRO_LOG_LEVEL:
          if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "libretro_log_level")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
@@ -1718,20 +1713,7 @@ static void menu_parse_and_resolve(unsigned menu_type)
             file_list_get_last(driver.menu->menu_stack, &dir, &menu_type, setting);
 
             if (!*dir)
-            {
-#if defined(_WIN32)
-               unsigned drives = GetLogicalDrives();
-               char drive[] = " :\\";
-               for (i = 0; i < 32; i++)
-               {
-                  drive[0] = 'A' + i;
-                  if (drives & (1 << i))
-                     file_list_push(driver.menu->selection_buf, drive, "", menu_type, 0);
-               }
-               file_list_push(driver.menu->selection_buf, "/", "", menu_type, 0);
-#endif
                return;
-            }
 
             const char *exts;
             char ext_buf[1024];
@@ -3712,11 +3694,7 @@ static void menu_common_setting_set_label_perf(char *type_str, size_t type_str_s
    if (counters[offset] && counters[offset]->call_cnt)
    {
       snprintf(type_str, type_str_size,
-#ifdef _WIN32
-            "%I64u ticks, %I64u runs.",
-#else
             "%llu ticks, %llu runs.",
-#endif
             ((unsigned long long)counters[offset]->total / (unsigned long long)counters[offset]->call_cnt),
             (unsigned long long)counters[offset]->call_cnt);
    }
@@ -4135,9 +4113,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
             break;
          case MENU_SETTINGS_PAUSE_IF_WINDOW_FOCUS_LOST:
             strlcpy(type_str, g_settings.pause_nonactive ? "ON" : "OFF", type_str_size);
-            break;
-         case MENU_SETTINGS_WINDOW_COMPOSITING_ENABLE:
-            strlcpy(type_str, g_settings.video.disable_composition ? "OFF" : "ON", type_str_size);
             break;
          case MENU_SETTINGS_USER_LANGUAGE:
             {

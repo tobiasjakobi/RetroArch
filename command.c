@@ -28,11 +28,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifndef _WIN32
-#include <fcntl.h>
-#include <unistd.h>
-#endif
-
 #define DEFAULT_NETWORK_CMD_PORT 55355
 #define STDIN_BUF_SIZE 4096
 
@@ -53,12 +48,7 @@ struct rarch_cmd
 
 static bool socket_nonblock(int fd)
 {
-#ifdef _WIN32
-   u_long mode = 1;
-   return ioctlsocket(fd, FIONBIO, &mode) == 0;
-#else
    return fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK) == 0;
-#endif
 }
 
 #if defined(HAVE_NETWORK_CMD) && defined(HAVE_NETPLAY)
@@ -74,7 +64,7 @@ static bool cmd_init_network(rarch_cmd_t *handle, uint16_t port)
    RARCH_LOG("Bringing up command interface on port %hu.\n", (unsigned short)port);
 
    memset(&hints, 0, sizeof(hints));
-#if defined(_WIN32) || defined(HAVE_SOCKET_LEGACY)
+#if defined(HAVE_SOCKET_LEGACY)
    hints.ai_family   = AF_INET;
 #else
    hints.ai_family   = AF_UNSPEC;
@@ -114,10 +104,8 @@ error:
 #ifdef HAVE_STDIN_CMD
 static bool cmd_init_stdin(rarch_cmd_t *handle)
 {
-#ifndef _WIN32
    if (!socket_nonblock(STDIN_FILENO))
       return false;
-#endif
 
    handle->stdin_enable = true;
    return true;
@@ -357,87 +345,6 @@ static void network_cmd_poll(rarch_cmd_t *handle)
 
 #ifdef HAVE_STDIN_CMD
 
-#ifdef _WIN32
-// Oh you, Win32 ... <_<
-static size_t read_stdin(char *buf, size_t size)
-{
-   DWORD i;
-   HANDLE hnd = GetStdHandle(STD_INPUT_HANDLE);
-   if (hnd == INVALID_HANDLE_VALUE)
-      return 0;
-
-   // Check first if we're a pipe
-   // (not console).
-   DWORD avail = 0;
-   bool echo = false;
-
-   // If not a pipe, check if we're running in a console.
-   if (!PeekNamedPipe(hnd, NULL, 0, NULL, &avail, NULL))
-   {
-      DWORD mode = 0;
-      if (!GetConsoleMode(hnd, &mode))
-         return 0;
-
-      if ((mode & (ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT))
-            && !SetConsoleMode(hnd, mode & ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT)))
-         return 0;
-
-      // Win32, Y U NO SANE NONBLOCK READ!?
-      DWORD has_read = 0;
-      INPUT_RECORD recs[256];
-      if (!PeekConsoleInput(hnd, recs, sizeof(recs) / sizeof(recs[0]), &has_read))
-         return 0;
-
-      bool has_key = false;
-      for (i = 0; i < has_read; i++)
-      {
-         // Very crude, but should get the job done ...
-         if (recs[i].EventType == KEY_EVENT &&
-               recs[i].Event.KeyEvent.bKeyDown &&
-               (isgraph(recs[i].Event.KeyEvent.wVirtualKeyCode) || recs[i].Event.KeyEvent.wVirtualKeyCode == VK_RETURN))
-         {
-            has_key = true;
-            echo    = true;
-            avail   = size;
-            break;
-         }
-      }
-
-      if (!has_key)
-      {
-         FlushConsoleInputBuffer(hnd);
-         return 0;
-      }
-   }
-
-   if (!avail)
-      return 0;
-
-   if (avail > size)
-      avail = size;
-
-   DWORD has_read = 0;
-   if (!ReadFile(hnd, buf, avail, &has_read, NULL))
-      return 0;
-
-   for (i = 0; i < has_read; i++)
-      if (buf[i] == '\r')
-         buf[i] = '\n';
-
-   // Console won't echo for us while in non-line mode, so do it manually ...
-   if (echo)
-   {
-      HANDLE hnd_out = GetStdHandle(STD_OUTPUT_HANDLE);
-      if (hnd_out != INVALID_HANDLE_VALUE)
-      {
-         DWORD has_written;
-         WriteConsole(hnd_out, buf, has_read, &has_written, NULL);
-      }
-   }
-
-   return has_read;
-}
-#else
 static size_t read_stdin(char *buf, size_t size)
 {
    size_t has_read = 0;
@@ -455,7 +362,6 @@ static size_t read_stdin(char *buf, size_t size)
 
    return has_read;
 }
-#endif
 
 static void stdin_cmd_poll(rarch_cmd_t *handle)
 {
@@ -521,7 +427,7 @@ static bool send_udp_packet(const char *host, uint16_t port, const char *msg)
    bool ret = true;
   
    memset(&hints, 0, sizeof(hints));
-#if defined(_WIN32) || defined(HAVE_SOCKET_LEGACY)
+#if defined(HAVE_SOCKET_LEGACY)
    hints.ai_family   = AF_INET;
 #else
    hints.ai_family   = AF_UNSPEC;
@@ -611,11 +517,7 @@ bool network_cmd_send(const char *cmd_)
 
    if (!host)
    {
-#ifdef _WIN32
-      host = "127.0.0.1";
-#else
       host = "localhost";
-#endif
    }
 
    if (port_)

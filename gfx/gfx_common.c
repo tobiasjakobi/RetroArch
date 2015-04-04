@@ -64,69 +64,6 @@ bool gfx_get_fps(char *buf, size_t size, char *buf_fps, size_t size_fps)
    return ret;
 }
 
-#if defined(_WIN32)
-#include <windows.h>
-#include "../dynamic.h"
-// We only load this library once, so we let it be unloaded at application shutdown,
-// since unloading it early seems to cause issues on some systems.
-
-static dylib_t dwmlib;
-static bool dwm_composition_disabled;
-
-static void gfx_dwm_shutdown(void)
-{
-   if (dwmlib)
-      dylib_close(dwmlib);
-   dwmlib = NULL;
-}
-
-static void gfx_init_dwm(void)
-{
-   static bool inited;
-
-   if (inited)
-      return;
-   inited = true;
-
-   dwmlib = dylib_load("dwmapi.dll");
-   if (!dwmlib)
-   {
-      RARCH_LOG("Did not find dwmapi.dll.\n");
-      return;
-   }
-   atexit(gfx_dwm_shutdown);
-
-   HRESULT (WINAPI *mmcss)(BOOL) = (HRESULT (WINAPI*)(BOOL))dylib_proc(dwmlib, "DwmEnableMMCSS");
-   if (mmcss)
-   {
-      RARCH_LOG("Setting multimedia scheduling for DWM.\n");
-      mmcss(TRUE);
-   }
-}
-
-void gfx_set_dwm(void)
-{
-   gfx_init_dwm();
-   if (!dwmlib)
-      return;
-
-   if (g_settings.video.disable_composition == dwm_composition_disabled)
-      return;
-
-   HRESULT (WINAPI *composition_enable)(UINT) = (HRESULT (WINAPI*)(UINT))dylib_proc(dwmlib, "DwmEnableComposition");
-   if (!composition_enable)
-   {
-      RARCH_ERR("Did not find DwmEnableComposition ...\n");
-      return;
-   }
-
-   HRESULT ret = composition_enable(!g_settings.video.disable_composition);
-   if (FAILED(ret))
-      RARCH_ERR("Failed to set composition state ...\n");
-   dwm_composition_disabled = g_settings.video.disable_composition;
-}
-#endif
-
 void gfx_scale_integer(struct rarch_viewport *vp, unsigned width, unsigned height, float aspect_ratio, bool keep_aspect)
 {
    int padding_x = 0;

@@ -17,180 +17,14 @@
 #include "thread.h"
 #include <stdlib.h>
 
-#if defined(_WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#else
 #include <pthread.h>
 #include <time.h>
-#endif
 
 struct thread_data
 {
    void (*func)(void*);
    void *userdata;
 };
-
-#ifdef _WIN32
-
-struct sthread
-{
-   HANDLE thread;
-};
-
-static DWORD CALLBACK thread_wrap(void *data_)
-{
-   struct thread_data *data = (struct thread_data*)data_;
-   data->func(data->userdata);
-   free(data);
-   return 0;
-}
-
-sthread_t *sthread_create(void (*thread_func)(void*), void *userdata)
-{
-   sthread_t *thread = (sthread_t*)calloc(1, sizeof(*thread));
-   if (!thread)
-      return NULL;
-
-   struct thread_data *data = (struct thread_data*)calloc(1, sizeof(*data));
-   if (!data)
-   {
-      free(thread);
-      return NULL;
-   }
-
-   data->func = thread_func;
-   data->userdata = userdata;
-
-   thread->thread = CreateThread(NULL, 0, thread_wrap, data, 0, NULL);
-   if (!thread->thread)
-   {
-      free(data);
-      free(thread);
-      return NULL;
-   }
-
-   return thread;
-}
-
-int sthread_detach(sthread_t *thread)
-{
-   CloseHandle(thread->thread);
-   free(thread);
-   return 0;
-}
-
-void sthread_join(sthread_t *thread)
-{
-   WaitForSingleObject(thread->thread, INFINITE);
-   CloseHandle(thread->thread);
-   free(thread);
-}
-
-struct slock
-{
-   HANDLE lock;
-};
-
-slock_t *slock_new(void)
-{
-   slock_t *lock = (slock_t*)calloc(1, sizeof(*lock));
-   if (!lock)
-      return NULL;
-
-   lock->lock = CreateMutex(NULL, FALSE, "");
-   if (!lock->lock)
-   {
-      free(lock);
-      return NULL;
-   }
-   return lock;
-}
-
-void slock_free(slock_t *lock)
-{
-   CloseHandle(lock->lock);
-   free(lock);
-}
-
-void slock_lock(slock_t *lock)
-{
-   WaitForSingleObject(lock->lock, INFINITE);
-}
-
-void slock_unlock(slock_t *lock)
-{
-   ReleaseMutex(lock->lock);
-}
-
-struct scond
-{
-   HANDLE event;
-};
-
-scond_t *scond_new(void)
-{
-   scond_t *cond = (scond_t*)calloc(1, sizeof(*cond));
-   if (!cond)
-      return NULL;
-
-   cond->event = CreateEvent(NULL, FALSE, FALSE, NULL);
-   if (!cond->event)
-   {
-      free(cond);
-      return NULL;
-   }
-
-   return cond;
-}
-
-void scond_wait(scond_t *cond, slock_t *lock)
-{
-   WaitForSingleObject(cond->event, 0);
-
-#if MSC_VER <= 1310
-   slock_unlock(lock);
-   WaitForSingleObject(cond->event, INFINITE);
-#else
-   SignalObjectAndWait(lock->lock, cond->event, INFINITE, FALSE);
-#endif
-
-   slock_lock(lock);
-}
-
-bool scond_wait_timeout(scond_t *cond, slock_t *lock, int64_t timeout_us)
-{
-   WaitForSingleObject(cond->event, 0);
-#if MSC_VER <= 1310
-   slock_unlock(lock);
-   DWORD res = WaitForSingleObject(cond->event, (DWORD)(timeout_us) / 1000);
-#else
-   DWORD res = SignalObjectAndWait(lock->lock, cond->event, (DWORD)(timeout_us) / 1000, FALSE);
-#endif
-
-   slock_lock(lock);
-   return res == WAIT_OBJECT_0;
-}
-
-void scond_signal(scond_t *cond)
-{
-   SetEvent(cond->event);
-}
-
-/* FIXME - check how this function should differ from scond_signal implementation */
-int scond_broadcast(scond_t *cond)
-{
-   SetEvent(cond->event);
-   return 0;
-}
-
-void scond_free(scond_t *cond)
-{
-   CloseHandle(cond->event);
-   free(cond);
-}
-
-#else
 
 struct sthread
 {
@@ -339,6 +173,4 @@ void scond_signal(scond_t *cond)
 {
    pthread_cond_signal(&cond->cond);
 }
-
-#endif
 

@@ -32,11 +32,7 @@
 #include "dynamic_dummy.h"
 
 #ifdef NEED_DYNAMIC
-#ifdef _WIN32
-#include <windows.h>
-#else
 #include <dlfcn.h>
-#endif
 #endif
 
 #ifdef HAVE_DYNAMIC
@@ -92,11 +88,7 @@ void *(*pretro_get_memory_data)(unsigned);
 size_t (*pretro_get_memory_size)(unsigned);
 
 #ifdef HAVE_DYNAMIC
-#if defined(_WIN32)
-#define DYNAMIC_EXT "dll"
-#else
 #define DYNAMIC_EXT "so"
-#endif
 
 static bool *load_no_content_hook;
 static bool environ_cb_get_system_info(unsigned cmd, void *data)
@@ -386,24 +378,14 @@ void uninit_libretro_sym(void)
 // Platform independent dylib loading.
 dylib_t dylib_load(const char *path)
 {
-#ifdef _WIN32
-   dylib_t lib = LoadLibrary(path);
-   if (!lib)
-      RARCH_ERR("Failed to load library, error code: 0x%x\n", (unsigned)GetLastError());
-   return lib;
-#else
    dylib_t lib = dlopen(path, RTLD_LAZY);
    if (!lib)
       RARCH_ERR("dylib_load() failed: \"%s\".\n", dlerror());
    return lib;
-#endif
 }
 
 function_t dylib_proc(dylib_t lib, const char *proc)
 {
-#ifdef _WIN32
-   function_t sym = (function_t)GetProcAddress(lib ? (HMODULE)lib : GetModuleHandle(NULL), proc);
-#else
    void *ptr_sym = NULL;
    if (lib)
       ptr_sym = dlsym(lib, proc);
@@ -420,18 +402,13 @@ function_t dylib_proc(dylib_t lib, const char *proc)
    // Dirty hack to workaround the non-legality of (void*) -> fn-pointer casts.
    function_t sym;
    memcpy(&sym, &ptr_sym, sizeof(void*));
-#endif
 
    return sym;
 }
 
 void dylib_close(dylib_t lib)
 {
-#ifdef _WIN32
-   FreeLibrary((HMODULE)lib);
-#else
    dlclose(lib);
-#endif
 }
 #endif
 

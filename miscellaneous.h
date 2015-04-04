@@ -19,17 +19,12 @@
 
 #include <time.h>
 
-#if defined(_WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
 #include "retroarch_logger.h"
 #include <limits.h>
 
 // Some platforms do not set this value.
 // Just assume a value. It's usually 4KiB.
-// Platforms with a known value (like Win32)
+// Platforms with a known value
 // set this value explicitly in platform specific headers.
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -52,14 +47,10 @@
 
 static inline void rarch_sleep(unsigned msec)
 {
-#if defined(_WIN32)
-   Sleep(msec);
-#else
    struct timespec tv = {0};
    tv.tv_sec = msec / 1000;
    tv.tv_nsec = (msec % 1000) * 1000000;
    nanosleep(&tv, NULL);
-#endif
 }
 
 static inline uint32_t next_pow2(uint32_t v)

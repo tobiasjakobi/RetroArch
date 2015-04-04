@@ -20,15 +20,6 @@
 #include "config.h"
 #endif
 
-#if defined(_WIN32)
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501
-#endif
-#define WIN32_LEAN_AND_MEAN
-#include <winsock2.h>
-#include <windows.h>
-#include <ws2tcpip.h>
-#else
 #include <sys/select.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -39,17 +30,11 @@
 #include <fcntl.h>
 
 #include <signal.h>
-#endif
 
-#if defined(_WIN32)
-// Woohoo, Winsock has headers from the STONE AGE. :D
-#define close(x) closesocket(x)
-#else
 #define CONST_CAST
 #define NONCONST_CAST
 #include <sys/time.h>
 #include <unistd.h>
-#endif
 
 // Compatibility layer for legacy or incomplete BSD socket implementations.
 // Only for IPv4. Mostly useful for the consoles which do not support

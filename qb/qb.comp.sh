@@ -11,7 +11,7 @@ case "$(uname)" in
 	*'BSD') OS='BSD';;
 	'CYGWIN'*) OS='Cygwin';;
 	'Haiku') OS='Haiku';;
-	*) OS="Win32";;
+	*) OS="Linux";;
 esac
 echo "$ECHOBUF ... $OS"
 

@@ -307,7 +307,7 @@ static bool init_tcp_socket(netplay_t *handle, const char *server, uint16_t port
    struct addrinfo hints, *res = NULL;
    memset(&hints, 0, sizeof(hints));
 
-#if defined(_WIN32) || defined(HAVE_SOCKET_LEGACY)
+#if defined(HAVE_SOCKET_LEGACY)
    hints.ai_family = AF_INET;
 #else
    hints.ai_family = AF_UNSPEC;
@@ -355,7 +355,7 @@ static bool init_udp_socket(netplay_t *handle, const char *server, uint16_t port
 {
    struct addrinfo hints;
    memset(&hints, 0, sizeof(hints));
-#if defined(_WIN32) || defined(HAVE_SOCKET_LEGACY)
+#if defined(HAVE_SOCKET_LEGACY)
    hints.ai_family = AF_INET;
 #else
    hints.ai_family = AF_UNSPEC;
@@ -406,16 +406,7 @@ bool netplay_init_network(void)
    if (inited)
       return true;
 
-#if defined(_WIN32)
-   WSADATA wsaData;
-   if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-   {
-      WSACleanup();
-      return false;
-   }
-#else
    signal(SIGPIPE, SIG_IGN); // Do not like SIGPIPE killing our app :(
-#endif
 
    inited = true;
    return true;

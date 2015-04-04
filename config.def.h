@@ -141,9 +141,6 @@ static const bool load_dummy_on_core_shutdown = false;
 static const bool load_dummy_on_core_shutdown = true;
 #endif
 
-// Forcibly disable composition. Only valid on Windows Vista/7/8 for now.
-static const bool disable_composition = false;
-
 // Video VSYNC (recommended)
 static const bool vsync = true;
 

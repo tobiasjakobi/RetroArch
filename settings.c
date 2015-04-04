@@ -159,7 +159,6 @@ void config_set_defaults(void)
    g_settings.video.monitor_index = monitor_index;
    g_settings.video.fullscreen_x = fullscreen_x;
    g_settings.video.fullscreen_y = fullscreen_y;
-   g_settings.video.disable_composition = disable_composition;
    g_settings.video.vsync = vsync;
    g_settings.video.hard_sync = hard_sync;
    g_settings.video.hard_sync_frames = hard_sync_frames;
@@ -446,49 +445,6 @@ static config_file_t *open_default_config_file(void)
 {
    config_file_t *conf = NULL;
 
-#if defined(_WIN32)
-   char conf_path[PATH_MAX];
-
-   char app_path[PATH_MAX];
-   fill_pathname_application_path(app_path, sizeof(app_path));
-   fill_pathname_resolve_relative(conf_path, app_path, "retroarch.cfg", sizeof(conf_path));
-
-   conf = config_file_new(conf_path);
-   if (!conf)
-   {
-      const char *appdata = getenv("APPDATA");
-      if (appdata)
-      {
-         fill_pathname_join(conf_path, appdata, "retroarch.cfg", sizeof(conf_path));
-         conf = config_file_new(conf_path);
-      }
-   }
-
-   // Try to create a new config file.
-   if (!conf)
-   {
-      conf = config_file_new(NULL);
-      bool saved = false;
-      if (conf) // Since this is a clean config file, we can safely use config_save_on_exit.
-      {
-         fill_pathname_resolve_relative(conf_path, app_path, "retroarch.cfg", sizeof(conf_path));
-         config_set_bool(conf, "config_save_on_exit", true);
-         saved = config_file_write(conf, conf_path);
-      }
-
-      if (saved)
-         RARCH_WARN("Created new config file in: \"%s\".\n", conf_path); // WARN here to make sure user has a good chance of seeing it.
-      else
-      {
-         RARCH_ERR("Failed to create new config file in: \"%s\".\n", conf_path);
-         config_file_free(conf);
-         conf = NULL;
-      }
-   }
-
-   if (conf)
-      strlcpy(g_extern.config_path, conf_path, sizeof(g_extern.config_path));
-#endif
    char conf_path[PATH_MAX];
    const char *xdg  = getenv("XDG_CONFIG_HOME");
    const char *home = getenv("HOME");
@@ -637,7 +593,6 @@ bool config_load_file(const char *path, bool set_defaults)
 
    CONFIG_GET_BOOL(video.windowed_fullscreen, "video_windowed_fullscreen");
    CONFIG_GET_INT(video.monitor_index, "video_monitor_index");
-   CONFIG_GET_BOOL(video.disable_composition, "video_disable_composition");
    CONFIG_GET_BOOL(video.vsync, "video_vsync");
    CONFIG_GET_BOOL(video.hard_sync, "video_hard_sync");
 
@@ -1186,7 +1141,6 @@ bool config_save_file(const char *path)
    config_set_bool(conf,  "video_hard_sync", g_settings.video.hard_sync);
    config_set_int(conf,   "video_hard_sync_frames", g_settings.video.hard_sync_frames);
    config_set_bool(conf,  "video_black_frame_insertion", g_settings.video.black_frame_insertion);
-   config_set_bool(conf,  "video_disable_composition", g_settings.video.disable_composition);
    config_set_bool(conf,  "pause_nonactive", g_settings.pause_nonactive);
    config_set_int(conf, "video_swap_interval", g_settings.video.swap_interval);
    config_set_bool(conf, "video_gpu_screenshot", g_settings.video.gpu_screenshot);

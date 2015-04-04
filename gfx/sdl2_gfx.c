@@ -199,17 +199,7 @@ static void sdl2_render_msg(sdl2_video_t *vid, const char *msg)
 
 static void sdl2_gfx_set_handles(sdl2_video_t *vid)
 {
-#if defined(_WIN32)
-   SDL_SysWMinfo info;
-   SDL_VERSION(&info.version);
-
-   if (SDL_GetWindowWMInfo(vid->window, &info) == 1)
-   {
-      driver.display_type  = RARCH_DISPLAY_WIN32;
-      driver.video_display = 0;
-      driver.video_window  = (uintptr_t)info.info.window;
-   }
-#elif defined(HAVE_X11)
+#if defined(HAVE_X11)
    SDL_SysWMinfo info;
    SDL_VERSION(&info.version);
 
@@ -374,10 +364,6 @@ static void sdl_refresh_input_size(sdl2_video_t *vid, bool menu, bool rgb32,
 
 static void *sdl2_gfx_init(const video_info_t *video, const input_driver_t **input, void **input_data)
 {
-#ifdef _WIN32
-   gfx_set_dwm();
-#endif
-
 #ifdef HAVE_X11
    XInitThreads();
 #endif

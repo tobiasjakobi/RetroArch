@@ -17,11 +17,7 @@
 #ifndef _RARCH_PERF_H
 #define _RARCH_PERF_H
 
-#ifdef _WIN32
-#define PERF_LOG_FMT "[PERF]: Avg (%s): %I64u ticks, %I64u runs.\n"
-#else
 #define PERF_LOG_FMT "[PERF]: Avg (%s): %llu ticks, %llu runs.\n"
-#endif
 
 #ifdef __cplusplus
 extern "C" {

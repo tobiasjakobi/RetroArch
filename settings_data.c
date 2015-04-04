@@ -450,11 +450,7 @@ void setting_data_get_description(const void *data, char *msg, size_t sizeof_msg
     if (!setting)
        return;
 
-    if (!strcmp(setting->name, "video_disable_composition"))
-       snprintf(msg, sizeof_msg,
-             "-- Forcibly disable composition.\n"
-             "Only valid on Windows Vista/7 for now.");
-    else if (!strcmp(setting->name, "libretro_log_level"))
+    if (!strcmp(setting->name, "libretro_log_level"))
          snprintf(msg, sizeof_msg,
                "-- Sets log level for libretro cores \n"
                "(GET_LOG_INTERFACE). \n"
@@ -765,8 +761,6 @@ static void general_read_handler(const void *data)
         *setting->value.boolean = g_settings.video.smooth;
     else if (!strcmp(setting->name, "video_monitor_index"))
         *setting->value.unsigned_integer = g_settings.video.monitor_index;
-    else if (!strcmp(setting->name, "video_disable_composition"))
-        *setting->value.boolean = g_settings.video.disable_composition;
     else if (!strcmp(setting->name, "video_vsync"))
        *setting->value.boolean = g_settings.video.vsync;
     else if (!strcmp(setting->name, "video_hard_sync"))
@@ -1024,11 +1018,6 @@ static void general_write_handler(const void *data)
    else if (!strcmp(setting->name, "video_monitor_index"))
    {
       g_settings.video.monitor_index = *setting->value.unsigned_integer;
-      has_set_reinit = true;
-   }
-   else if (!strcmp(setting->name, "video_disable_composition"))
-   {
-      g_settings.video.disable_composition = *setting->value.boolean;
       has_set_reinit = true;
    }
    else if (!strcmp(setting->name, "video_vsync"))
@@ -1444,7 +1433,6 @@ rarch_setting_t* setting_data_get_list(void)
 #ifdef HAVE_THREADS
          CONFIG_UINT(g_settings.autosave_interval,          "autosave_interval",          "SRAM Autosave",          autosave_interval, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_RANGE(0, 0, 10, true, false)
 #endif
-         CONFIG_BOOL(g_settings.video.disable_composition,  "video_disable_composition",  "Window Compositing",         disable_composition, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
          CONFIG_BOOL(g_settings.pause_nonactive,            "pause_nonactive",            "Window Unfocus Pause",       pause_nonactive, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
          CONFIG_FLOAT(g_settings.fastforward_ratio,         "fastforward_ratio",          "Maximum Run Speed",         fastforward_ratio, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_RANGE(-1, 10, 0.1, true, true)
          CONFIG_FLOAT(g_settings.slowmotion_ratio,          "slowmotion_ratio",           "Slow-Motion Ratio",          slowmotion_ratio, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)       WITH_RANGE(-1, 10, 0.1, true, true)

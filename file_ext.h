@@ -18,11 +18,7 @@
 #define _FILE_EXT_H
 
 #ifdef HAVE_DYNAMIC
-#ifdef _WIN32
-#define EXT_EXECUTABLES "dll"
-#else
 #define EXT_EXECUTABLES "so"
-#endif
 #endif
 
 #endif

@@ -2106,10 +2106,6 @@ static void gl_begin_debug(gl_t *gl)
 
 static void *gl_init(const video_info_t *video, const input_driver_t **input, void **input_data)
 {
-#ifdef _WIN32
-   gfx_set_dwm();
-#endif
-
    gl_t *gl = (gl_t*)calloc(1, sizeof(gl_t));
    if (!gl)
       return NULL;

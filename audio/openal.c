@@ -22,10 +22,6 @@
 #include <time.h>
 #include <string.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #define BUFSIZE 1024
 
 typedef struct al

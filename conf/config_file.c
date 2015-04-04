@@ -25,12 +25,8 @@
 #include "../miscellaneous.h"
 #include "../general.h"
 
-#if !defined(_WIN32)
-#include <sys/param.h> // PATH_MAX
-#elif defined(_WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
+// PATH_MAX
+#include <sys/param.h>
 
 #define MAX_INCLUDE_DEPTH 16
 
@@ -190,9 +186,6 @@ static void add_sub_conf(config_file_t *conf, char *line)
    add_include_list(conf, path);
    char real_path[PATH_MAX];
 
-#ifdef _WIN32
-   fill_pathname_resolve_relative(real_path, conf->path, path, sizeof(real_path));
-#else
    if (*path == '~')
    {
       const char *home = getenv("HOME");
@@ -201,7 +194,6 @@ static void add_sub_conf(config_file_t *conf, char *line)
    }
    else
       fill_pathname_resolve_relative(real_path, conf->path, path, sizeof(real_path));
-#endif
 
    config_file_t *sub_conf = config_file_new_internal(real_path, conf->include_depth + 1);
    if (!sub_conf)
@@ -754,11 +746,7 @@ void config_set_hex(config_file_t *conf, const char *key, unsigned val)
 void config_set_uint64(config_file_t *conf, const char *key, uint64_t val)
 {
    char buf[128];
-#ifdef _WIN32
-   snprintf(buf, sizeof(buf), "%I64u", val);
-#else
    snprintf(buf, sizeof(buf), "%llu", (long long unsigned)val);
-#endif
    config_set_string(conf, key, buf);
 }
 

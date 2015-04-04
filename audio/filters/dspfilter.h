@@ -103,7 +103,7 @@ typedef int (*dspfilter_config_get_int_array_t)(void *userdata, const char *key,
 
 typedef int (*dspfilter_config_get_string_t)(void *userdata, const char *key, char **output, const char *default_output);
 
-// Calls free() in host runtime. Sometimes needed on Windows. free() on NULL is fine.
+// Calls free() in host runtime. free() on NULL is fine.
 typedef void (*dspfilter_config_free_t)(void *ptr);
 
 struct dspfilter_config

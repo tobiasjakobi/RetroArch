@@ -27,12 +27,6 @@
 #include "hash.h"
 #include "file_extract.h"
 
-#ifdef _WIN32
-#include <io.h>
-#include <fcntl.h>
-#include <windows.h>
-#endif
-
 static void patch_rom(uint8_t **buf, ssize_t *size)
 {
    uint8_t *ret_buf = *buf;
@@ -140,11 +134,7 @@ static ssize_t read_rom_file(const char *path, void **buf)
 // Attempt to save valuable RAM data somewhere ...
 static void dump_to_file_desperate(const void *data, size_t size, unsigned type)
 {
-#if defined(_WIN32)
-   const char *base = getenv("APPDATA");
-#else
    const char *base = getenv("HOME");
-#endif
 
    if (!base)
       goto error;

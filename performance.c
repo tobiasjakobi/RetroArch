@@ -19,13 +19,8 @@
 #include "performance.h"
 #include "general.h"
 
-#if !defined(_WIN32) && !defined(RARCH_CONSOLE)
+#if !defined(RARCH_CONSOLE)
 #include <unistd.h>
-#endif
-
-#if defined(_WIN32)
-#include <windows.h>
-#include <intrin.h>
 #endif
 
 #if defined(_POSIX_MONOTONIC_CLOCK)
@@ -129,22 +124,6 @@ retro_perf_tick_t rarch_get_perf_counter(void)
    struct timeval tv;
    gettimeofday(&tv,NULL);
    time = (1000000 * tv.tv_sec + tv.tv_usec);
-#elif defined(_WIN32)
-   long tv_sec, tv_usec;
-   static const unsigned __int64 epoch = 11644473600000000Ui64;
-   FILETIME file_time;
-   SYSTEMTIME system_time;
-   ULARGE_INTEGER ularge;
-
-   GetSystemTime(&system_time);
-   SystemTimeToFileTime(&system_time, &file_time);
-   ularge.LowPart = file_time.dwLowDateTime;
-   ularge.HighPart = file_time.dwHighDateTime;
-
-   tv_sec = (long)((ularge.QuadPart - epoch) / 10000000L);
-   tv_usec = (long)(system_time.wMilliseconds * 1000);
-
-   time = (1000000 * tv_sec + tv_usec);
 #endif
 
    return time;
@@ -152,16 +131,7 @@ retro_perf_tick_t rarch_get_perf_counter(void)
 
 retro_time_t rarch_get_time_usec(void)
 {
-#if defined(_WIN32)
-   static LARGE_INTEGER freq;
-   if (!freq.QuadPart && !QueryPerformanceFrequency(&freq)) // Frequency is guaranteed to not change.
-      return 0;
-
-   LARGE_INTEGER count;
-   if (!QueryPerformanceCounter(&count))
-      return 0;
-   return count.QuadPart * 1000000 / freq.QuadPart;
-#elif defined(_POSIX_MONOTONIC_CLOCK)
+#if defined(_POSIX_MONOTONIC_CLOCK)
    struct timespec tv;
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)
       return 0;
@@ -251,11 +221,7 @@ static void arm_enable_runfast_mode(void)
 
 unsigned rarch_get_cpu_cores(void)
 {
-#if defined(_WIN32) // Win32
-   SYSTEM_INFO sysinfo;
-   GetSystemInfo(&sysinfo);
-   return sysinfo.dwNumberOfProcessors;
-#elif defined(_SC_NPROCESSORS_ONLN) // Linux, most unix-likes.
+#if defined(_SC_NPROCESSORS_ONLN) // Linux, most unix-likes.
    long ret = sysconf(_SC_NPROCESSORS_ONLN);
    if (ret <= 0)
       return (unsigned)1;

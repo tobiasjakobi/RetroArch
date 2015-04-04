@@ -21,9 +21,6 @@
 
 #if defined(__SSE2__)
 #include <emmintrin.h>
-#ifdef _WIN32
-#include <intrin.h>
-#endif
 #endif
 
 // ARGB8888 scaler is split in two:

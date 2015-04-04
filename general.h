@@ -45,15 +45,6 @@
 #define PACKAGE_VERSION "1.0.0.2"
 #endif
 
-// Platform-specific headers
-// Windows
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
-//////////////
-
 #ifdef HAVE_NETPLAY
 #include "netplay.h"
 #endif
@@ -196,8 +187,6 @@ struct settings
       float msg_color_r;
       float msg_color_g;
       float msg_color_b;
-
-      bool disable_composition;
 
       bool post_filter_record;
       bool gpu_record;

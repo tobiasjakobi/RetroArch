@@ -54,22 +54,14 @@ int scond_broadcast(scond_t *cond);
 void scond_signal(scond_t *cond);
 
 #ifndef RARCH_INTERNAL
-#if defined(_WIN32)
-#include <windows.h>
-#else
 #include <time.h>
-#endif
 
 static inline void retro_sleep(unsigned msec)
 {
-#if defined(_WIN32)
-   Sleep(msec);
-#else
    struct timespec tv = {0};
    tv.tv_sec = msec / 1000;
    tv.tv_nsec = (msec % 1000) * 1000000;
    nanosleep(&tv, NULL);
-#endif
 }
 #endif
 

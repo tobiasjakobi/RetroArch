@@ -263,7 +263,6 @@ py_state_t *py_state_new(const char *script, unsigned is_file, const char *pycla
    {
       // Have to hack around the fact that the
       // FILE struct isn't standardized across environments.
-      // PyRun_SimpleFile() breaks on Windows because it's compiled with MSVC.
 
       char *script_ = NULL;
       if (read_file(script, (void**)&script_) < 0)
