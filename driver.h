@@ -495,7 +495,6 @@ extern const audio_driver_t audio_openal;
 extern const audio_driver_t audio_jack;
 extern const audio_driver_t audio_sdl;
 extern const audio_driver_t audio_pulse;
-extern const audio_driver_t audio_dsound;
 extern const audio_driver_t audio_null;
 extern const video_driver_t video_gl;
 extern const video_driver_t video_d3d;

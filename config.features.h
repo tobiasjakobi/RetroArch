@@ -104,12 +104,6 @@ static const bool _pulse_supp = true;
 static const bool _pulse_supp = false;
 #endif
 
-#ifdef HAVE_DSOUND
-static const bool _dsound_supp = true;
-#else
-static const bool _dsound_supp = false;
-#endif
-
 #ifdef HAVE_ZLIB
 static const bool _zlib_supp = true;
 #else
