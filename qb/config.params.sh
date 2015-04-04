@@ -22,7 +22,6 @@ HAVE_XINERAMA=auto      # Disable Xinerama support.
 HAVE_KMS=auto           # Enable KMS context support
 HAVE_EXYNOS=no          # Enable Exynos video support
 HAVE_EGL=auto           # Enable EGL context support
-HAVE_VG=auto            # Enable OpenVG support
 HAVE_CG=auto            # Enable Cg shader support
 HAVE_LIBXML2=auto       # Enable libxml2 support
 HAVE_ZLIB=auto          # Enable zlib support (ZIP extract, PNG decoding/encoding)

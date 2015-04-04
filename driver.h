@@ -370,7 +370,7 @@ typedef struct video_driver
 
 enum rarch_display_type
 {
-   RARCH_DISPLAY_NONE = 0, // Non-bindable types like consoles, KMS, VideoCore, etc.
+   RARCH_DISPLAY_NONE = 0, // Non-bindable types like consoles, KMS, etc.
    RARCH_DISPLAY_X11, // video_display => Display*, video_window => Window
    RARCH_DISPLAY_WIN32 // video_display => N/A, video_window => HWND
 };
@@ -544,7 +544,6 @@ extern const video_driver_t video_d3d;
 extern const video_driver_t video_xvideo;
 extern const video_driver_t video_sdl;
 extern const video_driver_t video_sdl2;
-extern const video_driver_t video_vg;
 extern const video_driver_t video_null;
 extern const video_driver_t video_omap;
 extern const video_driver_t video_exynos;

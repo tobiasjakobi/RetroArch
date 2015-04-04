@@ -35,7 +35,6 @@ enum gfx_ctx_api
    GFX_CTX_OPENGL_ES_API,
    GFX_CTX_DIRECT3D8_API,
    GFX_CTX_DIRECT3D9_API,
-   GFX_CTX_OPENVG_API
 };
 
 typedef void (*gfx_ctx_proc_t)(void);
@@ -117,7 +116,6 @@ extern const gfx_ctx_driver_t gfx_ctx_drm_egl;
 extern const gfx_ctx_driver_t gfx_ctx_mali_fbdev;
 extern const gfx_ctx_driver_t gfx_ctx_vivante_fbdev;
 extern const gfx_ctx_driver_t gfx_ctx_wgl;
-extern const gfx_ctx_driver_t gfx_ctx_videocore;
 extern const gfx_ctx_driver_t gfx_ctx_null;
 
 const gfx_ctx_driver_t *gfx_ctx_find_driver(const char *ident); // Finds driver with ident. Does not initialize.

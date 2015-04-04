@@ -557,12 +557,6 @@ static bool gfx_ctx_set_video_mode(void *data,
    };
 #endif
 
-   static const EGLint egl_attribs_vg[] = {
-      EGL_ATTRIBS_BASE,
-      EGL_RENDERABLE_TYPE, EGL_OPENVG_BIT,
-      EGL_NONE,
-   };
-
    const EGLint *attrib_ptr;
    switch (g_api)
    {
@@ -576,9 +570,6 @@ static bool gfx_ctx_set_video_mode(void *data,
          else
 #endif
          attrib_ptr = egl_attribs_gles;
-         break;
-      case GFX_CTX_OPENVG_API:
-         attrib_ptr = egl_attribs_vg;
          break;
       default:
          attrib_ptr = NULL;
@@ -790,8 +781,6 @@ static bool gfx_ctx_bind_api(void *data, enum gfx_ctx_api api, unsigned major, u
             return false;
 #endif
          return eglBindAPI(EGL_OPENGL_ES_API);
-      case GFX_CTX_OPENVG_API:
-         return eglBindAPI(EGL_OPENVG_API);
       default:
          return false;
    }

@@ -89,9 +89,6 @@ static const video_driver_t *video_drivers[] = {
 #ifdef HAVE_XVIDEO
    &video_xvideo,
 #endif
-#ifdef HAVE_VG
-   &video_vg,
-#endif
 #ifdef HAVE_NULLVIDEO
    &video_null,
 #endif

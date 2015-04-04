@@ -218,12 +218,6 @@ ifeq ($(HAVE_OPENGL), 1)
       LIBS += $(GBM_LIBS) $(DRM_LIBS) $(EGL_LIBS)
    endif
 
-   ifeq ($(HAVE_VIDEOCORE), 1)
-      OBJ += gfx/context/vc_egl_ctx.o
-      DEFINES += $(EGL_CFLAGS)
-      LIBS += $(EGL_LIBS)
-   endif
-
    ifeq ($(HAVE_MALI_FBDEV), 1)
       OBJ += gfx/context/mali_fbdev_ctx.o
    endif
@@ -273,12 +267,6 @@ ifeq ($(HAVE_WAYLAND), 1)
  #OBJ += input/wayland.o
  DEFINES += $(WAYLAND_CFLAGS)
  LIBS += $(WAYLAND_LIBS)
-endif
-
-ifeq ($(HAVE_VG), 1)
-   OBJ += gfx/vg.o gfx/math/matrix_3x3.o
-   DEFINES += $(VG_CFLAGS)
-   LIBS += $(VG_LIBS)
 endif
 
 ifeq ($(HAVE_XVIDEO), 1)

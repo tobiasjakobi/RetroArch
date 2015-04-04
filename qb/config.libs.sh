@@ -20,17 +20,6 @@ fi
 
 add_define_make DYLIB_LIB "$DYLIB"
 
-[ -d /opt/vc/lib ] && add_library_dirs /opt/vc/lib
-check_lib VIDEOCORE -lbcm_host bcm_host_init "-lvcos -lvchiq_arm"
-
-if [ "$HAVE_VIDEOCORE" = 'yes' ]; then
-   [ -d /opt/vc/include ] && add_include_dirs /opt/vc/include
-   [ -d /opt/vc/include/interface/vcos/pthreads ] && add_include_dirs /opt/vc/include/interface/vcos/pthreads
-   [ -d /opt/vc/include/interface/vmcs_host/linux ] && add_include_dirs /opt/vc/include/interface/vmcs_host/linux
-   HAVE_GLES='auto'
-   EXTRA_GL_LIBS="-lEGL -lGLESv2 -lbcm_host -lvcos -lvchiq_arm"
-fi
-
 if [ "$HAVE_NEON" = "yes" ]; then
    CFLAGS="$CFLAGS -mfpu=neon -marm"
    CXXFLAGS="$CXXFLAGS -mfpu=neon -marm"
@@ -222,15 +211,7 @@ if [ "$HAVE_EGL" = "yes" ]; then
          [ "$HAVE_GLES" = "no" ] && HAVE_GLES=auto check_lib GLES "-lGLESv2 $EXTRA_GL_LIBS" && add_define_make GLES_LIBS "-lGLESv2 $EXTRA_GL_LIBS"
       fi
    fi
-   if [ "$HAVE_VG" != "no" ]; then
-      check_pkgconf VG vg
-      if [ "$HAVE_VG" = "no" ]; then
-         HAVE_VG=auto check_lib VG "-lOpenVG $EXTRA_GL_LIBS"
-         [ "$HAVE_VG" = "yes" ] && VG_LIBS=-lOpenVG
-      fi
-   fi
 else
-   HAVE_VG=no
    HAVE_GLES=no
 fi
 
@@ -284,6 +265,6 @@ add_define_make OS "$OS"
 
 # Creates config.mk and config.h.
 add_define_make GLOBAL_CONFIG_DIR "$GLOBAL_CONFIG_DIR"
-VARS="RGUI ALSA OSS OSS_BSD OSS_LIB AL ROAR JACK PULSE SDL SDL2 OPENGL OMAP GLES GLES3 VG EGL KMS EXYNOS GBM DRM DYLIB GETOPT_LONG THREADS CG LIBXML2 ZLIB DYNAMIC FFMPEG AVCODEC AVFORMAT AVUTIL SWSCALE FREETYPE XKBCOMMON XVIDEO X11 XEXT XF86VM XINERAMA WAYLAND MALI_FBDEV NETPLAY NETWORK_CMD STDIN_CMD COMMAND SOCKET_LEGACY FBO STRL STRCASESTR MMAP PYTHON FFMPEG_ALLOC_CONTEXT3 FFMPEG_AVCODEC_OPEN2 FFMPEG_AVIO_OPEN FFMPEG_AVFORMAT_WRITE_HEADER FFMPEG_AVFORMAT_NEW_STREAM FFMPEG_AVCODEC_ENCODE_AUDIO2 FFMPEG_AVCODEC_ENCODE_VIDEO2 BSV_MOVIE VIDEOCORE NEON FLOATHARD FLOATSOFTFP UDEV V4L2 AV_CHANNEL_LAYOUT"
+VARS="RGUI ALSA OSS OSS_BSD OSS_LIB AL ROAR JACK PULSE SDL SDL2 OPENGL OMAP GLES GLES3 EGL KMS EXYNOS GBM DRM DYLIB GETOPT_LONG THREADS CG LIBXML2 ZLIB DYNAMIC FFMPEG AVCODEC AVFORMAT AVUTIL SWSCALE FREETYPE XKBCOMMON XVIDEO X11 XEXT XF86VM XINERAMA WAYLAND MALI_FBDEV NETPLAY NETWORK_CMD STDIN_CMD COMMAND SOCKET_LEGACY FBO STRL STRCASESTR MMAP PYTHON FFMPEG_ALLOC_CONTEXT3 FFMPEG_AVCODEC_OPEN2 FFMPEG_AVIO_OPEN FFMPEG_AVFORMAT_WRITE_HEADER FFMPEG_AVFORMAT_NEW_STREAM FFMPEG_AVCODEC_ENCODE_AUDIO2 FFMPEG_AVCODEC_ENCODE_VIDEO2 BSV_MOVIE NEON FLOATHARD FLOATSOFTFP UDEV V4L2 AV_CHANNEL_LAYOUT"
 create_config_make config.mk $VARS
 create_config_header config.h $VARS

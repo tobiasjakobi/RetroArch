@@ -44,12 +44,6 @@ static const bool _udev_supp = true;
 static const bool _udev_supp = false;
 #endif
 
-#ifdef HAVE_VG
-static const bool _vg_supp = true;
-#else
-static const bool _vg_supp = false;
-#endif
-
 #ifdef HAVE_EGL
 static const bool _egl_supp = true;
 #else
