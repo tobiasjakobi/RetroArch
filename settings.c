@@ -76,8 +76,6 @@ const char *config_get_default_video(void)
          return "xvideo";
       case VIDEO_SDL:
          return "sdl";
-      case VIDEO_EXT:
-         return "ext";
       case VIDEO_NULL:
          return "null";
       case VIDEO_OMAP:
