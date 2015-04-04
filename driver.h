@@ -487,7 +487,6 @@ bool driver_update_system_av_info(const struct retro_system_av_info *info);
 extern driver_t driver;
 
 //////////////////////////////////////////////// Backends
-extern const audio_driver_t audio_oss;
 extern const audio_driver_t audio_alsa;
 extern const audio_driver_t audio_alsathread;
 extern const audio_driver_t audio_openal;

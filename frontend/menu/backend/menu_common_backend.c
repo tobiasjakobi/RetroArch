@@ -801,10 +801,6 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                " \n"
                "ALSA wants a PCM device."
 #endif
-#ifdef HAVE_OSS
-               " \n"
-               "OSS wants a path (e.g. /dev/dsp)."
-#endif
 #ifdef HAVE_JACK
                " \n"
                "JACK wants portnames (e.g. system:playback1\n"

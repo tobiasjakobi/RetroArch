@@ -27,7 +27,6 @@ HAVE_LIBXML2=auto       # Enable libxml2 support
 HAVE_ZLIB=auto          # Enable zlib support (ZIP extract, PNG decoding/encoding)
 HAVE_FBO=auto           # Enable render-to-texture (FBO) support
 HAVE_ALSA=auto          # Enable ALSA support
-HAVE_OSS=auto           # Enable OSS support
 HAVE_AL=auto            # Enable OpenAL support
 HAVE_JACK=auto          # Enable JACK support
 HAVE_PULSE=auto         # Enable PulseAudio support

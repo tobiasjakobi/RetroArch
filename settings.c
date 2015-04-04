@@ -37,8 +37,6 @@ const char *config_get_default_audio(void)
 {
    switch (AUDIO_DEFAULT_DRIVER)
    {
-      case AUDIO_OSS:
-         return "oss";
       case AUDIO_ALSA:
          return "alsa";
       case AUDIO_ALSATHREAD:

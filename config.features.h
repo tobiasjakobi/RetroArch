@@ -74,12 +74,6 @@ static const bool _alsa_supp = true;
 static const bool _alsa_supp = false;
 #endif
 
-#if defined(HAVE_OSS) || defined(HAVE_OSS_BSD)
-static const bool _oss_supp = true;
-#else
-static const bool _oss_supp = false;
-#endif
-
 #ifdef HAVE_AL
 static const bool _al_supp = true;
 #else
