@@ -9,8 +9,6 @@ ECHOBUF="Checking operating system"
 case "$(uname)" in
 	'Linux') OS='Linux';;
 	*'BSD') OS='BSD';;
-	'CYGWIN'*) OS='Cygwin';;
-	'Haiku') OS='Haiku';;
 	*) OS="Linux";;
 esac
 echo "$ECHOBUF ... $OS"

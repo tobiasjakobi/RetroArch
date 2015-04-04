@@ -12,8 +12,6 @@ add_define_make NOUNUSED_VARIABLE "$HAVE_NOUNUSED_VARIABLE"
 
 if [ "$OS" = 'BSD' ]; then
    DYLIB=-lc;
-elif [ "$OS" = 'Haiku' ]; then
-   DYLIB="";
 else
    DYLIB=-ldl;
 fi

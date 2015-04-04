@@ -66,12 +66,7 @@ RETROLAUNCH_OBJ = tools/retrolaunch/main.o \
 
 HEADERS = $(wildcard */*/*.h) $(wildcard */*.h) $(wildcard *.h)
 
-ifeq ($(findstring Haiku,$(OS)),)
-   LIBS = -lm
-endif
-
 DEFINES = -DHAVE_CONFIG_H -DRARCH_INTERNAL -DHAVE_CC_RESAMPLER -DHAVE_OVERLAY
-
 
 ifeq ($(GLOBAL_CONFIG_DIR),)
    GLOBAL_CONFIG_DIR = /etc
@@ -108,9 +103,7 @@ endif
 
 ifeq ($(HAVE_THREADS), 1)
    OBJ += autosave.o thread.o gfx/video_thread_wrapper.o audio/thread_wrapper.o
-   ifeq ($(findstring Haiku,$(OS)),)
-      LIBS += -lpthread
-   endif
+   LIBS += -lpthread
 endif
 
    OBJ += movie.o
