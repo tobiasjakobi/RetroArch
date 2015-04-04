@@ -51,8 +51,6 @@ const char *config_get_default_audio(void)
          return "sdl";
       case AUDIO_PULSE:
          return "pulse";
-      case AUDIO_EXT:
-         return "ext";
       case AUDIO_NULL:
          return "null";
       default:
