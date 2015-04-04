@@ -321,19 +321,14 @@ static uint64_t x_input_get_capabilities(void *data)
 }
 
 const input_driver_t input_x = {
-   x_input_init,
-   x_input_poll,
-   x_input_state,
-   x_bind_button_pressed,
-   x_input_free,
-   NULL,
-   NULL,
-   NULL,
-   x_input_get_capabilities,
-   NULL,
-   "x",
-   x_grab_mouse,
-   x_set_rumble,
-   x_get_joypad_driver,
+   .init = x_input_init,
+   .poll = x_input_poll,
+   .input_state = x_input_state,
+   .key_pressed = x_bind_button_pressed,
+   .free = x_input_free,
+   .get_capabilities = x_input_get_capabilities,
+   .ident = "x",
+   .grab_mouse = x_grab_mouse,
+   .set_rumble = x_set_rumble,
+   .get_joypad_driver = x_get_joypad_driver
 };
-

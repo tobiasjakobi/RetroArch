@@ -60,21 +60,12 @@ static uint64_t nullinput_get_capabilities(void *data)
    return caps;
 }
 
-static bool nullinput_set_sensor_state(void *data, unsigned port, enum retro_sensor_action action, unsigned event_rate)
-{
-   return false;
-}
-
 const input_driver_t input_null = {
-   nullinput_input_init,
-   nullinput_input_poll,
-   nullinput_input_state,
-   nullinput_input_key_pressed,
-   nullinput_input_free_input,
-   NULL,
-   nullinput_set_sensor_state,
-   NULL,
-   nullinput_get_capabilities,
-   NULL,
-   "null",
+   .init = nullinput_input_init,
+   .poll = nullinput_input_poll,
+   .input_state = nullinput_input_state,
+   .key_pressed = nullinput_input_key_pressed,
+   .free = nullinput_input_free_input,
+   .get_capabilities = nullinput_get_capabilities,
+   .ident = "null"
 };

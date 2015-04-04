@@ -820,19 +820,14 @@ static const rarch_joypad_driver_t *udev_input_get_joypad_driver(void *data)
 }
 
 const input_driver_t input_udev = {
-   udev_input_init,
-   udev_input_poll,
-   udev_input_state,
-   udev_bind_button_pressed,
-   udev_input_free,
-   NULL,
-   NULL,
-   NULL,
-   udev_input_get_capabilities,
-   NULL,
-   "udev",
-   udev_input_grab_mouse,
-   udev_input_set_rumble,
-   udev_input_get_joypad_driver,
+   .init = udev_input_init,
+   .poll = udev_input_poll,
+   .input_state = udev_input_state,
+   .key_pressed = udev_bind_button_pressed,
+   .free = udev_input_free,
+   .get_capabilities = udev_input_get_capabilities,
+   .ident = "udev",
+   .grab_mouse = udev_input_grab_mouse,
+   .set_rumble = udev_input_set_rumble,
+   .get_joypad_driver = udev_input_get_joypad_driver
 };
-

@@ -328,24 +328,18 @@ static uint64_t sdl_get_capabilities(void *data)
 }
 
 const input_driver_t input_sdl = {
-   sdl_input_init,
-   sdl_input_poll,
-   sdl_input_state,
-   sdl_bind_button_pressed,
-   sdl_input_free,
-   NULL,
-   NULL,
-   NULL,
-   sdl_get_capabilities,
-   NULL,
+   .init = sdl_input_init,
+   .poll = sdl_input_poll,
+   .input_state = sdl_input_state,
+   .key_pressed = sdl_bind_button_pressed,
+   .free = sdl_input_free,
+   .get_capabilities = sdl_get_capabilities,
 #ifdef HAVE_SDL2
-   "sdl2",
-   sdl_grab_mouse,
+   .ident = "sdl2",
+   .grab = mouse sdl_grab_mouse,
 #else
-   "sdl",
-   NULL,
+   .ident = "sdl",
 #endif
-   sdl_set_rumble,
-   sdl_get_joypad_driver,
+   .set_rumble = sdl_set_rumble,
+   .get_joypad_driver = sdl_get_joypad_driver
 };
-

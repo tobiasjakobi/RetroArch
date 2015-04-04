@@ -238,18 +238,13 @@ static uint64_t linuxraw_get_capabilities(void *data)
 }
 
 const input_driver_t input_linuxraw = {
-   linuxraw_input_init,
-   linuxraw_input_poll,
-   linuxraw_input_state,
-   linuxraw_bind_button_pressed,
-   linuxraw_input_free,
-   NULL,
-   NULL,
-   NULL,
-   linuxraw_get_capabilities,
-   NULL,
-   "linuxraw",
-   NULL,
-   linuxraw_set_rumble,
-   linuxraw_get_joypad_driver,
+   .init = linuxraw_input_init,
+   .poll = linuxraw_input_poll,
+   .input_state = linuxraw_input_state,
+   .key_pressed = linuxraw_bind_button_pressed,
+   .free = linuxraw_input_free,
+   .get_capabilities = linuxraw_get_capabilities,
+   .ident = "linuxraw",
+   .set_rumble = linuxraw_set_rumble,
+   .get_joypad_driver = linuxraw_get_joypad_driver
 };

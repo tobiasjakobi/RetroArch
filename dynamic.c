@@ -780,15 +780,6 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          break;
       }
 
-      case RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE:
-      {
-         RARCH_LOG("Environ GET_SENSOR_INTERFACE.\n");
-         struct retro_sensor_interface *iface = (struct retro_sensor_interface*)data;
-         iface->set_sensor_state = driver_set_sensor_state;
-         iface->get_sensor_input = driver_sensor_get_input;
-         break;
-      }
-
       case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
       {
          RARCH_LOG("Environ GET_LOG_INTERFACE.\n");

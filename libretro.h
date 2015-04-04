@@ -538,13 +538,6 @@ enum retro_mod
                                            // Example bitmask: caps = (1 << RETRO_DEVICE_JOYPAD) | (1 << RETRO_DEVICE_ANALOG).
                                            // Should only be called in retro_run().
                                            //
-#define RETRO_ENVIRONMENT_GET_SENSOR_INTERFACE (25 | RETRO_ENVIRONMENT_EXPERIMENTAL)
-                                           // struct retro_sensor_interface * --
-                                           // Gets access to the sensor interface.
-                                           // The purpose of this interface is to allow
-                                           // setting state related to sensors such as polling rate, enabling/disable it entirely, etc.
-                                           // Reading sensor state is done via the normal input_state_callback API.
-                                           //
 #define RETRO_ENVIRONMENT_GET_LOG_INTERFACE 27
                                            // struct retro_log_callback * --
                                            // Gets an interface for logging. This is useful for logging in a cross-platform way
@@ -946,29 +939,6 @@ struct retro_perf_callback
    retro_perf_start_t            perf_start;
    retro_perf_stop_t             perf_stop;
    retro_perf_log_t              perf_log;
-};
-
-// FIXME: Document the sensor API and work out behavior.
-// It will be marked as experimental until then.
-enum retro_sensor_action
-{
-   RETRO_SENSOR_ACCELEROMETER_ENABLE = 0,
-   RETRO_SENSOR_ACCELEROMETER_DISABLE,
-
-   RETRO_SENSOR_DUMMY = INT_MAX
-};
-
-// Id values for SENSOR types.
-#define RETRO_SENSOR_ACCELEROMETER_X 0
-#define RETRO_SENSOR_ACCELEROMETER_Y 1
-#define RETRO_SENSOR_ACCELEROMETER_Z 2
-
-typedef bool (*retro_set_sensor_state_t)(unsigned port, enum retro_sensor_action action, unsigned rate);
-typedef float (*retro_sensor_get_input_t)(unsigned port, unsigned id);
-struct retro_sensor_interface
-{
-   retro_set_sensor_state_t set_sensor_state;
-   retro_sensor_get_input_t get_sensor_input;
 };
 ////
 
