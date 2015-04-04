@@ -468,10 +468,6 @@ void rarch_deinit_filter(void);
 void rarch_init_filter(enum retro_pixel_format);
 #endif
 
-#ifdef HAVE_FILTERS_BUILTIN
-unsigned dspfilter_get_last_idx(void);
-#endif
-
 const char *rarch_dspfilter_get_name(void *data);
 
 #ifdef HAVE_MENU
@@ -514,23 +510,6 @@ extern const menu_ctx_driver_t menu_ctx_rmenu;
 extern const menu_ctx_driver_t menu_ctx_rgui;
 
 extern const menu_ctx_driver_backend_t menu_ctx_backend_common;
-
-#ifdef HAVE_FILTERS_BUILTIN
-extern const struct softfilter_implementation *blargg_ntsc_snes_rf_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *blargg_ntsc_snes_composite_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *blargg_ntsc_snes_svideo_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *blargg_ntsc_snes_rgb_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *lq2x_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *phosphor2x_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *twoxbr_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *epx_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *twoxsai_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *supereagle_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *supertwoxsai_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *twoxbr_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *darken_get_implementation(softfilter_simd_mask_t simd);
-extern const struct softfilter_implementation *scale2x_get_implementation(softfilter_simd_mask_t simd);
-#endif
 
 #include "driver_funcs.h"
 

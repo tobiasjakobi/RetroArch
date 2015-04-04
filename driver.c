@@ -768,10 +768,9 @@ void uninit_audio(void)
 void rarch_init_filter(enum retro_pixel_format colfmt)
 {
    rarch_deinit_filter();
-#ifndef HAVE_FILTERS_BUILTIN
+
    if (!*g_settings.video.filter_path)
       return;
-#endif
 
    // Deprecated format. Gets pre-converted.
    if (colfmt == RETRO_PIXEL_FORMAT_0RGB1555)
@@ -790,9 +789,7 @@ void rarch_init_filter(enum retro_pixel_format colfmt)
    unsigned pow2_y  = 0;
    unsigned maxsize = 0;
 
-#ifndef HAVE_FILTERS_BUILTIN
    RARCH_LOG("Loading softfilter from \"%s\"\n", g_settings.video.filter_path);
-#endif
    g_extern.filter.filter = rarch_softfilter_new(g_settings.video.filter_path,
          RARCH_SOFTFILTER_THREADS_AUTO, colfmt, width, height);
 

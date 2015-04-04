@@ -66,7 +66,7 @@ static void filter_thread_loop(void *data)
 
 struct rarch_softfilter
 {
-#if !defined(HAVE_FILTERS_BUILTIN) && defined(HAVE_DYLIB)
+#if defined(HAVE_DYLIB)
    dylib_t lib;
 #endif
 
@@ -84,62 +84,13 @@ struct rarch_softfilter
 #endif
 };
 
-#ifdef HAVE_FILTERS_BUILTIN
-static const struct softfilter_implementation *(*softfilter_drivers[]) (softfilter_simd_mask_t) =
-{
-   NULL,
-   &blargg_ntsc_snes_rf_get_implementation,
-   &blargg_ntsc_snes_composite_get_implementation,
-   &blargg_ntsc_snes_svideo_get_implementation,
-   &blargg_ntsc_snes_rgb_get_implementation,
-   &lq2x_get_implementation,
-   &phosphor2x_get_implementation,
-   &twoxbr_get_implementation,
-   &darken_get_implementation,
-   &twoxsai_get_implementation,
-   &supertwoxsai_get_implementation,
-   &supereagle_get_implementation,
-   &epx_get_implementation,
-   &scale2x_get_implementation,
-};
-
-unsigned softfilter_get_last_idx(void)
-{
-   return sizeof(softfilter_drivers) / sizeof(softfilter_drivers[0]);
-}
-
-static softfilter_get_implementation_t softfilter_get_implementation_from_idx(unsigned i)
-{
-   if (i < softfilter_get_last_idx())
-      return softfilter_drivers[i];
-   return NULL;
-}
-
-#endif
-
 const char *rarch_softfilter_get_name(void *data)
 {
-   (void)data;
-#ifdef HAVE_FILTERS_BUILTIN
-   unsigned cpu_features;
-   const struct softfilter_implementation *impl;
-   softfilter_get_implementation_t cb = (softfilter_get_implementation_t)softfilter_get_implementation_from_idx(g_settings.video.filter_idx);
-   if (cb)
-   {
-      cpu_features = rarch_get_cpu_features();
-      impl = (const struct softfilter_implementation *)cb(cpu_features);
-      if (impl)
-         return impl->ident;
-   }
-
-   return NULL;
-#else
    rarch_softfilter_t *filt = (rarch_softfilter_t*)data;
    if (!filt || !filt->impl)
       return NULL;
 
    return filt->impl->ident;
-#endif
 }
 
 rarch_softfilter_t *rarch_softfilter_new(const char *filter_path,
@@ -150,19 +101,12 @@ rarch_softfilter_t *rarch_softfilter_new(const char *filter_path,
    unsigned cpu_features, output_fmts, input_fmts, input_fmt;
    (void)filter_path;
 
-#if defined(HAVE_FILTERS_BUILTIN)
-   if (!g_settings.video.filter_idx)
-      return NULL;
-#endif
-
    rarch_softfilter_t *filt = (rarch_softfilter_t*)calloc(1, sizeof(*filt));
    if (!filt)
       return NULL;
 
    softfilter_get_implementation_t cb = NULL;
-#if defined(HAVE_FILTERS_BUILTIN)
-   cb = (softfilter_get_implementation_t)softfilter_get_implementation_from_idx(g_settings.video.filter_idx);
-#elif defined(HAVE_DYLIB)
+#if defined(HAVE_DYLIB)
    filt->lib = dylib_load(filter_path);
    if (!filt->lib)
       goto error;
@@ -292,7 +236,7 @@ void rarch_softfilter_free(rarch_softfilter_t *filt)
    free(filt->packets);
    if (filt->impl && filt->impl_data)
       filt->impl->destroy(filt->impl_data);
-#if !defined(HAVE_FILTERS_BUILTIN) && defined(HAVE_DYLIB)
+#if defined(HAVE_DYLIB)
    if (filt->lib)
       dylib_close(filt->lib);
 #endif

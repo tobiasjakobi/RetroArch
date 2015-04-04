@@ -579,15 +579,10 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_SOFTFILTER:
-#ifdef HAVE_FILTERS_BUILTIN
-         snprintf(msg, sizeof(msg),
-               " -- CPU-based video filter.");
-#else
          snprintf(msg, sizeof(msg),
                " -- CPU-based video filter.\n"
                " \n"
                "Path to a dynamic library.");
-#endif
          break;
       case MENU_SETTINGS_BLOCK_SRAM_OVERWRITE:
          if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "block_sram_overwrite")))
@@ -758,10 +753,8 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                " -- Audio DSP plugin.\n"
                " Processes audio before it's sent to \n"
                "the driver."
-#ifndef HAVE_FILTERS_BUILTIN
                " \n"
                "Path to a dynamic library."
-#endif
                );
          break;
       case MENU_SETTINGS_TOGGLE_FULLSCREEN:
@@ -3223,32 +3216,15 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
          case MENU_SETTINGS_VIDEO_SOFTFILTER:
             switch (action)
             {
-#ifdef HAVE_FILTERS_BUILTIN
-               case MENU_ACTION_LEFT:
-                  if (g_settings.video.filter_idx > 0)
-                     g_settings.video.filter_idx--;
-                  break;
-               case MENU_ACTION_RIGHT:
-                  if ((g_settings.video.filter_idx + 1) != softfilter_get_last_idx())
-                     g_settings.video.filter_idx++;
-                  break;
-#endif
                case MENU_ACTION_OK:
-#ifdef HAVE_FILTERS_BUILTIN
-                  driver.menu_data_own = true;
-                  rarch_main_command(RARCH_CMD_REINIT);
-#elif defined(HAVE_DYLIB)
+#if defined(HAVE_DYLIB)
                   file_list_push(driver.menu->menu_stack, g_settings.video.filter_dir, "", id, driver.menu->selection_ptr);
                   menu_clear_navigation(driver.menu);
 #endif
                   driver.menu->need_refresh = true;
                   break;
                case MENU_ACTION_START:
-#if defined(HAVE_FILTERS_BUILTIN)
-                  g_settings.video.filter_idx = 0;
-#else
                   strlcpy(g_settings.video.filter_path, "", sizeof(g_settings.video.filter_path));
-#endif
                   driver.menu_data_own = true;
                   rarch_main_command(RARCH_CMD_REINIT);
                   break;

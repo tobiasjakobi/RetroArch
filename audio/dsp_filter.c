@@ -221,45 +221,7 @@ static bool create_filter_graph(rarch_dsp_filter_t *dsp, float sample_rate)
    return true;
 }
 
-#if defined(HAVE_FILTERS_BUILTIN)
-extern const struct dspfilter_implementation *panning_dspfilter_get_implementation(dspfilter_simd_mask_t mask);
-extern const struct dspfilter_implementation *iir_dspfilter_get_implementation(dspfilter_simd_mask_t mask);
-extern const struct dspfilter_implementation *echo_dspfilter_get_implementation(dspfilter_simd_mask_t mask);
-extern const struct dspfilter_implementation *phaser_dspfilter_get_implementation(dspfilter_simd_mask_t mask);
-extern const struct dspfilter_implementation *wahwah_dspfilter_get_implementation(dspfilter_simd_mask_t mask);
-extern const struct dspfilter_implementation *eq_dspfilter_get_implementation(dspfilter_simd_mask_t mask);
-extern const struct dspfilter_implementation *chorus_dspfilter_get_implementation(dspfilter_simd_mask_t mask);
-
-static const dspfilter_get_implementation_t dsp_plugs_builtin[] = {
-   panning_dspfilter_get_implementation,
-   iir_dspfilter_get_implementation,
-   echo_dspfilter_get_implementation,
-   phaser_dspfilter_get_implementation,
-   wahwah_dspfilter_get_implementation,
-   eq_dspfilter_get_implementation,
-   chorus_dspfilter_get_implementation,
-};
-
-static bool append_plugs(rarch_dsp_filter_t *dsp)
-{
-   unsigned i;
-   dspfilter_simd_mask_t mask = rarch_get_cpu_features();
-
-   dsp->plugs = (struct rarch_dsp_plug*)calloc(ARRAY_SIZE(dsp_plugs_builtin), sizeof(*dsp->plugs));
-   if (!dsp->plugs)
-      return false;
-   dsp->num_plugs = ARRAY_SIZE(dsp_plugs_builtin);
-
-   for (i = 0; i < ARRAY_SIZE(dsp_plugs_builtin); i++)
-   {
-      dsp->plugs[i].impl = dsp_plugs_builtin[i](mask);
-      if (!dsp->plugs[i].impl)
-         return false;
-   }
-
-   return true;
-}
-#elif defined(HAVE_DYLIB)
+#if defined(HAVE_DYLIB)
 static bool append_plugs(rarch_dsp_filter_t *dsp, struct string_list *list)
 {
    unsigned i;
@@ -312,7 +274,7 @@ static bool append_plugs(rarch_dsp_filter_t *dsp, struct string_list *list)
 
 rarch_dsp_filter_t *rarch_dsp_filter_new(const char *filter_config, float sample_rate)
 {
-#if !defined(HAVE_FILTERS_BUILTIN) && defined(HAVE_DYLIB)
+#if defined(HAVE_DYLIB)
    char basedir[PATH_MAX];
 #endif
    struct string_list *plugs = NULL;
@@ -328,10 +290,7 @@ rarch_dsp_filter_t *rarch_dsp_filter_new(const char *filter_config, float sample
       goto error;
    }
 
-#if defined(HAVE_FILTERS_BUILTIN)
-   if (!append_plugs(dsp))
-      goto error;
-#elif defined(HAVE_DYLIB)
+#if defined(HAVE_DYLIB)
    fill_pathname_basedir(basedir, filter_config, sizeof(basedir));
 
    plugs = dir_list_new(basedir, EXT_EXECUTABLES, false);
