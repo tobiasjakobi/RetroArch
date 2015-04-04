@@ -412,8 +412,6 @@ static void correct_errors( snes_ntsc_rgb_t color, snes_ntsc_rgb_t* out );
 #ifndef restrict
 	#if defined (__GNUC__)
 		#define restrict __restrict__
-	#elif defined (_MSC_VER) && _MSC_VER > 1300
-		#define restrict __restrict
 	#else
 		/* no support for restricted pointers */
 		#define restrict

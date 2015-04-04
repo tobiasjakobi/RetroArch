@@ -32,14 +32,7 @@ extern "C" {
 #endif
 
 #ifndef __cplusplus
-#if defined(_MSC_VER)
-/* Hack applied for MSVC when compiling in C89 mode as it isn't C99 compliant. */
-#define bool unsigned char
-#define true 1
-#define false 0
-#else
 #include <stdbool.h>
-#endif
 #endif
 
 // Used for checking API/ABI mismatches that can break libretro implementations.

@@ -13,11 +13,6 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef _MSC_VER
-#pragma comment(lib, "cg")
-#pragma comment(lib, "cggl")
-#endif
-
 #include "shader_cg.h"
 #include "shader_common.h"
 #include <Cg/cg.h>
