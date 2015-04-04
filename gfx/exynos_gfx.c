@@ -1575,19 +1575,14 @@ static void exynos_show_mouse(void *data, bool state) {
 }
 
 static const video_poke_interface_t exynos_poke_interface = {
-  NULL, /* set_filtering */
-#ifdef HAVE_FBO
-  NULL, /* get_current_framebuffer */
-  NULL, /* get_proc_address */
-#endif
-  exynos_set_aspect_ratio,
-  exynos_apply_state_changes,
+  .set_aspect_ratio = exynos_set_aspect_ratio,
+  .apply_state_changes = exynos_apply_state_changes,
 #ifdef HAVE_MENU
-  exynos_set_texture_frame,
-  exynos_set_texture_enable,
+  .set_texture_frame = exynos_set_texture_frame,
+  .set_texture_enable = exynos_set_texture_enable,
 #endif
-  exynos_set_osd_msg,
-  exynos_show_mouse
+  .set_osd_msg = exynos_set_osd_msg,
+  .show_mouse = exynos_show_mouse
 };
 
 static void exynos_gfx_get_poke_interface(void *data, const video_poke_interface_t **iface) {
@@ -1596,20 +1591,14 @@ static void exynos_gfx_get_poke_interface(void *data, const video_poke_interface
 }
 
 const video_driver_t video_exynos = {
-  exynos_gfx_init,
-  exynos_gfx_frame,
-  exynos_gfx_set_nonblock_state,
-  exynos_gfx_alive,
-  exynos_gfx_focus,
-  NULL, /* set_shader */
-  exynos_gfx_free,
-  "exynos",
-  exynos_gfx_set_rotation,
-  exynos_gfx_viewport_info,
-  NULL, /* read_viewport */
-
-#ifdef HAVE_OVERLAY
-  NULL, /* overlay_interface */
-#endif
-  exynos_gfx_get_poke_interface
+  .init = exynos_gfx_init,
+  .frame = exynos_gfx_frame,
+  .set_nonblock_state = exynos_gfx_set_nonblock_state,
+  .alive = exynos_gfx_alive,
+  .focus = exynos_gfx_focus,
+  .free = exynos_gfx_free,
+  .ident = "exynos",
+  .set_rotation = exynos_gfx_set_rotation,
+  .viewport_info = exynos_gfx_viewport_info,
+  .poke_interface = exynos_gfx_get_poke_interface
 };
