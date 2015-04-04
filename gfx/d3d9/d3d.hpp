@@ -152,7 +152,5 @@ typedef struct d3d_video
       void *chain;
 } d3d_video_t;
 
-extern "C" bool dinput_handle_message(void *dinput, UINT message, WPARAM wParam, LPARAM lParam);
-
 #endif
 

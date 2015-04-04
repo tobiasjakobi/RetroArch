@@ -80,9 +80,7 @@ typedef struct
 #define ERROR_DEVICE_NOT_CONNECTED 1167
 #endif
 
-#ifndef HAVE_DINPUT
 #error Cannot compile xinput without dinput.
-#endif
 
 // Due to 360 pads showing up under both XI and DI, and since we are going
 // to have to pass through unhandled joypad numbers to DI, a slightly ugly
@@ -134,11 +132,8 @@ const char* winxinput_joypad_name (unsigned pad)
 {
    int xplayer = pad_index_to_xplayer_index(pad);
 
-   if (xplayer < 0)
-      return dinput_joypad.name(pad);
-   else
-      // TODO: Different name if disconnected?
-      return XBOX_CONTROLLER_NAMES[xplayer];
+   // TODO: Different name if disconnected?
+   return XBOX_CONTROLLER_NAMES[xplayer];
 }
 
 static bool winxinput_joypad_init(void)
@@ -220,14 +215,6 @@ static bool winxinput_joypad_init(void)
 
    g_xinput_block_pads = true;
 
-   // We're going to have to be buddies with dinput if we want to be able
-   // to use XI and non-XI controllers together.
-   if (!dinput_joypad.init())
-   {
-      g_xinput_block_pads = false;
-      return false;
-   }
-
    for (autoconf_pad = 0; autoconf_pad < MAX_PLAYERS; autoconf_pad++)
    {
       if (pad_index_to_xplayer_index(autoconf_pad) > -1)
@@ -245,8 +232,6 @@ static bool winxinput_joypad_query_pad(unsigned pad)
    int xplayer = pad_index_to_xplayer_index(pad);
    if (xplayer > -1)
       return g_winxinput_states[xplayer].connected;
-   else
-      return dinput_joypad.query_pad(pad);
 }
 
 static void winxinput_joypad_destroy(void)
@@ -260,7 +245,6 @@ static void winxinput_joypad_destroy(void)
    g_XInputGetStateEx = NULL;
    g_XInputSetState   = NULL;
 
-   dinput_joypad.destroy();
    g_xinput_block_pads = false;
 }
 
@@ -287,8 +271,6 @@ static bool winxinput_joypad_button (unsigned port_num, uint16_t joykey)
       return false;
 
    int xplayer = pad_index_to_xplayer_index(port_num);
-   if (xplayer == -1)
-      return dinput_joypad.button(port_num, joykey);
 
    if (!(g_winxinput_states[xplayer].connected))
       return false;
@@ -325,9 +307,6 @@ static int16_t winxinput_joypad_axis (unsigned port_num, uint32_t joyaxis)
       return 0;
 
    int xplayer = pad_index_to_xplayer_index(port_num);
-
-   if (xplayer == -1)
-      return dinput_joypad.axis(port_num, joyaxis);
 
    if (!(g_winxinput_states[xplayer].connected))
       return 0;
@@ -381,8 +360,6 @@ static void winxinput_joypad_poll(void)
       if (g_winxinput_states[i].connected)
          if (g_XInputGetStateEx(i, &(g_winxinput_states[i].xstate)) == ERROR_DEVICE_NOT_CONNECTED)
             g_winxinput_states[i].connected = false;
-
-   dinput_joypad.poll();
 }
 
 static bool winxinput_joypad_rumble(unsigned pad, enum retro_rumble_effect effect, uint16_t strength)
@@ -390,10 +367,7 @@ static bool winxinput_joypad_rumble(unsigned pad, enum retro_rumble_effect effec
    int xplayer = pad_index_to_xplayer_index(pad);
    if (xplayer == -1)
    {
-      if (dinput_joypad.set_rumble)
-         return dinput_joypad.set_rumble(pad, effect, strength);
-      else
-         return false;
+      return false;
    }
 
 

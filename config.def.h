@@ -56,7 +56,6 @@ enum
    INPUT_SDL,
    INPUT_X,
    INPUT_WAYLAND,
-   INPUT_DINPUT,
    INPUT_XINPUT,
    INPUT_UDEV,
    INPUT_LINUXRAW,
@@ -100,8 +99,6 @@ enum
 
 #if defined(HAVE_XINPUT2)
 #define INPUT_DEFAULT_DRIVER INPUT_XINPUT
-#elif defined(_WIN32)
-#define INPUT_DEFAULT_DRIVER INPUT_DINPUT
 #elif defined(HAVE_UDEV)
 #define INPUT_DEFAULT_DRIVER INPUT_UDEV
 #elif defined(__linux__)

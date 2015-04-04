@@ -90,7 +90,6 @@ bool input_joypad_hat_raw(const rarch_joypad_driver_t *driver,
 
 const char *input_joypad_name(const rarch_joypad_driver_t *driver, unsigned joypad);
 
-extern const rarch_joypad_driver_t dinput_joypad;
 extern const rarch_joypad_driver_t linuxraw_joypad;
 extern const rarch_joypad_driver_t udev_joypad;
 extern const rarch_joypad_driver_t winxinput_joypad; // Named as such to avoid confusion with xb1/360 port code
@@ -105,7 +104,6 @@ struct rarch_key_map
 extern const struct rarch_key_map rarch_key_map_x11[];
 extern const struct rarch_key_map rarch_key_map_sdl[];
 extern const struct rarch_key_map rarch_key_map_sdl2[];
-extern const struct rarch_key_map rarch_key_map_dinput[];
 extern const struct rarch_key_map rarch_key_map_linux[];
 
 void input_init_keyboard_lut(const struct rarch_key_map *map);

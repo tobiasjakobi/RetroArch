@@ -29,7 +29,6 @@
 
 static d3d_video_t *curD3D = NULL;
 static bool d3d_quit = false;
-static void *dinput;
 
 extern bool d3d_restore(d3d_video_t *data);
 
@@ -82,8 +81,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message,
 				d3d_resize(driver.video_data, new_width, new_height);
 			return 0;
     }
-    if (dinput_handle_message(dinput, message, wParam, lParam))
-        return 0;
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
 #endif
@@ -211,9 +208,6 @@ static void gfx_ctx_d3d_destroy(void *data)
 static void gfx_ctx_d3d_input_driver(void *data, const input_driver_t **input, void **input_data)
 {
    (void)data;
-   dinput = input_dinput.init();
-   *input = dinput ? &input_dinput : NULL;
-   *input_data = dinput;
 }
 
 static void gfx_ctx_d3d_get_video_size(void *data, unsigned *width, unsigned *height)

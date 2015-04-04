@@ -56,7 +56,6 @@ JOBJ := conf/config_file.o \
 	compat/compat.o \
 	file_path.o \
 	tools/input_common_joyconfig.o \
-	input/dinput.o \
 	input/winxinput_joypad.o
 
 HEADERS = $(wildcard */*/*.h) $(wildcard */*.h) $(wildcard *.h)
@@ -71,7 +70,6 @@ else
    WINDRES = windres
 endif
 
-HAVE_DINPUT = 1
 HAVE_OPENGL = 1
 HAVE_FBO = 1
 HAVE_DYLIB = 1
@@ -226,12 +224,6 @@ ifeq ($(HAVE_WINXINPUT), 1)
    OBJ += input/winxinput_joypad.o
 endif
 
-ifeq ($(HAVE_DINPUT), 1)
-   LIBS += -ldinput8 -ldxguid -lole32
-   DEFINES += -DHAVE_DINPUT
-   OBJ += input/dinput.o
-endif
-
 OBJ += record/ffemu.o 
 
 ifeq ($(HAVE_FFMPEG), 1)
@@ -315,9 +307,9 @@ $(OBJDIR)/%.o: %.rc $(HEADERS)
 $(JTARGET): $(RARCH_JOBJ)
 	@$(if $(Q), $(shell echo echo LD $@),)
 ifeq ($(CXX_BUILD), 1)
-	$(Q)$(CXX) -o $@ $(RARCH_JOBJ) -ldxguid -ldinput8 -lole32 $(LDFLAGS) $(JLIBS)
+	$(Q)$(CXX) -o $@ $(RARCH_JOBJ) -ldxguid -lole32 $(LDFLAGS) $(JLIBS)
 else
-	$(Q)$(CC) -o $@ $(RARCH_JOBJ) -ldxguid -ldinput8 -lole32 $(LDFLAGS) $(JLIBS)
+	$(Q)$(CC) -o $@ $(RARCH_JOBJ) -ldxguid -lole32 $(LDFLAGS) $(JLIBS)
 endif
 
 clean:
