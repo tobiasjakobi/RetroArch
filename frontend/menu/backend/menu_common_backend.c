@@ -646,12 +646,6 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
 #endif
                "GLSL"
 #endif
-#ifdef HAVE_HLSL
-#if defined(HAVE_CG) || defined(HAVE_HLSL)
-               "/"
-#endif
-               "HLSL"
-#endif
                " preset directly. \n"
                "The menu shader menu is updated accordingly. \n"
                " \n"
@@ -1042,13 +1036,6 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                   " \n"
                   "Performance is considered to be suboptimal. \n"
                   "Consider using it only as a last resort.");
-         else if (!strcmp(g_settings.video.driver, "d3d"))
-            snprintf(msg, sizeof(msg),
-                  " -- Direct3D Video driver. \n"
-                  " \n"
-                  "Performance for software-rendered cores \n"
-                  "is dependent on your graphic card's \n"
-                  "underlying D3D driver).");
          else if (!strcmp(g_settings.video.driver, "exynos"))
             snprintf(msg, sizeof(msg),
                   " -- Exynos-G2D Video Driver. \n"
@@ -1114,7 +1101,7 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                " -- Path to shader. \n"
                " \n"
                "All shaders must be of the same \n"
-               "type (i.e. CG, GLSL or HLSL). \n"
+               "type (i.e. CG or GLSL). \n"
                " \n"
                "Set Shader Directory to set where \n"
                "the browser starts to look for \n"
@@ -3652,7 +3639,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
                   {
 #if defined(HAVE_GLSL)
                      type = RARCH_SHADER_GLSL;
-#elif defined(HAVE_CG) || defined(HAVE_HLSL)
+#elif defined(HAVE_CG)
                      type = RARCH_SHADER_CG;
 #endif
                   }

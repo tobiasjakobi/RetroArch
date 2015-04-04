@@ -23,9 +23,6 @@
 #endif
 
 static const gfx_ctx_driver_t *gfx_ctx_drivers[] = {
-#if defined(HAVE_WIN32_D3D9)
-   &gfx_ctx_d3d9,
-#endif
 #if defined(HAVE_MALI_FBDEV)
    &gfx_ctx_mali_fbdev,
 #endif

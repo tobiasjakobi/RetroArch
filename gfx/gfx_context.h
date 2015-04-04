@@ -33,15 +33,12 @@ enum gfx_ctx_api
 {
    GFX_CTX_OPENGL_API,
    GFX_CTX_OPENGL_ES_API,
-   GFX_CTX_DIRECT3D8_API,
-   GFX_CTX_DIRECT3D9_API,
 };
 
 typedef void (*gfx_ctx_proc_t)(void);
 
 // The opaque void* argument should be the overlying driver data (e.g. gl_t for OpenGL contexts).
 // This will allow us in the future to have separate contexts to separate gl_t structs (if needed).
-// For now, this is only relevant for D3D.
 typedef struct gfx_ctx_driver
 {
    bool (*init)(void *data);
@@ -111,7 +108,6 @@ extern const gfx_ctx_driver_t gfx_ctx_sdl_gl;
 extern const gfx_ctx_driver_t gfx_ctx_x_egl;
 extern const gfx_ctx_driver_t gfx_ctx_wayland;
 extern const gfx_ctx_driver_t gfx_ctx_glx;
-extern const gfx_ctx_driver_t gfx_ctx_d3d9;
 extern const gfx_ctx_driver_t gfx_ctx_drm_egl;
 extern const gfx_ctx_driver_t gfx_ctx_mali_fbdev;
 extern const gfx_ctx_driver_t gfx_ctx_vivante_fbdev;

@@ -35,7 +35,7 @@
 #include "../../../screenshot.h"
 #include "../../../gfx/fonts/bitmap.h"
 
-#if defined(HAVE_CG) || defined(HAVE_GLSL) || defined(HAVE_HLSL)
+#if defined(HAVE_CG) || defined(HAVE_GLSL)
 #define HAVE_SHADER_MANAGER
 #endif
 

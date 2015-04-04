@@ -36,7 +36,6 @@ enum
    VIDEO_XVIDEO,
    VIDEO_SDL,
    VIDEO_EXT,
-   VIDEO_D3D9,
    VIDEO_NULL,
    VIDEO_OMAP,
    VIDEO_EXYNOS,
@@ -66,8 +65,6 @@ enum
 
 #if defined(HAVE_OPENGL) || defined(HAVE_OPENGLES)
 #define VIDEO_DEFAULT_DRIVER VIDEO_GL
-#elif defined(HAVE_WIN32_D3D9)
-#define VIDEO_DEFAULT_DRIVER VIDEO_D3D9
 #elif defined(HAVE_XVIDEO)
 #define VIDEO_DEFAULT_DRIVER VIDEO_XVIDEO
 #elif defined(HAVE_SDL)

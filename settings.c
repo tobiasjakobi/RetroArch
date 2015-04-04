@@ -72,8 +72,6 @@ const char *config_get_default_video(void)
    {
       case VIDEO_GL:
          return "gl";
-      case VIDEO_D3D9:
-         return "d3d";
       case VIDEO_XVIDEO:
          return "xvideo";
       case VIDEO_SDL:

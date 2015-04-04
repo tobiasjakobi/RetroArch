@@ -32,7 +32,7 @@
 #include "../../input/keyboard_line.h"
 #include "../../performance.h"
 
-#if defined(HAVE_CG) || defined(HAVE_HLSL) || defined(HAVE_GLSL)
+#if defined(HAVE_CG) || defined(HAVE_GLSL)
 
 #ifndef HAVE_SHADER_MANAGER
 #define HAVE_SHADER_MANAGER
