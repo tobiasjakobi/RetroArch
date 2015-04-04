@@ -289,19 +289,6 @@ typedef struct camera_driver
    const char *ident;
 } camera_driver_t;
 
-typedef struct location_driver
-{
-   void *(*init)(void);
-   void (*free)(void *data);
-
-   bool (*start)(void *data);
-   void (*stop)(void *data);
-
-   bool (*get_position)(void *data, double *lat, double *lon, double *horiz_accuracy, double *vert_accuracy);
-   void (*set_interval)(void *data, unsigned interval_msecs, unsigned interval_distance);
-   const char *ident;
-} location_driver_t;
-
 struct rarch_viewport;
 
 #ifdef HAVE_OVERLAY
@@ -398,10 +385,6 @@ typedef struct driver
    const camera_driver_t *camera;
    void *camera_data;
 #endif
-#ifdef HAVE_LOCATION
-   const location_driver_t *location;
-   void *location_data;
-#endif
    void *audio_data;
    void *video_data;
    void *input_data;
@@ -431,9 +414,6 @@ typedef struct driver
    bool input_data_own;
 #ifdef HAVE_CAMERA
    bool camera_data_own;
-#endif
-#ifdef HAVE_LOCATION
-   bool location_data_own;
 #endif
 #ifdef HAVE_MENU
    bool menu_data_own;
@@ -503,13 +483,6 @@ void find_prev_camera_driver(void);
 void find_next_camera_driver(void);
 #endif
 
-#ifdef HAVE_LOCATION
-void init_location(void);
-void uninit_location(void);
-void find_prev_location_driver(void);
-void find_next_location_driver(void);
-#endif
-
 void driver_set_monitor_refresh_rate(float hz);
 bool driver_monitor_fps_statistics(double *refresh_rate, double *deviation, unsigned *sample_points);
 void driver_set_nonblock_state(bool nonblock);
@@ -540,14 +513,6 @@ const char *rarch_dspfilter_get_name(void *data);
 bool driver_camera_start(void);
 void driver_camera_stop(void);
 void driver_camera_poll(void);
-#endif
-
-// Used by RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE
-#ifdef HAVE_LOCATION
-bool driver_location_start(void);
-void driver_location_stop(void);
-bool driver_location_get_position(double *lat, double *lon, double *horiz_accuracy, double *vert_accuracy);
-void driver_location_set_interval(unsigned interval_msecs, unsigned interval_distance);
 #endif
 
 #ifdef HAVE_MENU

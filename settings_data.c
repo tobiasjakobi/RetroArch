@@ -736,10 +736,6 @@ void setting_data_get_description(const void *data, char *msg, size_t sizeof_msg
          snprintf(msg, sizeof_msg,
                " -- Allow or disallow camera access by \n"
                "cores.");
-    else if (!strcmp(setting->name, "location_allow"))
-       snprintf(msg, sizeof_msg,
-             " -- Allow or disallow location services \n"
-             "access by cores.");
     else if (!strcmp(setting->name, "savestate_auto_save"))
          snprintf(msg, sizeof_msg,
                " -- Automatically saves a savestate at the \n"
@@ -970,10 +966,6 @@ static void general_read_handler(const void *data)
 #ifdef HAVE_CAMERA
     else if (!strcmp(setting->name, "camera_allow"))
         *setting->value.boolean = g_settings.camera.allow;
-#endif
-#ifdef HAVE_LOCATION
-    else if (!strcmp(setting->name, "location_allow"))
-        *setting->value.boolean = g_settings.location.allow;
 #endif
     else if (!strcmp(setting->name, "video_shared_context"))
        *setting->value.boolean = g_settings.video.shared_context;
@@ -1313,10 +1305,6 @@ static void general_write_handler(const void *data)
    else if (!strcmp(setting->name, "camera_allow"))
       g_settings.camera.allow = *setting->value.boolean;
 #endif
-#ifdef HAVE_LOCATION
-   else if (!strcmp(setting->name, "location_allow"))
-      g_settings.location.allow = *setting->value.boolean;
-#endif
    else if (!strcmp(setting->name, "video_shared_context"))
       g_settings.video.shared_context = *setting->value.boolean;
 #ifdef HAVE_NETPLAY
@@ -1443,10 +1431,7 @@ rarch_setting_t* setting_data_get_list(void)
          CONFIG_STRING(g_settings.audio.resampler,             "audio_driver",               "Audio Resampler Driver",     config_get_default_audio_resampler(), GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
 #ifdef HAVE_CAMERA
          CONFIG_STRING(g_settings.camera.device,            "camera_device",              "Camera Driver",              config_get_default_camera(), GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
-#endif         
-#ifdef HAVE_LOCATION
-         CONFIG_STRING(g_settings.location.driver,          "location_driver",            "Location Driver",            config_get_default_location(), GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
-#endif         
+#endif
          CONFIG_STRING(g_settings.input.joypad_driver,      "input_joypad_driver",        "Joypad Driver",              "", GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
          CONFIG_STRING(g_settings.input.keyboard_layout,    "input_keyboard_layout",      "Keyboard Layout",            "", GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
 
@@ -1739,9 +1724,6 @@ rarch_setting_t* setting_data_get_list(void)
        START_SUB_GROUP("State")
 #ifdef HAVE_CAMERA
          CONFIG_BOOL(g_settings.camera.allow,     "camera_allow",     "Allow Camera",          false, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
-#endif
-#ifdef HAVE_LOCATION
-         CONFIG_BOOL(g_settings.location.allow,     "location_allow",     "Allow Location",          false, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
 #endif
        END_SUB_GROUP()
        END_GROUP()

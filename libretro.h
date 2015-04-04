@@ -573,12 +573,6 @@ enum retro_mod
                                            // struct retro_perf_callback * --
                                            // Gets an interface for performance counters. This is useful for performance logging in a
                                            // cross-platform way and for detecting architecture-specific features, such as SIMD support.
-#define RETRO_ENVIRONMENT_GET_LOCATION_INTERFACE 29
-                                           // struct retro_location_callback * --
-                                           // Gets access to the location interface.
-                                           // The purpose of this interface is to be able to retrieve location-based information from the host device,
-                                           // such as current latitude / longitude.
-                                           //
 #define RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY 30
                                            // const char ** --
                                            // Returns the "content" directory of the frontend.
@@ -1047,41 +1041,6 @@ struct retro_camera_callback
    // Set by libretro core. Called right before camera driver is deinitialized.
    // Can be NULL, in which this callback is not called.
    retro_camera_lifetime_status_t deinitialized;
-};
-
-// Sets the interval of time and/or distance at which to update/poll location-based data.
-// To ensure compatibility with all location-based implementations, values for both
-// interval_ms and interval_distance should be provided.
-// interval_ms is the interval expressed in milliseconds.
-// interval_distance is the distance interval expressed in meters.
-typedef void (*retro_location_set_interval_t)(unsigned interval_ms, unsigned interval_distance);
-
-// Start location services. The device will start listening for changes to the
-// current location at regular intervals (which are defined with retro_location_set_interval_t).
-typedef bool (*retro_location_start_t)(void);
-
-// Stop location services. The device will stop listening for changes to the current
-// location.
-typedef void (*retro_location_stop_t)(void);
-
-// Get the position of the current location. Will set parameters to 0 if no new
-// location update has happened since the last time.
-typedef bool (*retro_location_get_position_t)(double *lat, double *lon, double *horiz_accuracy,
-      double *vert_accuracy);
-
-// Callback which signals when the location driver is initialized and/or deinitialized.
-// retro_location_start_t can be called in initialized callback.
-typedef void (*retro_location_lifetime_status_t)(void);
-
-struct retro_location_callback
-{
-   retro_location_start_t         start;
-   retro_location_stop_t          stop;
-   retro_location_get_position_t  get_position;
-   retro_location_set_interval_t  set_interval;
-
-   retro_location_lifetime_status_t initialized;
-   retro_location_lifetime_status_t deinitialized;
 };
 
 enum retro_rumble_effect
