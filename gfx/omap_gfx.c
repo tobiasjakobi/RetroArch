@@ -882,21 +882,12 @@ static void omap_gfx_viewport_info(void *data, struct rarch_viewport *vp) {
 }
 
 const video_driver_t video_omap = {
-  omap_gfx_init,
-  omap_gfx_frame,
-  omap_gfx_set_nonblock_state,
-  omap_gfx_alive,
-  omap_gfx_focus,
-  NULL, /* set_shader */
-  omap_gfx_free,
-  "omap",
-
-  NULL, /* set_rotation */
-  omap_gfx_viewport_info,
-  NULL, /* read_viewport */
-
-#ifdef HAVE_OVERLAY
-  NULL, /* overlay_interface */
-#endif
-  NULL /* poke_interface */
+  .init = omap_gfx_init,
+  .frame = omap_gfx_frame,
+  .set_nonblock_state = omap_gfx_set_nonblock_state,
+  .alive = omap_gfx_alive,
+  .focus = omap_gfx_focus,
+  .free = omap_gfx_free,
+  .ident = "omap",
+  .viewport_info = omap_gfx_viewport_info
 };
