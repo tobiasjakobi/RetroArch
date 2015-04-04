@@ -28,7 +28,6 @@ HAVE_ZLIB=auto          # Enable zlib support (ZIP extract, PNG decoding/encodin
 HAVE_FBO=auto           # Enable render-to-texture (FBO) support
 HAVE_ALSA=auto          # Enable ALSA support
 HAVE_OSS=auto           # Enable OSS support
-HAVE_ROAR=auto          # Enable RoarAudio support
 HAVE_AL=auto            # Enable OpenAL support
 HAVE_JACK=auto          # Enable JACK support
 HAVE_PULSE=auto         # Enable PulseAudio support

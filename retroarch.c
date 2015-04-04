@@ -820,7 +820,6 @@ static void print_features(void)
    _PSUPP(alsa, "ALSA", "audio driver");
    _PSUPP(oss, "OSS", "audio driver");
    _PSUPP(jack, "Jack", "audio driver");
-   _PSUPP(roar, "RoarAudio", "audio driver");
    _PSUPP(pulse, "PulseAudio", "audio driver");
    _PSUPP(zlib, "zlib", "PNG encode/decode and .zip extraction");
    _PSUPP(al, "OpenAL", "audio driver");

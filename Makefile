@@ -141,12 +141,6 @@ ifeq ($(HAVE_ALSA), 1)
    DEFINES += $(ALSA_CFLAGS)
 endif
 
-ifeq ($(HAVE_ROAR), 1)
-   OBJ += audio/roar.o
-   LIBS += $(ROAR_LIBS)
-   DEFINES += $(ROAR_CFLAGS)
-endif
-
 ifeq ($(HAVE_HARD_FLOAT), 1)
    DEFINES += -mfloat-abi=hard
 endif

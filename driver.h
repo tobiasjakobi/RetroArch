@@ -490,7 +490,6 @@ extern driver_t driver;
 extern const audio_driver_t audio_oss;
 extern const audio_driver_t audio_alsa;
 extern const audio_driver_t audio_alsathread;
-extern const audio_driver_t audio_roar;
 extern const audio_driver_t audio_openal;
 extern const audio_driver_t audio_jack;
 extern const audio_driver_t audio_sdl;

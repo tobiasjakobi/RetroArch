@@ -86,12 +86,6 @@ static const bool _al_supp = true;
 static const bool _al_supp = false;
 #endif
 
-#ifdef HAVE_ROAR
-static const bool _roar_supp = true;
-#else
-static const bool _roar_supp = false;
-#endif
-
 #ifdef HAVE_JACK
 static const bool _jack_supp = true;
 #else
