@@ -40,7 +40,6 @@
 #include "../file.h"
 
 static const rarch_joypad_driver_t *joypad_drivers[] = {
-#ifndef IS_RETROLAUNCH
 #ifdef HAVE_UDEV
    &udev_joypad,
 #endif
@@ -49,7 +48,6 @@ static const rarch_joypad_driver_t *joypad_drivers[] = {
 #endif
 #if defined(HAVE_SDL) || defined(HAVE_SDL2)
    &sdl_joypad,
-#endif
 #endif
    NULL,
 };
@@ -216,7 +214,6 @@ bool input_joypad_hat_raw(const rarch_joypad_driver_t *driver,
    return driver->button(joypad, HAT_MAP(hat, hat_dir));
 }
 
-#ifndef IS_RETROLAUNCH
 bool input_translate_coord_viewport(int mouse_x, int mouse_y,
       int16_t *res_x, int16_t *res_y, int16_t *res_screen_x, int16_t *res_screen_y)
 {
@@ -249,7 +246,6 @@ bool input_translate_coord_viewport(int mouse_x, int mouse_y,
    *res_screen_y = scaled_screen_y;
    return true;
 }
-#endif
 
 #ifdef HAVE_X11
 const struct rarch_key_map rarch_key_map_x11[] = {
@@ -1009,7 +1005,7 @@ void input_config_parse_joy_axis(config_file_t *conf, const char *prefix,
    }
 }
 
-#if !defined(IS_JOYCONFIG) && !defined(IS_RETROLAUNCH)
+#if !defined(IS_JOYCONFIG)
 static void input_autoconfigure_joypad_conf(config_file_t *conf, struct retro_keybind *binds)
 {
    unsigned i;

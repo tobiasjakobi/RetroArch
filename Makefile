@@ -1,6 +1,6 @@
 include config.mk
 
-TARGET = retroarch tools/retroarch-joyconfig tools/retrolaunch/retrolaunch
+TARGET = retroarch tools/retroarch-joyconfig
 
 OBJDIR := obj-unix
 
@@ -52,17 +52,6 @@ JOYCONFIG_OBJ = tools/retroarch-joyconfig.o \
 	file_path.o \
 	compat/compat.o \
 	tools/input_common_joyconfig.o
-
-RETROLAUNCH_OBJ = tools/retrolaunch/main.o \
-	tools/retrolaunch/sha1.o \
-	tools/retrolaunch/parser.o \
-	tools/retrolaunch/cd_detect.o \
-	tools/retrolaunch/rl_fnmatch.o \
-	tools/input_common_launch.o \
-	file_path.o \
-	compat/compat.o \
-	conf/config_file.o \
-	settings.o
 
 HEADERS = $(wildcard */*/*.h) $(wildcard */*.h) $(wildcard *.h)
 
@@ -372,11 +361,10 @@ endif
 
 RARCH_OBJ := $(addprefix $(OBJDIR)/,$(OBJ))
 RARCH_JOYCONFIG_OBJ := $(addprefix $(OBJDIR)/,$(JOYCONFIG_OBJ))
-RARCH_RETROLAUNCH_OBJ := $(addprefix $(OBJDIR)/,$(RETROLAUNCH_OBJ))
 
 all: $(TARGET) config.mk
 
--include $(RARCH_OBJ:.o=.d) $(RARCH_JOYCONFIG_OBJ:.o=.d) $(RARCH_RETROLAUNCH_OBJ:.o=.d)
+-include $(RARCH_OBJ:.o=.d) $(RARCH_JOYCONFIG_OBJ:.o=.d)
 
 config.mk: configure qb/*
 	@echo "config.mk is outdated or non-existing. Run ./configure again."
@@ -393,10 +381,6 @@ ifeq ($(CXX_BUILD), 1)
 else
 	$(Q)$(CC) -o $@ $(RARCH_JOYCONFIG_OBJ) $(JOYCONFIG_LIBS) $(LDFLAGS) $(LIBRARY_DIRS)
 endif
-
-tools/retrolaunch/retrolaunch: $(RARCH_RETROLAUNCH_OBJ)
-	@$(if $(Q), $(shell echo echo LD $@),)
-	$(Q)$(LINK) -o $@ $(RARCH_RETROLAUNCH_OBJ) $(LIBS) $(LDFLAGS) $(LIBRARY_DIRS)
 
 $(OBJDIR)/%.o: %.c config.h config.mk
 	@mkdir -p $(dir $@)
@@ -420,11 +404,6 @@ $(OBJDIR)/tools/udev_joypad.o: input/udev_joypad.c
 	@$(if $(Q), $(shell echo echo CC $<),)
 	$(Q)$(CC) $(CFLAGS) $(DEFINES) -MMD -DIS_JOYCONFIG -c -o $@ $<
 
-$(OBJDIR)/tools/input_common_launch.o: input/input_common.c
-	@mkdir -p $(dir $@)
-	@$(if $(Q), $(shell echo echo CC $<),)
-	$(Q)$(CC) $(CFLAGS) $(DEFINES) -MMD -DIS_RETROLAUNCH -c -o $@ $<
-
 $(OBJDIR)/tools/input_common_joyconfig.o: input/input_common.c
 	@mkdir -p $(dir $@)
 	@$(if $(Q), $(shell echo echo CC $<),)
@@ -447,7 +426,6 @@ install: $(TARGET)
 	install -m644 docs/retroarch.1 $(DESTDIR)$(MAN_DIR)
 	install -m644 docs/retroarch-cg2glsl.1 $(DESTDIR)$(MAN_DIR)
 	install -m644 docs/retroarch-joyconfig.1 $(DESTDIR)$(MAN_DIR)
-	install -m644 docs/retrolaunch.1 $(DESTDIR)$(MAN_DIR)
 	install -m644 media/retroarch.png $(DESTDIR)$(PREFIX)/share/pixmaps
 	install -m644 media/retroarch.svg $(DESTDIR)$(PREFIX)/share/pixmaps
 
@@ -455,19 +433,16 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/retroarch
 	rm -f $(DESTDIR)$(PREFIX)/bin/retroarch-joyconfig
 	rm -f $(DESTDIR)$(PREFIX)/bin/retroarch-cg2glsl
-	rm -f $(DESTDIR)$(PREFIX)/bin/retrolaunch
 	rm -f $(DESTDIR)$(GLOBAL_CONFIG_DIR)/retroarch.cfg
 	rm -f $(DESTDIR)$(PREFIX)/share/man/man1/retroarch.1
 	rm -f $(DESTDIR)$(PREFIX)/share/man/man1/retroarch-cg2glsl.1
 	rm -f $(DESTDIR)$(PREFIX)/share/man/man1/retroarch-joyconfig.1
-	rm -f $(DESTDIR)$(PREFIX)/share/man/man1/retrolaunch.1
 	rm -f $(DESTDIR)$(PREFIX)/share/pixmaps/retroarch.png
 	rm -f $(DESTDIR)$(PREFIX)/share/pixmaps/retroarch.svg
 
 clean:
 	rm -rf $(OBJDIR)
 	rm -f $(TARGET)
-	rm -f tools/retrolaunch/retrolaunch
 	rm -f tools/retroarch-joyconfig
 
 .PHONY: all install uninstall clean
