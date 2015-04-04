@@ -110,12 +110,6 @@ static const bool _dsound_supp = true;
 static const bool _dsound_supp = false;
 #endif
 
-#ifdef HAVE_XAUDIO
-static const bool _xaudio_supp = true;
-#else
-static const bool _xaudio_supp = false;
-#endif
-
 #ifdef HAVE_ZLIB
 static const bool _zlib_supp = true;
 #else
