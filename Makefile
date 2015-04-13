@@ -331,13 +331,7 @@ ifeq ($(CXX_BUILD), 1)
    CFLAGS += -std=c++0x -xc++ -D__STDC_CONSTANT_MACROS
 else
    LINK = $(CC)
-   ifneq ($(GNU90_BUILD), 1)
-      ifneq ($(findstring icc,$(CC)),)
-         CFLAGS += -std=c99 -D_GNU_SOURCE
-      else
-         CFLAGS += -std=gnu99 -D_GNU_SOURCE
-      endif
-   endif
+   CFLAGS += -std=c99 -D_GNU_SOURCE
 endif
 
 ifeq ($(NOUNUSED), yes)
