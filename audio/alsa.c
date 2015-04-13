@@ -276,14 +276,14 @@ static size_t alsa_buffer_size(void *data)
 }
 
 const audio_driver_t audio_alsa = {
-   alsa_init,
-   alsa_write,
-   alsa_stop,
-   alsa_start,
-   alsa_set_nonblock_state,
-   alsa_free,
-   alsa_use_float,
-   "alsa",
-   alsa_write_avail,
-   alsa_buffer_size,
+   .init = alsa_init,
+   .write = alsa_write,
+   .stop = alsa_stop,
+   .start = alsa_start,
+   .set_nonblock_state = alsa_set_nonblock_state,
+   .free = alsa_free,
+   .use_float = alsa_use_float,
+   .ident = "alsa",
+   .write_avail = alsa_write_avail,
+   .buffer_size = alsa_buffer_size,
 };
