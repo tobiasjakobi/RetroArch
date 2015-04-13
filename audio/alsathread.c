@@ -306,14 +306,14 @@ static size_t alsa_thread_buffer_size(void *data)
 }
 
 const audio_driver_t audio_alsathread = {
-   alsa_thread_init,
-   alsa_thread_write,
-   alsa_thread_stop,
-   alsa_thread_start,
-   alsa_thread_set_nonblock_state,
-   alsa_thread_free,
-   alsa_thread_use_float,
-   "alsathread",
-   alsa_thread_write_avail,
-   alsa_thread_buffer_size,
+   .init = alsa_thread_init,
+   .write = alsa_thread_write,
+   .stop = alsa_thread_stop,
+   .start = alsa_thread_start,
+   .set_nonblock_state = alsa_thread_set_nonblock_state,
+   .free = alsa_thread_free,
+   .use_float = alsa_thread_use_float,
+   .ident = "alsathread",
+   .write_avail = alsa_thread_write_avail,
+   .buffer_size = alsa_thread_buffer_size,
 };
