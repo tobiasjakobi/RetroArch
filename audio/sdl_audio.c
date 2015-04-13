@@ -188,17 +188,16 @@ static void sdl_audio_free(void *data)
 }
 
 const audio_driver_t audio_sdl = {
-   sdl_audio_init,
-   sdl_audio_write,
-   sdl_audio_stop,
-   sdl_audio_start,
-   sdl_audio_set_nonblock_state,
-   sdl_audio_free,
-   NULL,
+   .init = sdl_audio_init,
+   .write = sdl_audio_write,
+   .stop = sdl_audio_stop,
+   .start = sdl_audio_start,
+   .set_nonblock_state = sdl_audio_set_nonblock_state,
+   .free = sdl_audio_free,
 #ifdef HAVE_SDL2
-   "sdl2"
+   .ident = "sdl2",
 #else
-   "sdl"
+   .ident = "sdl",
 #endif
 };
    
