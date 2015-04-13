@@ -299,15 +299,15 @@ static size_t pulse_buffer_size(void *data)
 }
 
 const audio_driver_t audio_pulse = {
-   pulse_init,
-   pulse_write,
-   pulse_stop,
-   pulse_start,
-   pulse_set_nonblock_state,
-   pulse_free,
-   pulse_use_float,
-   "pulse",
-   pulse_write_avail,
-   pulse_buffer_size,
+   .init = pulse_init,
+   .write = pulse_write,
+   .stop = pulse_stop,
+   .start = pulse_start,
+   .set_nonblock_state = pulse_set_nonblock_state,
+   .free = pulse_free,
+   .use_float = pulse_use_float,
+   .ident = "pulse",
+   .write_avail = pulse_write_avail,
+   .buffer_size = pulse_buffer_size,
 };
 
