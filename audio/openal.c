@@ -225,15 +225,14 @@ static size_t al_buffer_size(void *data)
 }
 
 const audio_driver_t audio_openal = {
-   al_init,
-   al_write,
-   al_stop,
-   al_start,
-   al_set_nonblock_state,
-   al_free,
-   NULL,
-   "openal",
-   al_write_avail,
-   al_buffer_size,
+   .init = al_init,
+   .write = al_write,
+   .stop = al_stop,
+   .start = al_start,
+   .set_nonblock_state = al_set_nonblock_state,
+   .free = al_free,
+   .ident = "openal",
+   .write_avail = al_write_avail,
+   .buffer_size = al_buffer_size,
 };
 
