@@ -93,7 +93,7 @@ ifeq ($(HAVE_MENU_COMMON), 1)
 endif
 
 ifeq ($(HAVE_THREADS), 1)
-   OBJ += autosave.o thread.o gfx/video_thread_wrapper.o audio/thread_wrapper.o
+   OBJ += autosave.o thread.o gfx/thread_wrapper.o audio/thread_wrapper.o
    LIBS += -lpthread
 endif
 
@@ -139,7 +139,7 @@ ifeq ($(SCALER_NO_SIMD), 1)
 endif
 
 ifeq ($(HAVE_SDL), 1)
-   OBJ += gfx/sdl_gfx.o input/sdl_input.o input/sdl_joypad.o audio/sdl_audio.o
+   OBJ += gfx/sdl.o input/sdl_input.o input/sdl_joypad.o audio/sdl_audio.o
    JOYCONFIG_OBJ += input/sdl_joypad.o
    JOYCONFIG_LIBS += $(SDL_LIBS)
    DEFINES += $(SDL_CFLAGS) $(BSD_LOCAL_INC)
@@ -147,7 +147,7 @@ ifeq ($(HAVE_SDL), 1)
 endif
 
 ifeq ($(HAVE_SDL2), 1)
-   OBJ += gfx/sdl2_gfx.o input/sdl_input.o input/sdl_joypad.o audio/sdl_audio.o
+   OBJ += gfx/sdl2.o input/sdl_input.o input/sdl_joypad.o audio/sdl_audio.o
    JOYCONFIG_OBJ += input/sdl_joypad.o
    JOYCONFIG_LIBS += $(SDL2_LIBS)
    DEFINES += $(SDL2_CFLAGS) $(BSD_LOCAL_INC)
@@ -155,11 +155,11 @@ ifeq ($(HAVE_SDL2), 1)
 endif
 
 ifeq ($(HAVE_OMAP), 1)
-   OBJ += gfx/omap_gfx.o
+   OBJ += gfx/omap.o
 endif
 
 ifeq ($(HAVE_EXYNOS), 1)
-   OBJ += gfx/exynos_gfx.o mem/neon/memcpy-neon.o
+   OBJ += gfx/exynos.o mem/neon/memcpy-neon.o
    LIBS += $(DRM_LIBS) $(EXYNOS_LIBS)
    DEFINES += $(DRM_CFLAGS) $(EXYNOS_CFLAGS)
 endif
