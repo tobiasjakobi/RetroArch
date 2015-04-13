@@ -488,21 +488,14 @@ static void sdl_get_poke_interface(void *data, const video_poke_interface_t **if
 }
 
 const video_driver_t video_sdl = {
-   sdl_gfx_init,
-   sdl_gfx_frame,
-   sdl_gfx_set_nonblock_state,
-   sdl_gfx_alive,
-   sdl_gfx_focus,
-   NULL,
-   sdl_gfx_free,
-   "sdl",
-
-   NULL,
-   sdl_gfx_viewport_info,
-   NULL,
-#ifdef HAVE_OVERLAY
-   NULL,
-#endif
-   sdl_get_poke_interface
+   .init = sdl_gfx_init,
+   .frame = sdl_gfx_frame,
+   .set_nonblock_state = sdl_gfx_set_nonblock_state,
+   .alive = sdl_gfx_alive,
+   .focus = sdl_gfx_focus,
+   .free = sdl_gfx_free,
+   .ident = "sdl",
+   .viewport_info = sdl_gfx_viewport_info,
+   .poke_interface = sdl_get_poke_interface
 };
 
