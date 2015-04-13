@@ -791,21 +791,21 @@ static void thread_get_poke_interface(void *data, const video_poke_interface_t *
 }
 
 static const video_driver_t video_thread = {
-   thread_init_never_call, // Should never be called directly.
-   thread_frame,
-   thread_set_nonblock_state,
-   thread_alive,
-   thread_focus,
-   thread_set_shader,
-   thread_free,
-   "Thread wrapper",
-   thread_set_rotation,
-   thread_viewport_info,
-   thread_read_viewport,
+   .init = thread_init_never_call, // Should never be called directly.
+   .frame = thread_frame,
+   .set_nonblock_state = thread_set_nonblock_state,
+   .alive = thread_alive,
+   .focus = thread_focus,
+   .set_shader = thread_set_shader,
+   .free = thread_free,
+   .ident = "Thread wrapper",
+   .set_rotation = thread_set_rotation,
+   .viewport_info = thread_viewport_info,
+   .read_viewport = thread_read_viewport,
 #ifdef HAVE_OVERLAY
-   thread_get_overlay_interface, // get_overlay_interface
+   .overlay_interface = thread_get_overlay_interface,
 #endif
-   thread_get_poke_interface,
+   .poke_interface = thread_get_poke_interface,
 };
 
 static void thread_set_callbacks(thread_video_t *thr, const video_driver_t *driver)
