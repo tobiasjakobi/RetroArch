@@ -327,15 +327,15 @@ static size_t ja_buffer_size(void *data)
 }
 
 const audio_driver_t audio_jack = {
-   ja_init,
-   ja_write,
-   ja_stop,
-   ja_start,
-   ja_set_nonblock_state,
-   ja_free,
-   ja_use_float,
-   "jack",
-   ja_write_avail,
-   ja_buffer_size,
+   .init = ja_init,
+   .write = ja_write,
+   .stop = ja_stop,
+   .start = ja_start,
+   .set_nonblock_state = ja_set_nonblock_state,
+   .free = ja_free,
+   .use_float = ja_use_float,
+   .ident = "jack",
+   .write_avail = ja_write_avail,
+   .buffer_size = ja_buffer_size,
 };
 
