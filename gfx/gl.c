@@ -2929,34 +2929,28 @@ static void gl_get_poke_interface(void *data, const video_poke_interface_t **ifa
 }
 
 const video_driver_t video_gl = {
-   gl_init,
-   gl_frame,
-   gl_set_nonblock_state,
-   gl_alive,
-   gl_focus,
+   .init = gl_init,
+   .frame = gl_frame,
+   .set_nonblock_state = gl_set_nonblock_state,
+   .alive = gl_alive,
+   .focus = gl_focus,
 
 #if defined(HAVE_GLSL) || defined(HAVE_CG)
-   gl_set_shader,
-#else
-   NULL,
+   .set_shader = gl_set_shader,
 #endif
 
-   gl_free,
-   "gl",
-
-   gl_set_rotation,
-
-   gl_viewport_info,
+   .free = gl_free,
+   .ident = "gl",
+   .set_rotation = gl_set_rotation,
+   .viewport_info = gl_viewport_info,
 
 #ifndef NO_GL_READ_PIXELS
-   gl_read_viewport,
-#else
-   NULL,
+   .read_viewport = gl_read_viewport,
 #endif
 
 #ifdef HAVE_OVERLAY
-   gl_get_overlay_interface,
+   .overlay_interface = gl_get_overlay_interface,
 #endif
-   gl_get_poke_interface,
+   .poke_interface = gl_get_poke_interface
 };
 
