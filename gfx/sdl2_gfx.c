@@ -713,21 +713,16 @@ void sdl2_gfx_poke_interface(void *data, const video_poke_interface_t **iface)
 }
 
 const video_driver_t video_sdl2 = {
-   sdl2_gfx_init,
-   sdl2_gfx_frame,
-   sdl2_gfx_set_nonblock_state,
-   sdl2_gfx_alive,
-   sdl2_gfx_focus,
-   NULL,
-   sdl2_gfx_free,
-   "sdl2",
-
-   sdl2_gfx_set_rotation,
-   sdl2_gfx_viewport_info,
-   sdl2_gfx_read_viewport,
-#ifdef HAVE_OVERLAY
-    NULL, //void (*overlay_interface)(void *data, const video_overlay_interface_t **iface);
-#endif
-    sdl2_gfx_poke_interface
+   .init = sdl2_gfx_init,
+   .frame = sdl2_gfx_frame,
+   .set_nonblock_state = sdl2_gfx_set_nonblock_state,
+   .alive = sdl2_gfx_alive,
+   .focus = sdl2_gfx_focus,
+   .free = sdl2_gfx_free,
+   .ident = "sdl2",
+   .set_rotation = sdl2_gfx_set_rotation,
+   .viewport_info = sdl2_gfx_viewport_info,
+   .read_viewport = sdl2_gfx_read_viewport,
+   .poke_interface = sdl2_gfx_poke_interface
 };
 
