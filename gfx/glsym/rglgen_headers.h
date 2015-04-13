@@ -6,10 +6,7 @@
 #include <EGL/eglext.h>
 #endif
 
-#if defined(HAVE_PSGL)
-#include <PSGL/psgl.h>
-#include <GLES/glext.h>
-#elif defined(HAVE_OPENGL_MODERN)
+#if defined(HAVE_OPENGL_MODERN)
 #include <GL3/gl3.h>
 #include <GL3/gl3ext.h>
 #elif defined(HAVE_OPENGLES3)

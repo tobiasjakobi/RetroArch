@@ -160,19 +160,7 @@ static bool init_vao(gl_t *gl)
 #endif
 
 #ifdef HAVE_FBO
-#if defined(HAVE_PSGL)
-#define glGenFramebuffers glGenFramebuffersOES
-#define glBindFramebuffer glBindFramebufferOES
-#define glFramebufferTexture2D glFramebufferTexture2DOES
-#define glCheckFramebufferStatus glCheckFramebufferStatusOES
-#define glDeleteFramebuffers glDeleteFramebuffersOES
-#define glGenRenderbuffers glGenRenderbuffersOES
-#define glBindRenderbuffer glBindRenderbufferOES
-#define glFramebufferRenderbuffer glFramebufferRenderbufferOES
-#define glRenderbufferStorage glRenderbufferStorageOES
-#define glDeleteRenderbuffers glDeleteRenderbuffersOES
-#define check_fbo_proc(gl) (true)
-#elif !defined(HAVE_OPENGLES2)
+#if !defined(HAVE_OPENGLES2)
 static bool check_fbo_proc(gl_t *gl)
 {
    if (!gl->core_context && !gl_query_extension(gl, "ARB_framebuffer_object"))
@@ -1086,16 +1074,9 @@ static void gl_update_input_size(gl_t *gl, unsigned width, unsigned height, unsi
       if (clear)
       {
          glPixelStorei(GL_UNPACK_ALIGNMENT, get_alignment(width * sizeof(uint32_t)));
-#if defined(HAVE_PSGL)
-         glBufferSubData(GL_TEXTURE_REFERENCE_BUFFER_SCE,
-               gl->tex_w * gl->tex_h * gl->tex_index * gl->base_size,
-               gl->tex_w * gl->tex_h * gl->base_size,
-               gl->empty_buf);
-#else
          glTexSubImage2D(GL_TEXTURE_2D,
                0, 0, 0, gl->tex_w, gl->tex_h, gl->texture_type,
                gl->texture_fmt, gl->empty_buf);
-#endif
       }
 
       GLfloat xamt = (GLfloat)width / gl->tex_w;
@@ -1114,7 +1095,7 @@ static void gl_update_input_size(gl_t *gl, unsigned width, unsigned height, unsi
 }
 
 // It is *much* faster (order of mangnitude on my setup) to use a custom SIMD-optimized conversion routine than letting GL do it :(
-#if !defined(HAVE_PSGL) && !defined(HAVE_OPENGLES2)
+#if !defined(HAVE_OPENGLES2)
 static inline void gl_convert_frame_rgb16_32(gl_t *gl, void *output, const void *input, int width, int height, int in_pitch)
 {
    if (width != gl->scaler.in_width || height != gl->scaler.in_height)
@@ -1188,20 +1169,9 @@ static void gl_init_textures(gl_t *gl, const video_info_t *video)
    (void)video;
 #endif
 
-#ifdef HAVE_PSGL
-   if (!gl->pbo)
-      glGenBuffers(1, &gl->pbo);
-
-   glBindBuffer(GL_TEXTURE_REFERENCE_BUFFER_SCE, gl->pbo);
-   glBufferData(GL_TEXTURE_REFERENCE_BUFFER_SCE,
-         gl->tex_w * gl->tex_h * gl->base_size * gl->textures, NULL, GL_STREAM_DRAW);
-#endif
-
    GLenum internal_fmt = gl->internal_fmt;
-#ifndef HAVE_PSGL
    GLenum texture_type = gl->texture_type;
    GLenum texture_fmt  = gl->texture_fmt;
-#endif
 
    // GLES is picky about which format we use here.
    // Without extensions, we can *only* render to 16-bit FBOs.
@@ -1236,20 +1206,12 @@ static void gl_init_textures(gl_t *gl, const video_info_t *video)
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl->tex_mag_filter);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl->tex_min_filter);
 
-#ifdef HAVE_PSGL
-      glTextureReferenceSCE(GL_TEXTURE_2D, 1,
-            gl->tex_w, gl->tex_h, 0, 
-            internal_fmt,
-            gl->tex_w * gl->base_size,
-            gl->tex_w * gl->tex_h * i * gl->base_size);
-#else
       if (!gl->egl_images)
       {
          glTexImage2D(GL_TEXTURE_2D,
                0, internal_fmt, gl->tex_w, gl->tex_h, 0, texture_type,
                texture_fmt, gl->empty_buf ? gl->empty_buf : NULL);
       }
-#endif
    }
    glBindTexture(GL_TEXTURE_2D, gl->texture[gl->tex_index]);
 }
@@ -1321,18 +1283,6 @@ static inline void gl_copy_frame(gl_t *gl, const void *frame, unsigned width, un
          }
       }
    }
-#elif defined(HAVE_PSGL)
-   unsigned h;
-   size_t buffer_addr        = gl->tex_w * gl->tex_h * gl->tex_index * gl->base_size;
-   size_t buffer_stride      = gl->tex_w * gl->base_size;
-   const uint8_t *frame_copy = frame;
-   size_t frame_copy_size    = width * gl->base_size;
-
-   uint8_t *buffer = (uint8_t*)glMapBuffer(GL_TEXTURE_REFERENCE_BUFFER_SCE, GL_READ_WRITE) + buffer_addr;
-   for (h = 0; h < height; h++, buffer += buffer_stride, frame_copy += pitch)
-      memcpy(buffer, frame_copy, frame_copy_size);
-
-   glUnmapBuffer(GL_TEXTURE_REFERENCE_BUFFER_SCE);
 #else
    glPixelStorei(GL_UNPACK_ALIGNMENT, get_alignment(pitch));
    if (gl->base_size == 2)
@@ -1719,11 +1669,6 @@ static void gl_free(void *data)
 
 #ifdef HAVE_OVERLAY
    gl_free_overlay(gl);
-#endif
-
-#if defined(HAVE_PSGL)
-   glBindBuffer(GL_TEXTURE_REFERENCE_BUFFER_SCE, 0);
-   glDeleteBuffers(1, &gl->pbo);
 #endif
 
    scaler_ctx_gen_reset(&gl->scaler);
@@ -2259,7 +2204,6 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
    // Empty buffer that we use to clear out the texture with on res change.
    gl->empty_buf = calloc(sizeof(uint32_t), gl->tex_w * gl->tex_h);
 
-#if !defined(HAVE_PSGL)
    gl->conv_buffer = calloc(sizeof(uint32_t), gl->tex_w * gl->tex_h);
    if (!gl->conv_buffer)
    {
@@ -2267,7 +2211,6 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
       free(gl);
       return NULL;
    }
-#endif
 
    gl_init_textures(gl, video);
    gl_init_textures_data(gl);
@@ -2443,10 +2386,6 @@ static bool gl_set_shader(void *data, enum rarch_shader_type type, const char *p
 #endif
 
          glDeleteTextures(gl->textures, gl->texture);
-#if defined(HAVE_PSGL)
-         glBindBuffer(GL_TEXTURE_REFERENCE_BUFFER_SCE, 0);
-         glDeleteBuffers(1, &gl->pbo);
-#endif
          gl->textures = textures;
          RARCH_LOG("GL: Using %u textures.\n", gl->textures);
          gl->tex_index = 0;

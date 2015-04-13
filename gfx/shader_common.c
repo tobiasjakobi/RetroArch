@@ -22,9 +22,6 @@ void gl_load_texture_data(GLuint obj, const struct texture_image *img,
 {
    glBindTexture(GL_TEXTURE_2D, obj);
 
-#ifdef HAVE_PSGL
-   mipmap = false;
-#endif
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 
@@ -34,16 +31,13 @@ void gl_load_texture_data(GLuint obj, const struct texture_image *img,
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, mag_filter);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, min_filter);
 
-#ifndef HAVE_PSGL
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-#endif
    glTexImage2D(GL_TEXTURE_2D,
          0, driver.gfx_use_rgba ? GL_RGBA : RARCH_GL_INTERNAL_FORMAT32, img->width, img->height,
          0, driver.gfx_use_rgba ? GL_RGBA : RARCH_GL_TEXTURE_TYPE32, RARCH_GL_FORMAT32, img->pixels);
-#ifndef HAVE_PSGL
+
    if (mipmap)
       glGenerateMipmap(GL_TEXTURE_2D);
-#endif
 }
 
 bool gl_load_luts(const struct gfx_shader *generic_shader, GLuint *lut_textures)
