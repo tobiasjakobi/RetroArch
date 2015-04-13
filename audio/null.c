@@ -62,13 +62,13 @@ static bool null_audio_use_float(void *data)
 }
 
 const audio_driver_t audio_null = {
-   null_audio_init,
-   null_audio_write,
-   null_audio_stop,
-   null_audio_start,
-   null_audio_set_nonblock_state,
-   null_audio_free,
-   null_audio_use_float,
-   "null",
+   .init = null_audio_init,
+   .write = null_audio_write,
+   .stop = null_audio_stop,
+   .start = null_audio_start,
+   .set_nonblock_state = null_audio_set_nonblock_state,
+   .free = null_audio_free,
+   .use_float = null_audio_use_float,
+   .ident = "null",
 };
 
