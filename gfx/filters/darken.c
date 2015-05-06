@@ -21,12 +21,6 @@
 #include "softfilter.h"
 #include <stdlib.h>
 
-#ifdef RARCH_INTERNAL
-#define softfilter_get_implementation darken_get_implementation
-#define softfilter_thread_data darken_softfilter_thread_data
-#define filter_data darken_filter_data
-#endif
-
 struct softfilter_thread_data
 {
    void *out_data;
@@ -171,9 +165,3 @@ const struct softfilter_implementation *softfilter_get_implementation(softfilter
    (void)simd;
    return &darken;
 }
-
-#ifdef RARCH_INTERNAL
-#undef softfilter_get_implementation
-#undef softfilter_thread_data
-#undef filter_data
-#endif

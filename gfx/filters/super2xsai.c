@@ -19,12 +19,6 @@
 #include "softfilter.h"
 #include <stdlib.h>
 
-#ifdef RARCH_INTERNAL
-#define softfilter_get_implementation supertwoxsai_get_implementation
-#define softfilter_thread_data supertwoxsai_softfilter_thread_data
-#define filter_data supertwoxsai_filter_data
-#endif
-
 #define SUPERTWOXSAI_SCALE 2
 
 struct softfilter_thread_data
@@ -326,9 +320,3 @@ const struct softfilter_implementation *softfilter_get_implementation(softfilter
    (void)simd;
    return &supertwoxsai_generic;
 }
-
-#ifdef RARCH_INTERNAL
-#undef softfilter_get_implementation
-#undef softfilter_thread_data
-#undef filter_data
-#endif

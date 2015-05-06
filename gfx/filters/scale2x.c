@@ -32,12 +32,6 @@ void neon_scale2x_16_16(const uint16_t *src, uint16_t *dst, unsigned int width,
    unsigned int srcstride, unsigned int dststride, unsigned int height, unsigned int access) {}
 #endif
 
-#ifdef RARCH_INTERNAL
-#define softfilter_get_implementation scale2x_get_implementation
-#define softfilter_thread_data scale2x_softfilter_thread_data
-#define filter_data scale2x_filter_data
-#endif
-
 #define SCALE2X_SCALE 2
 
 /* first_line_access: bit is set when the first line of the buffer segment is *
@@ -330,9 +324,3 @@ const struct softfilter_implementation *softfilter_get_implementation(softfilter
 #endif
    return &scale2x_generic;
 }
-
-#ifdef RARCH_INTERNAL
-#undef softfilter_get_implementation
-#undef softfilter_thread_data
-#undef filter_data
-#endif

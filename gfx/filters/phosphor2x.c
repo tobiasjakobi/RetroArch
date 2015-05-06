@@ -25,12 +25,6 @@
 #include <stdbool.h>
 #endif
 
-#ifdef RARCH_INTERNAL
-#define softfilter_get_implementation phosphor2x_get_implementation
-#define softfilter_thread_data phosphor2x_softfilter_thread_data
-#define filter_data phosphor2x_filter_data
-#endif
-
 #define PHOSPHOR2X_SCALE 2
 
 struct softfilter_thread_data
@@ -430,9 +424,3 @@ const struct softfilter_implementation *softfilter_get_implementation(softfilter
    (void)simd;
    return &phosphor2x_generic;
 }
-
-#ifdef RARCH_INTERNAL
-#undef softfilter_get_implementation
-#undef softfilter_thread_data
-#undef filter_data
-#endif

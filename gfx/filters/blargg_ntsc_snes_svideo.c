@@ -23,12 +23,6 @@
 #include <stdbool.h>
 #endif
 
-#ifdef RARCH_INTERNAL
-#define softfilter_get_implementation blargg_ntsc_snes_svideo_get_implementation
-#define softfilter_thread_data blargg_ntsc_snes_svideo_softfilter_thread_data
-#define filter_data blargg_ntsc_snes_svideo_filter_data
-#endif
-
 struct softfilter_thread_data
 {
    void *out_data;
@@ -207,9 +201,3 @@ const struct softfilter_implementation *softfilter_get_implementation(softfilter
    (void)simd;
    return &blargg_ntsc_snes_svideo_generic;
 }
-
-#ifdef RARCH_INTERNAL
-#undef softfilter_get_implementation
-#undef softfilter_thread_data
-#undef filter_data
-#endif

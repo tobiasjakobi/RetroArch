@@ -24,12 +24,6 @@
 #include "snes_ntsc/snes_ntsc.h"
 #include "snes_ntsc/snes_ntsc.c"
 
-#ifdef RARCH_INTERNAL
-#define softfilter_get_implementation blargg_ntsc_snes_rgb_get_implementation
-#define softfilter_thread_data blargg_ntsc_snes_rgb_softfilter_thread_data
-#define filter_data blargg_ntsc_snes_rgb_filter_data
-#endif
-
 struct softfilter_thread_data
 {
    void *out_data;
@@ -209,9 +203,3 @@ const struct softfilter_implementation *softfilter_get_implementation(softfilter
    (void)simd;
    return &blargg_ntsc_snes_rgb_generic;
 }
-
-#ifdef RARCH_INTERNAL
-#undef softfilter_get_implementation
-#undef softfilter_thread_data
-#undef filter_data
-#endif
