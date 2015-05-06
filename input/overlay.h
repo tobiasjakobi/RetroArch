@@ -16,7 +16,6 @@
 #ifndef INPUT_OVERLAY_H__
 #define INPUT_OVERLAY_H__
 
-#include "../boolean.h"
 #include "../libretro.h"
 #include <stdint.h>
 

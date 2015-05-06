@@ -18,8 +18,11 @@
 #ifndef __DRIVER__H
 #define __DRIVER__H
 
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
 #include <sys/types.h>
-#include "boolean.h"
 #include "libretro_private.h"
 #include <stdlib.h>
 #include <stdint.h>

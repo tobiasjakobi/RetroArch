@@ -16,7 +16,11 @@
 
 #include "softfilter.h"
 #include <stdlib.h>
-#include "boolean.h"
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
 #include "snes_ntsc/snes_ntsc.h"
 #include "snes_ntsc/snes_ntsc.c"
 

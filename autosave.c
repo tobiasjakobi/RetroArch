@@ -16,7 +16,6 @@
 #include "autosave.h"
 #include "thread.h"
 #include <stdlib.h>
-#include "boolean.h"
 #include <string.h>
 #include <stdio.h>
 #include "general.h"

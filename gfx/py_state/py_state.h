@@ -17,7 +17,6 @@
 #define __RARCH_PY_STATE_H
 
 #include <stdint.h>
-#include "../../boolean.h"
 
 #ifndef PY_STATE_OMIT_DECLARATION
 typedef struct py_state py_state_t;

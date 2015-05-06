@@ -17,7 +17,10 @@
 #ifndef __RARCH_GLSL_H
 #define __RARCH_GLSL_H
 
-#include "../boolean.h"
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
 #include "shader_common.h"
 
 void gl_glsl_set_get_proc_address(gfx_ctx_proc_t (*proc)(const char*));

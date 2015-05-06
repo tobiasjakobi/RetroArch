@@ -18,7 +18,10 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "boolean.h"
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
 bool screenshot_dump(const char *folder, const void *frame, 
       unsigned width, unsigned height, int pitch, bool bgr24);

@@ -17,10 +17,13 @@
 // Compile: gcc -o phosphor2x.so -shared phosphor2x.c -std=c99 -O3 -Wall -pedantic -fPIC
 
 #include "softfilter.h"
-#include "boolean.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
 #ifdef RARCH_INTERNAL
 #define softfilter_get_implementation phosphor2x_get_implementation

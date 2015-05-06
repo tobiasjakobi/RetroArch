@@ -16,7 +16,6 @@
 #ifndef __RARCH_FILE_PATH_H
 #define __RARCH_FILE_PATH_H
 
-#include "boolean.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -24,6 +23,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
 long read_file(const char *path, void **buf);

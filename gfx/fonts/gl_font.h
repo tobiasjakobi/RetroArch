@@ -17,7 +17,6 @@
 #define GL_FONT_H__
 
 #include "../../driver.h"
-#include "../../boolean.h"
 
 typedef struct gl_font_renderer
 {

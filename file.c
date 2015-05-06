@@ -16,7 +16,6 @@
 #include "file.h"
 #include "general.h"
 #include <stdlib.h>
-#include "boolean.h"
 #include "libretro.h"
 #include <string.h>
 #include <time.h>

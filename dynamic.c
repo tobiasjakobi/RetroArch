@@ -26,7 +26,6 @@
 #include "config.h"
 #endif
 
-#include "boolean.h"
 #include "libretro_private.h"
 #include "dynamic_dummy.h"
 

@@ -16,7 +16,6 @@
 #ifndef SHADER_PARSE_H
 #define SHADER_PARSE_H
 
-#include "../boolean.h"
 #include "state_tracker.h"
 #include "../conf/config_file.h"
 #include "../miscellaneous.h"

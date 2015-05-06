@@ -16,7 +16,10 @@
 #ifndef __RARCH_FILE_H
 #define __RARCH_FILE_H
 
-#include "boolean.h"
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>

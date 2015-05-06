@@ -16,7 +16,6 @@
 
 #include "../driver.h"
 #include <stdlib.h>
-#include "../boolean.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>

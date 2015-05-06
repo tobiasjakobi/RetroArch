@@ -40,7 +40,6 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../boolean.h"
 #include "../fifo_buffer.h"
 #include "../thread.h"
 #include "../general.h"

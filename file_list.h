@@ -19,9 +19,10 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
-#include "boolean.h"
 #include "settings_data.h"
 
 struct item_file

@@ -29,7 +29,9 @@
 #include <X11/extensions/Xinerama.h>
 #endif
 
-#include "../../boolean.h"
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
 void x11_show_mouse(Display *dpy, Window win, bool state);
 void x11_windowed_fullscreen(Display *dpy, Window win);

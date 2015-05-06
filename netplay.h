@@ -19,7 +19,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "boolean.h"
 #include "libretro.h"
 
 void input_poll_net(void);

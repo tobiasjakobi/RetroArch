@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../compat/getopt_rarch.h"
-#include "../boolean.h"
 #include "../input/input_common.h"
 #include "../general.h"
 #include <assert.h>

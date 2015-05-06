@@ -13,7 +13,6 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../boolean.h"
 #include <string.h>
 #include "../general.h"
 #include "shader_glsl.h"

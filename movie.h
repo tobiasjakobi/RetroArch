@@ -18,7 +18,10 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "boolean.h"
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
 #define BSV_MAGIC 0x42535631
 

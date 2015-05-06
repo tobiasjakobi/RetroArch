@@ -14,7 +14,6 @@
  */
 
 #include <Python.h>
-#include "../../boolean.h"
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>

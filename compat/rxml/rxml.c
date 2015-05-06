@@ -20,7 +20,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdint.h>
-#include "../../boolean.h"
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
 #ifndef RXML_TEST
 #include "../../general.h"

@@ -21,10 +21,11 @@
 #endif
 
 #include <stdint.h>
-#include "boolean.h"
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
 typedef struct rarch_cmd rarch_cmd_t;

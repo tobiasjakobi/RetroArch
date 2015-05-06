@@ -16,8 +16,11 @@
 #ifndef __RARCH_IMAGE_CONTEXT_H
 #define __RARCH_IMAGE_CONTEXT_H
 
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
 #include <stdint.h>
-#include "../../boolean.h"
 
 struct texture_image
 {

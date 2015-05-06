@@ -18,7 +18,6 @@
 #define __FRONTEND_CONTEXT_H
 
 #include <stddef.h>
-#include "../boolean.h"
 
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
@@ -26,6 +25,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
 typedef void (*environment_get_t)(int *argc, char *argv[], void *args,

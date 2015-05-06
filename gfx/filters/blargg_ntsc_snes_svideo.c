@@ -16,9 +16,12 @@
 
 #include "softfilter.h"
 #include <stdlib.h>
-#include "boolean.h"
 #include "snes_ntsc/snes_ntsc.h"
 #include "snes_ntsc/snes_ntsc.c"
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
 #ifdef RARCH_INTERNAL
 #define softfilter_get_implementation blargg_ntsc_snes_svideo_get_implementation

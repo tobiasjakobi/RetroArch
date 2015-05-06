@@ -17,7 +17,10 @@
 #include <string.h>
 #include <stddef.h>
 #include "message_queue.h"
-#include "boolean.h"
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
 struct queue_elem
 {

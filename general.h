@@ -17,7 +17,6 @@
 #ifndef __RARCH_GENERAL_H
 #define __RARCH_GENERAL_H
 
-#include "boolean.h"
 #include <stdio.h>
 #include <limits.h>
 #include <setjmp.h>

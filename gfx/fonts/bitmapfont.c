@@ -13,12 +13,15 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+
 #include "fonts.h"
 #include "bitmap.h"
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#include "../../boolean.h"
 
 #define ATLAS_COLS 16
 #define ATLAS_ROWS 16

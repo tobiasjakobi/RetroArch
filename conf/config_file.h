@@ -19,10 +19,11 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
 #include <stdint.h>
-#include "../boolean.h"
 #include <stdio.h>
 #include <stddef.h>
 

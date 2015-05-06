@@ -14,12 +14,11 @@
  */
 
 
-#include "driver.h"
-#include "general.h"
-#include <pulse/pulseaudio.h>
-#include "../boolean.h"
-#include <string.h>
+#include "../driver.h"
+#include "../general.h"
 
+#include <pulse/pulseaudio.h>
+#include <string.h>
 #include <stdio.h>
 
 typedef struct

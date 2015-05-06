@@ -18,10 +18,11 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "../boolean.h"
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
 enum ffemu_pix_format

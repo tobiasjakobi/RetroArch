@@ -18,10 +18,11 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
 #include <stdint.h>
-#include "../boolean.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

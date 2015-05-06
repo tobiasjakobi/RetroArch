@@ -18,7 +18,10 @@
 #define __RARCH_FONTS_H
 
 #include <stdint.h>
-#include "../../boolean.h"
+
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
 // All coordinates and offsets are top-left oriented.
 //
