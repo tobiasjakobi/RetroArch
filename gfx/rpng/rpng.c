@@ -21,14 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef RARCH_INTERNAL
 #include "../../hash.h"
-#else
-static inline uint32_t crc32_calculate(const uint8_t *data, size_t length)
-{
-   return crc32(0, data, length);
-}
-#endif
 
 #undef GOTO_END_ERROR
 #define GOTO_END_ERROR() do { \

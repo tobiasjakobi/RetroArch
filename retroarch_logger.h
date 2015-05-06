@@ -21,7 +21,7 @@
 
 #if defined(RARCH_DUMMY_LOG)
 #define LOG_FILE (stderr)
-#elif defined(HAVE_FILE_LOGGER) && defined(RARCH_INTERNAL)
+#elif defined(HAVE_FILE_LOGGER)
 #define LOG_FILE (g_extern.log_file)
 #else
 #define LOG_FILE (stderr)
@@ -31,7 +31,7 @@
 #include <logger_override.h>
 #else
 
-#if defined(RARCH_DUMMY_LOG) || !defined(RARCH_INTERNAL)
+#if defined(RARCH_DUMMY_LOG)
 #define RARCH_LOG_VERBOSE (true)
 #else
 #define RARCH_LOG_VERBOSE g_extern.verbosity

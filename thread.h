@@ -54,18 +54,6 @@ bool scond_wait_timeout(scond_t *cond, slock_t *lock, int64_t timeout_us);
 int scond_broadcast(scond_t *cond);
 void scond_signal(scond_t *cond);
 
-#ifndef RARCH_INTERNAL
-#include <time.h>
-
-static inline void retro_sleep(unsigned msec)
-{
-   struct timespec tv = {0};
-   tv.tv_sec = msec / 1000;
-   tv.tv_nsec = (msec % 1000) * 1000000;
-   nanosleep(&tv, NULL);
-}
-#endif
-
 #if defined(__cplusplus)
 }
 #endif

@@ -55,7 +55,7 @@ JOYCONFIG_OBJ = tools/retroarch-joyconfig.o \
 
 HEADERS = $(wildcard */*/*.h) $(wildcard */*.h) $(wildcard *.h)
 
-DEFINES = -DHAVE_CONFIG_H -DRARCH_INTERNAL -DHAVE_CC_RESAMPLER -DHAVE_OVERLAY
+DEFINES = -DHAVE_CONFIG_H -DHAVE_CC_RESAMPLER -DHAVE_OVERLAY
 
 LIBS += -lm
 
