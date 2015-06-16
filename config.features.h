@@ -2,10 +2,7 @@
 #define __RARCH_FEATURES_H
 
 #include <stddef.h>
-
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

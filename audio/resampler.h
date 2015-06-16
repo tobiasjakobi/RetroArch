@@ -24,10 +24,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <math.h>
-
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
 
 // M_PI is left out of ISO C99 :(
 #ifndef M_PI

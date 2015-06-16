@@ -21,12 +21,7 @@
 #endif
 
 #include <stdint.h>
-
-#ifdef __cplusplus
-extern "C" {
-#else
 #include <stdbool.h>
-#endif
 
 typedef struct rarch_cmd rarch_cmd_t;
 
@@ -39,10 +34,6 @@ bool rarch_cmd_get(rarch_cmd_t *handle, unsigned id);
 
 #if defined(HAVE_NETWORK_CMD) && defined(HAVE_NETPLAY)
 bool network_cmd_send(const char *cmd);
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif

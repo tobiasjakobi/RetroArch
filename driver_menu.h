@@ -22,10 +22,6 @@
 #include "file_list.h"
 #include "core_info.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define MENU_MAX_BUTTONS 219
 
 #define MENU_MAX_AXES 32
@@ -177,11 +173,6 @@ typedef struct menu_ctx_driver
    // Human readable string.
    const char *ident;
 } menu_ctx_driver_t;
-
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

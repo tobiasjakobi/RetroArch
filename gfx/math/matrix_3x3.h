@@ -17,9 +17,7 @@
 #ifndef MATH_MATRIX_3X3_H__
 #define MATH_MATRIX_3X3_H__
 
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
 
 typedef struct math_matrix_3x3
 {

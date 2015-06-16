@@ -20,10 +20,6 @@
 #include "../conf/config_file.h"
 #include "../miscellaneous.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef GFX_MAX_SHADERS
 #define GFX_MAX_SHADERS 16
 #endif
@@ -155,10 +151,6 @@ void gfx_shader_resolve_relative(struct gfx_shader *shader, const char *ref_path
 bool gfx_shader_resolve_parameters(config_file_t *conf, struct gfx_shader *shader);
 
 enum rarch_shader_type gfx_shader_parse_type(const char *path, enum rarch_shader_type fallback);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

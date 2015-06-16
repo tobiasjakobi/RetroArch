@@ -1,7 +1,6 @@
 . qb/config.comp.sh
 
 TEMP_C=.tmp.c
-TEMP_CXX=.tmp.cxx
 TEMP_EXE=.tmp
 
 ECHOBUF="Checking operating system"
@@ -29,22 +28,4 @@ EOF
 	[ "$CC" ] || { echo "$ECHOBUF ... Not found. Exiting."; exit 1;}
 	echo "$ECHOBUF ... $CC"
 	rm -f "$TEMP_C" "$TEMP_EXE"
-fi
-
-# Checking for working C++
-if [ "$USE_LANG_CXX" = 'yes' ]; then
-	ECHOBUF="Checking for suitable working C++ compiler"
-#	echo -n "Checking for suitable working C++ compiler"
-	cat << EOF > "$TEMP_CXX"
-#include <iostream>
-int main() { std::cout << "Hai guise" << std::endl; return 0; }
-EOF
-	if [ -z "$CXX" ]; then
-		for CXX in ${CXX:=$(which ${CROSS_COMPILE}g++ ${CROSS_COMPILE}c++ ${CROSS_COMPILE}clang++)} ''; do
-			"$CXX" -o "$TEMP_EXE" "$TEMP_CXX" >/dev/null 2>&1 && break
-		done
-	fi
-	[ "$CXX" ] || { echo "$ECHOBUF ... Not found. Exiting."; exit 1;}
-	echo "$ECHOBUF ... $CXX"
-	rm -f "$TEMP_CXX" "$TEMP_EXE"
 fi

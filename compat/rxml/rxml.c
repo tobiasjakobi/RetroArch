@@ -20,10 +20,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdint.h>
-
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
 
 #ifndef RXML_TEST
 #include "../../general.h"

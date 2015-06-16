@@ -17,10 +17,7 @@
 #define __RARCH_REWIND_H
 
 #include <stddef.h>
-
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
 
 typedef struct state_manager state_manager_t;
 

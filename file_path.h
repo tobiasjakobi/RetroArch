@@ -21,11 +21,7 @@
 #include <stddef.h>
 #include <sys/types.h>
 
-#ifdef __cplusplus
-extern "C" {
-#else
 #include <stdbool.h>
-#endif
 
 long read_file(const char *path, void **buf);
 bool read_file_string(const char *path, char **buf);
@@ -144,10 +140,6 @@ void fill_pathname_slash(char *path, size_t size);
 
 #ifndef RARCH_CONSOLE
 void fill_pathname_application_path(char *buf, size_t size);
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif

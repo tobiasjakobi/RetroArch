@@ -18,10 +18,6 @@
 
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct content_history content_history_t;
 
 content_history_t *content_history_init(const char *path, size_t size);
@@ -46,10 +42,6 @@ const char* content_history_get_core_path(content_history_t *hist,
       unsigned index);
 const char* content_history_get_core_name(content_history_t *hist,
       unsigned index);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

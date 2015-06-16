@@ -17,12 +17,7 @@
 #ifndef __CONFIG_FILE_H
 #define __CONFIG_FILE_H
 
-#ifdef __cplusplus
-extern "C" {
-#else
 #include <stdbool.h>
-#endif
-
 #include <stdint.h>
 #include <stdio.h>
 #include <stddef.h>
@@ -109,10 +104,6 @@ bool config_file_write(config_file_t *conf, const char *path);
 void config_file_dump(config_file_t *conf, FILE *file);
 // Also dumps inherited values, useful for logging.
 void config_file_dump_all(config_file_t *conf);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

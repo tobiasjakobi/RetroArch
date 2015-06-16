@@ -20,10 +20,6 @@
 #include "../conf/config_file.h"
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 static inline void input_conv_analog_id_to_bind_id(unsigned index, unsigned id,
       unsigned *id_minus, unsigned *id_plus)
 {
@@ -157,10 +153,6 @@ void input_config_autoconfigure_joypad(unsigned index, const char *name, const c
 
 void input_push_analog_dpad(struct retro_keybind *binds, unsigned mode);
 void input_pop_analog_dpad(struct retro_keybind *binds);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

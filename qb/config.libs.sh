@@ -20,43 +20,36 @@ add_define_make DYLIB_LIB "$DYLIB"
 
 if [ "$HAVE_NEON" = "yes" ]; then
    CFLAGS="$CFLAGS -mfpu=neon -marm"
-   CXXFLAGS="$CXXFLAGS -mfpu=neon -marm"
    ASFLAGS="$ASFLAGS -mfpu=neon"
 fi
 
 if [ "$HAVE_FLOATHARD" = "yes" ]; then
    CFLAGS="$CFLAGS -mfloat-abi=hard"
-   CXXFLAGS="$CXXFLAGS -mfloat-abi=hard"
    ASFLAGS="$ASFLAGS -mfloat-abi=hard"
 fi
 
 if [ "$HAVE_FLOATSOFTFP" = "yes" ]; then
    CFLAGS="$CFLAGS -mfloat-abi=softfp"
-   CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
    ASFLAGS="$ASFLAGS -mfloat-abi=softfp"
 fi
 
 if [ "$HAVE_NEON" = "yes" ]; then
    CFLAGS="$CFLAGS -mfpu=neon -marm"
-   CXXFLAGS="$CXXFLAGS -mfpu=neon -marm"
    ASFLAGS="$ASFLAGS -mfpu=neon"
 fi
 
 if [ "$HAVE_FLOATHARD" = "yes" ]; then
    CFLAGS="$CFLAGS -mfloat-abi=hard"
-   CXXFLAGS="$CXXFLAGS -mfloat-abi=hard"
    ASFLAGS="$ASFLAGS -mfloat-abi=hard"
 fi
 
 if [ "$HAVE_FLOATSOFTFP" = "yes" ]; then
    CFLAGS="$CFLAGS -mfloat-abi=softfp"
-   CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
    ASFLAGS="$ASFLAGS -mfloat-abi=softfp"
 fi
 
 if [ "$HAVE_SSE" = "yes" ]; then
    CFLAGS="$CFLAGS -msse -msse2"
-   CXXFLAGS="$CXXFLAGS -msse -msse2"
 fi
 
 if [ "$HAVE_EGL" != "no" ]; then
@@ -82,7 +75,7 @@ else LIBRETRO="-lretro"
 fi
 
 [ "$HAVE_DYNAMIC" = 'yes' ] || {
-   check_lib_cxx RETRO "$LIBRETRO" retro_init "$DYLIB" "Cannot find libretro."
+   check_lib RETRO "$LIBRETRO" retro_init "$DYLIB"
    add_define_make libretro "$LIBRETRO"
 }
 
@@ -147,7 +140,7 @@ fi
 
 if [ "$HAVE_OPENGL" != 'no' ] && [ "$HAVE_GLES" != 'yes' ]; then
    # On some distros, -lCg doesn't link against -lstdc++ it seems ...
-   check_lib_cxx CG -lCg cgCreateContext
+   check_lib CG -lCg cgCreateContext
 else
    echo "Ignoring Cg. Desktop OpenGL is not enabled."
    HAVE_CG='no'

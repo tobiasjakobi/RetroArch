@@ -16,19 +16,12 @@
 #ifndef __RARCH_FILE_H
 #define __RARCH_FILE_H
 
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
-
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <sys/types.h>
 #include "file_path.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 // Handles files related to libretro.
 
@@ -39,9 +32,5 @@ void load_ram_file(const char *path, int type);
 void save_ram_file(const char *path, int type);
 
 bool init_rom_file(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

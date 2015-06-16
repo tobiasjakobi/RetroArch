@@ -16,12 +16,9 @@
 
 #include "softfilter.h"
 #include <stdlib.h>
+#include <stdbool.h>
 #include "snes_ntsc/snes_ntsc.h"
 #include "snes_ntsc/snes_ntsc.c"
-
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
 
 struct softfilter_thread_data
 {

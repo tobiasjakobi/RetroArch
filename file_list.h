@@ -17,12 +17,7 @@
 #ifndef MENU_LIST_H__
 #define MENU_LIST_H__
 
-#ifdef __cplusplus
-extern "C" {
-#else
 #include <stdbool.h>
-#endif
-
 #include "settings_data.h"
 
 struct item_file
@@ -71,8 +66,5 @@ bool file_list_search(const file_list_t *list, const char *needle, size_t *index
 
 void *file_list_get_last_setting(const file_list_t *list, int index);
 
-#ifdef __cplusplus
-}
-#endif
 #endif
 

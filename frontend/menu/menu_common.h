@@ -57,10 +57,6 @@
 
 #define MENU_KEYBOARD_BIND_TIMEOUT_SECONDS 5
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef enum
 {
    MENU_FILE_PLAIN,
@@ -117,9 +113,5 @@ uint64_t menu_input(void);
 void menu_flush_stack_type(unsigned final_type);
 void menu_update_system_info(menu_handle_t *menu, bool *load_no_content);
 void menu_build_scroll_indices(file_list_t *buf);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

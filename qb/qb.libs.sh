@@ -40,35 +40,7 @@ check_lib()	#$1 = HAVE_$1	$2 = lib	$3 = function in lib	$4 = extralibs
 	}
 
 	/bin/true
-}
-
-check_lib_cxx()	#$1 = HAVE_$1	$2 = lib	$3 = function in lib	$4 = extralibs	$5 = critical error message [checked only if non-empty]
-{	tmpval="$(eval echo \$HAVE_$1)"
-	[ "$tmpval" = 'no' ] && return 0
-
-	if [ "$3" ]; then
-		ECHOBUF="Checking function $3 in ${2% }"
-		echo "extern \"C\" { void $3(void); } int main() { $3(); }" > $TEMP_CXX
-	else
-		ECHOBUF="Checking existence of ${2% }"
-		echo "int main() { return 0; }" > $TEMP_CXX
-	fi
-	answer='no'
-#	echo -n "$ECHOBUF"
-	"$CXX" -o "$TEMP_EXE" "$TEMP_CXX" $INCLUDE_DIRS $LIBRARY_DIRS $4 $CFLAGS $LDFLAGS $2 >>config.log 2>&1 && answer='yes'
-	eval HAVE_$1="$answer"; echo "$ECHOBUF ... $answer"
-	rm "$TEMP_CXX" "$TEMP_EXE" >/dev/null 2>&1
-	[ "$answer" = 'no' ] && {
-		[ "$5" ] && { echo "$5"; exit 1;}
-		[ "$tmpval" = 'yes' ] && {
-			echo "Forced to build with library $2, but cannot locate. Exiting ..."
-			exit 1
-		}
-	
-	}
-
-	/bin/true
-}
+}	
 
 check_code_c()
 {	tmpval="$(eval echo \$HAVE_$1)"
@@ -80,18 +52,6 @@ check_code_c()
 	"$CC" -o "$TEMP_EXE" "$TEMP_C" $INCLUDE_DIRS $LIBRARY_DIRS $2 $CFLAGS $LDFLAGS >>config.log 2>&1 && answer='yes'
 	eval HAVE_$1="$answer"; echo "$ECHOBUF ... $answer"
 	rm "$TEMP_C" "$TEMP_EXE" >/dev/null 2>&1
-}
-
-check_code_cxx()
-{	tmpval="$(eval echo \$HAVE_$1)"
-	[ "$tmpval" = 'no' ] && return 0
-
-	ECHOBUF="Checking C++ code snippet \"$3\""
-#	echo -n "Checking C++ code snippet \"$3\""
-	answer='no'
-	"$CXX" -o "$TEMP_EXE" "$TEMP_CXX" $INCLUDE_DIRS $LIBRARY_DIRS $2 $CXXFLAGS $LDFLAGS >>config.log 2>&1 && answer='yes'
-	eval HAVE_$1="$answer"; echo "$ECHOBUF ... $answer"
-	rm "$TEMP_CXX" "$TEMP_EXE" >/dev/null 2>&1
 }
 
 check_pkgconf()	#$1 = HAVE_$1	$2 = package	$3 = version	$4 = critical error message [checked only if non-empty]
@@ -180,19 +140,6 @@ check_switch_c()	#$1 = HAVE_$1	$2 = switch	$3 = critical error message [checked 
 	}
 }
 
-check_switch_cxx()	#$1 = HAVE_$1	$2 = switch	$3 = critical error message [checked only if non-empty]
-{	ECHOBUF="Checking for availability of switch $2 in $CXX"
-#	echo -n "Checking for availability of switch $2 in $CXX"
-	echo "int main() { return 0; }" > $TEMP_CXX
-	answer='no'
-	"$CXX" -o "$TEMP_EXE" "$TEMP_CXX" "$2" >>config.log 2>&1 && answer='yes'
-	eval HAVE_$1="$answer"; echo "$ECHOBUF ... $answer"
-	rm "$TEMP_CXX" "$TEMP_EXE" >/dev/null 2>&1
-	[ "$answer" = 'no' ] && {
-		[ "$3" ] && { echo "$3"; exit 1;}
-	}
-}
-
 create_config_header()
 {   outfile="$1"; shift
 
@@ -225,10 +172,6 @@ create_config_make()
 	{	if [ "$USE_LANG_C" = 'yes' ]; then
 			echo "CC = $CC"
 			echo "CFLAGS = $CFLAGS"
-		fi
-		if [ "$USE_LANG_CXX" = 'yes' ]; then
-			echo "CXX = $CXX"
-			echo "CXXFLAGS = $CXXFLAGS"
 		fi
 		echo "ASFLAGS = $ASFLAGS"
 		echo "LDFLAGS = $LDFLAGS"

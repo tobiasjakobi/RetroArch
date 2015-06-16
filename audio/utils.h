@@ -16,10 +16,6 @@
 #ifndef AUDIO_UTILS_H
 #define AUDIO_UTILS_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdint.h>
 #include <stddef.h>
 
@@ -64,9 +60,5 @@ void audio_convert_float_to_s16_C(int16_t *out,
       const float *in, size_t samples);
 
 void audio_convert_init_simd(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

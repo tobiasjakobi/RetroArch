@@ -44,7 +44,6 @@ else
 endif
 
 CC      := $(compiler) -Wall
-CXX     := $(subst CC,++,$(compiler)) -std=gnu++0x -Wall
 flags   := -fPIC $(extra_flags)
 asflags := -fPIC  $(extra_flags)
 objects :=

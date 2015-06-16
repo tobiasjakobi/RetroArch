@@ -8,8 +8,6 @@ Package: $PACKAGE_NAME
 General environment variables:
 CC:         C compiler
 CFLAGS:     C compiler flags
-CXX:        C++ compiler
-CXXFLAGS:   C++ compiler flags
 LDFLAGS:    Linker flags
 
 General options:

@@ -22,10 +22,6 @@
 #include "file.h"
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct
 {
    char *path;
@@ -94,9 +90,5 @@ const core_info_t *core_info_list_get_by_id(const char *core_id);
 
 const char *core_info_get_custom_config(const char *core_id, char *buffer, size_t buffer_length);
 bool core_info_has_custom_config(const char *core_id);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* CORE_INFO_H_ */

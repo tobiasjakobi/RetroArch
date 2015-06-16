@@ -16,10 +16,7 @@
 #ifndef SCALER_H__
 #define SCALER_H__
 
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
-
 #include <stdint.h>
 #include <stddef.h>
 #include "scaler_common.h"

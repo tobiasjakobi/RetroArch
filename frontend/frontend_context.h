@@ -18,15 +18,10 @@
 #define __FRONTEND_CONTEXT_H
 
 #include <stddef.h>
+#include <stdbool.h>
 
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#else
-#include <stdbool.h>
 #endif
 
 typedef void (*environment_get_t)(int *argc, char *argv[], void *args,
@@ -55,9 +50,5 @@ extern const frontend_ctx_driver_t frontend_ctx_null;
 
 const frontend_ctx_driver_t *frontend_ctx_find_driver(const char *ident); // Finds driver with ident. Does not initialize.
 const frontend_ctx_driver_t *frontend_ctx_init_first(void); // Finds first suitable driver and initializes.
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

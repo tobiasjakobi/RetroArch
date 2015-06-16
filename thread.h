@@ -18,12 +18,7 @@
 #define THREAD_H__
 
 #include <stdint.h>
-
-#if defined(__cplusplus)
-extern "C" {
-#else
 #include <stdbool.h>
-#endif
 
 // Implements the bare minimum needed for RetroArch. :)
 
@@ -53,9 +48,5 @@ void scond_wait(scond_t *cond, slock_t *lock);
 bool scond_wait_timeout(scond_t *cond, slock_t *lock, int64_t timeout_us);
 int scond_broadcast(scond_t *cond);
 void scond_signal(scond_t *cond);
-
-#if defined(__cplusplus)
-}
-#endif
 
 #endif

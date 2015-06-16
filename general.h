@@ -54,10 +54,6 @@
 
 #include "audio/resampler.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define MAX_PLAYERS 8
 
 enum basic_event
@@ -698,10 +694,6 @@ void rarch_disk_control_append_image(const char *path);
 bool rarch_set_rumble_state(unsigned port, enum retro_rumble_effect effect, bool enable);
 
 /////////
-
-#ifdef __cplusplus
-}
-#endif
 
 static inline float db_to_gain(float db)
 {

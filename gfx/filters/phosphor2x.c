@@ -20,10 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
 
 #define PHOSPHOR2X_SCALE 2
 

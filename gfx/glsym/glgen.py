@@ -81,10 +81,6 @@ if __name__ == '__main__':
       f.write('#ifndef RGLGEN_DECL_H__\n')
       f.write('#define RGLGEN_DECL_H__\n')
 
-      f.write('#ifdef __cplusplus\n')
-      f.write('extern "C" {\n')
-      f.write('#endif\n')
-
       f.write('#ifdef GL_APIENTRY\n')
       f.write('typedef void (GL_APIENTRY *RGLGENGLDEBUGPROC)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);\n')
       f.write('typedef void (GL_APIENTRY *RGLGENGLDEBUGPROCKHR)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);\n')
@@ -113,10 +109,6 @@ if __name__ == '__main__':
 
       f.write('struct rglgen_sym_map { const char *sym; void *ptr; };\n')
       f.write('extern const struct rglgen_sym_map rglgen_symbol_map[];\n')
-
-      f.write('#ifdef __cplusplus\n')
-      f.write('}\n')
-      f.write('#endif\n')
 
       f.write('#endif\n')
 

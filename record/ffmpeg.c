@@ -17,9 +17,6 @@
 #include "../config.h"
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <libavcodec/avcodec.h>
 #include <libavutil/mathematics.h>
 #include <libavutil/avutil.h>
@@ -33,9 +30,6 @@ extern "C" {
 #include <libavutil/avconfig.h>
 #include <libavutil/pixdesc.h>
 #include <libswscale/swscale.h>
-#ifdef __cplusplus
-}
-#endif
 
 #include <stdint.h>
 #include <stdio.h>

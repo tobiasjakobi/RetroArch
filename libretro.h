@@ -26,14 +26,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <limits.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
 
 // Used for checking API/ABI mismatches that can break libretro implementations.
 // It is not incremented for compatible changes to the API.
@@ -1319,9 +1312,5 @@ unsigned retro_get_region(void);
 // Gets region of memory.
 void *retro_get_memory_data(unsigned id);
 size_t retro_get_memory_size(unsigned id);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

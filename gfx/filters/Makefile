@@ -44,8 +44,6 @@ extra_flags += -static-libgcc -static-libstdc++
 DYLIB = dll
 endif
 
-CC      := $(compiler)
-CXX     := $(subst CC,++,$(compiler)) -std=gnu++0x
 flags   := -fPIC $(extra_flags)
 asflags := -fPIC  $(extra_flags)
 objects :=
@@ -63,14 +61,14 @@ objects += blargg_ntsc_snes_composite.$(DYLIB) blargg_ntsc_snes_rf.$(DYLIB) blar
 all: build;
 
 %.o: %.S
-	$(CC) -c -o $@ $(asflags) $<
+	$(compiler) -c -o $@ $(asflags) $<
 
 %.o: %.c
-	$(CC) -c -o $@ $(flags) $<
+	$(compiler) -c -o $@ $(flags) $<
 
 .SECONDEXPANSION:
 %.$(DYLIB): %.o $$(findstring %_neon.o,$$(neon_asm))
-	$(CC) -o $@ $(ldflags) $(flags) $^
+	$(compiler) -o $@ $(ldflags) $(flags) $^
 
 build: $(objects)
 

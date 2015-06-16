@@ -6,10 +6,6 @@
 
 #include "snes_ntsc_config.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /* Image parameters, ranging from -1.0 to 1.0. Actual internal values shown
 in parenthesis and should remain fairly stable in future versions. */
 typedef struct snes_ntsc_setup_t
@@ -199,9 +195,5 @@ enum { snes_ntsc_burst_size = snes_ntsc_entry_size / snes_ntsc_burst_count };
 	if ( bits == 0 )\
 		rgb_out = raw_ << x;\
 }
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif

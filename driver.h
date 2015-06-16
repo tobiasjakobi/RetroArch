@@ -18,10 +18,8 @@
 #ifndef __DRIVER__H
 #define __DRIVER__H
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
 
+#include <stdbool.h>
 #include <sys/types.h>
 #include "libretro_private.h"
 #include <stdlib.h>
@@ -43,10 +41,6 @@
 
 #ifdef HAVE_COMMAND
 #include "command.h"
-#endif
-
-#ifdef __cplusplus
-extern "C" {
 #endif
 
 #define AUDIO_CHUNK_SIZE_BLOCKING 512
@@ -506,10 +500,6 @@ extern const menu_ctx_driver_t menu_ctx_rgui;
 extern const menu_ctx_driver_backend_t menu_ctx_backend_common;
 
 #include "driver_funcs.h"
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

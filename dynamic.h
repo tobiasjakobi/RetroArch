@@ -28,10 +28,6 @@
 #undef NEED_DYNAMIC
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void init_libretro_sym(bool dummy);
 void uninit_libretro_sym(void);
 
@@ -104,10 +100,6 @@ extern void *(*pretro_get_memory_data)(unsigned);
 extern size_t (*pretro_get_memory_size)(unsigned);
 
 extern bool rarch_environment_cb(unsigned cmd, void *data);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

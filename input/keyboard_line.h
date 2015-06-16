@@ -16,10 +16,6 @@
 #ifndef KEYBOARD_LINE_H__
 #define KEYBOARD_LINE_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "../libretro.h"
 #include <stdint.h>
 
@@ -51,10 +47,6 @@ const char **input_keyboard_start_line(void *userdata, input_keyboard_line_compl
 // Callback returns false when all polling is done.
 void input_keyboard_wait_keys(void *userdata, input_keyboard_press_t cb);
 void input_keyboard_wait_keys_cancel(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

@@ -17,10 +17,6 @@
 #ifndef __RARCH_MSG_QUEUE_H
 #define __RARCH_MSG_QUEUE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct msg_queue msg_queue_t;
 
 // Creates a message queue with maximum size different messages. Returns NULL if allocation error.
@@ -36,9 +32,5 @@ const char *msg_queue_pull(msg_queue_t *queue);
 void msg_queue_clear(msg_queue_t *queue);
 
 void msg_queue_free(msg_queue_t *queue);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

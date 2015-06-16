@@ -19,10 +19,6 @@
 
 #define PERF_LOG_FMT "[PERF]: Avg (%s): %llu ticks, %llu runs.\n"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "general.h"
 
 #define MAX_COUNTERS 64
@@ -68,10 +64,6 @@ unsigned rarch_get_cpu_cores(void);
 
 #define RARCH_PERFORMANCE_START(X) rarch_perf_start(&(X))
 #define RARCH_PERFORMANCE_STOP(X) rarch_perf_stop(&(X))
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

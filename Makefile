@@ -322,17 +322,11 @@ endif
 
 ifeq ($(GL_DEBUG), 1)
    CFLAGS += -DGL_DEBUG
-   CXXFLAGS += -DGL_DEBUG
 endif
 
 CFLAGS += -Wall $(OPTIMIZE_FLAG) $(INCLUDE_DIRS) -g -I.
-ifeq ($(CXX_BUILD), 1)
-   LINK = $(CXX)
-   CFLAGS += -std=c++0x -xc++ -D__STDC_CONSTANT_MACROS
-else
-   LINK = $(CC)
-   CFLAGS += -std=c99 -D_GNU_SOURCE
-endif
+CFLAGS += -std=c99 -D_GNU_SOURCE
+LINK = $(CC)
 
 ifeq ($(NOUNUSED), yes)
    CFLAGS += -Wno-unused-result
@@ -364,11 +358,7 @@ retroarch: $(RARCH_OBJ)
 
 tools/retroarch-joyconfig: $(RARCH_JOYCONFIG_OBJ)
 	@$(if $(Q), $(shell echo echo LD $@),)
-ifeq ($(CXX_BUILD), 1)
-	$(Q)$(CXX) -o $@ $(RARCH_JOYCONFIG_OBJ) $(JOYCONFIG_LIBS) $(LDFLAGS) $(LIBRARY_DIRS)
-else
 	$(Q)$(CC) -o $@ $(RARCH_JOYCONFIG_OBJ) $(JOYCONFIG_LIBS) $(LDFLAGS) $(LIBRARY_DIRS)
-endif
 
 $(OBJDIR)/%.o: %.c config.h config.mk
 	@mkdir -p $(dir $@)

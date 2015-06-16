@@ -16,10 +16,6 @@
 #ifndef __GFX_COMMON_H
 #define __GFX_COMMON_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stddef.h>
 #include <stdint.h>
 #include "../general.h"
@@ -103,9 +99,5 @@ extern struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END];
 void gfx_set_square_pixel_viewport(unsigned width, unsigned height);
 void gfx_set_core_viewport(void);
 void gfx_set_config_viewport(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

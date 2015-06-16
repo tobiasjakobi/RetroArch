@@ -17,17 +17,10 @@
 #define RPNG_H__
 
 #include <stdint.h>
-
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
-#endif
-
-#ifdef __cplusplus
-extern "C" {
 #endif
 
 bool rpng_load_image_argb(const char *path, uint32_t **data, unsigned *width, unsigned *height);
@@ -37,10 +30,6 @@ bool rpng_save_image_argb(const char *path, const uint32_t *data,
       unsigned width, unsigned height, unsigned pitch);
 bool rpng_save_image_bgr24(const char *path, const uint8_t *data,
       unsigned width, unsigned height, unsigned pitch);
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 #endif

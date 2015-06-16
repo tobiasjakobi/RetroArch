@@ -18,12 +18,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-
-#ifdef __cplusplus
-extern "C" {
-#else
 #include <stdbool.h>
-#endif
 
 enum ffemu_pix_format
 {
@@ -94,9 +89,5 @@ extern const ffemu_backend_t ffemu_ffmpeg;
 
 const ffemu_backend_t *ffemu_find_backend(const char *ident);
 bool ffemu_init_first(const ffemu_backend_t **backend, void **data, const struct ffemu_params *params);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

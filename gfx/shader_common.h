@@ -16,9 +16,7 @@
 #ifndef SHADER_COMMON_H__
 #define SHADER_COMMON_H__
 
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 #include "../config.h"

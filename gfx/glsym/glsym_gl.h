@@ -1,8 +1,5 @@
 #ifndef RGLGEN_DECL_H__
 #define RGLGEN_DECL_H__
-#ifdef __cplusplus
-extern "C" {
-#endif
 #ifdef GL_APIENTRY
 typedef void (GL_APIENTRY *RGLGENGLDEBUGPROC)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);
 typedef void (GL_APIENTRY *RGLGENGLDEBUGPROCKHR)(GLenum, GLenum, GLuint, GLenum, GLsizei, const GLchar*, GLvoid*);
@@ -3102,7 +3099,4 @@ extern RGLSYMGLGETIMAGETRANSFORMPARAMETERFVHPPROC __rglgen_glGetImageTransformPa
 
 struct rglgen_sym_map { const char *sym; void *ptr; };
 extern const struct rglgen_sym_map rglgen_symbol_map[];
-#ifdef __cplusplus
-}
-#endif
 #endif

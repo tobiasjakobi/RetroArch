@@ -13,14 +13,11 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
-
 #include "fonts.h"
 #include "bitmap.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <math.h>
 
 #define ATLAS_COLS 16

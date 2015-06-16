@@ -16,11 +16,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
-#include "message_queue.h"
-
-#ifndef __cplusplus
 #include <stdbool.h>
-#endif
+#include "message_queue.h"
 
 struct queue_elem
 {

@@ -19,10 +19,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define SOFTFILTER_SIMD_SSE      (1 << 0)
 #define SOFTFILTER_SIMD_SSE2     (1 << 1)
 #define SOFTFILTER_SIMD_VMX      (1 << 2)
@@ -118,10 +114,6 @@ struct softfilter_implementation
    const char *ident; // Human readable identifier of implementation.
    unsigned api_version; // Must be SOFTFILTER_API_VERSION
 };
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
 

@@ -16,10 +16,8 @@
 // BPS/UPS/IPS implementation from bSNES (nall::).
 // Modified for RetroArch.
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
 
+#include <stdbool.h>
 #include "patch.h"
 #include "hash.h"
 #include <stdint.h>
