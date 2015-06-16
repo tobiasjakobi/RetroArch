@@ -154,10 +154,6 @@ ifeq ($(HAVE_SDL2), 1)
    LIBS += $(SDL2_LIBS)
 endif
 
-ifeq ($(HAVE_OMAP), 1)
-   OBJ += gfx/omap.o
-endif
-
 ifeq ($(HAVE_EXYNOS), 1)
    OBJ += gfx/exynos.o mem/neon/memcpy-neon.o
    LIBS += $(DRM_LIBS) $(EXYNOS_LIBS)
