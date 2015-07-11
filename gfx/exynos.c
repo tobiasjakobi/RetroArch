@@ -696,16 +696,22 @@ static int exynos_open(struct exynos_data *pdata) {
     goto fail;
   }
 
-  for (i = 0; i < drm->resources->count_encoders; i++) {
-    drm->encoder = drmModeGetEncoder(fd, drm->resources->encoders[i]);
+  for (i = 0; i < drm->connector->count_encoders; i++) {
+    drm->encoder = drmModeGetEncoder(fd, drm->connector->encoders[i]);
  
     if (drm->encoder == NULL) continue;
- 
-    if (drm->encoder->encoder_id == drm->connector->encoder_id)
+
+    if (drm->connector->encoder_id == 0 ||
+        drm->encoder->encoder_id == drm->connector->encoder_id)
       break;
  
     drmModeFreeEncoder(drm->encoder);
     drm->encoder = NULL;
+  }
+
+  if (i == drm->connector->count_encoders) {
+    RARCH_ERR("video_exynos: no compatible encoder found\n");
+    goto fail;
   }
 
   fliphandler = calloc(1, sizeof(struct exynos_fliphandler));
