@@ -133,7 +133,7 @@ struct exynos_drm {
   drmModeConnector *connector;
   drmModeEncoder *encoder;
   drmModeModeInfo *mode;
-  drmModeCrtc *orig_crtc;
+  drmModeCrtc *crtc, *orig_crtc;
 
   uint32_t crtc_id;
   uint32_t connector_id;
@@ -256,6 +256,7 @@ static void restore_crtc(struct exynos_drm *d, int fd) {
 }
 
 static void clean_up_drm(struct exynos_drm *d, int fd) {
+  if (d->crtc) drmModeFreeCrtc(d->crtc);
   if (d->encoder) drmModeFreeEncoder(d->encoder);
   if (d->connector) drmModeFreeConnector(d->connector);
   if (d->resources) drmModeFreeResources(d->resources);
@@ -643,7 +644,7 @@ static int exynos_open(struct exynos_data *pdata) {
   int fd = -1;
   struct exynos_drm *drm = NULL;
   struct exynos_fliphandler *fliphandler = NULL;
-  unsigned i;
+  unsigned i, j;
 
   pdata->fd = -1;
 
@@ -698,19 +699,31 @@ static int exynos_open(struct exynos_data *pdata) {
 
   for (i = 0; i < drm->connector->count_encoders; i++) {
     drm->encoder = drmModeGetEncoder(fd, drm->connector->encoders[i]);
- 
-    if (drm->encoder == NULL) continue;
+    if (drm->encoder == NULL)
+      continue;
 
-    if (drm->connector->encoder_id == 0 ||
-        drm->encoder->encoder_id == drm->connector->encoder_id)
+    /* Find a CRTC that is compatible with the encoder. */
+    for (j = 0; j < drm->resources->count_crtcs; ++j) {
+      if (drm->encoder->possible_crtcs & (1 << j))
+        break;
+    }
+
+    /* Select this encoder if compatible CRTC was found. */
+    if (j != drm->resources->count_crtcs)
       break;
- 
+
     drmModeFreeEncoder(drm->encoder);
     drm->encoder = NULL;
   }
 
   if (i == drm->connector->count_encoders) {
     RARCH_ERR("video_exynos: no compatible encoder found\n");
+    goto fail;
+  }
+
+  drm->crtc = drmModeGetCrtc(fd, drm->resources->crtcs[j]);
+  if (drm->crtc == NULL) {
+    RARCH_ERR("video_exynos: failed to get crtc from encoder\n");
     goto fail;
   }
 
@@ -788,7 +801,7 @@ static int exynos_init(struct exynos_data *pdata, unsigned bpp) {
     goto fail;
   }
 
-  drm->crtc_id = drm->encoder->crtc_id;
+  drm->crtc_id = drm->crtc->crtc_id;
   drm->connector_id = drm->connector->connector_id;
   drm->orig_crtc = drmModeGetCrtc(fd, drm->crtc_id);
   if (!drm->orig_crtc)
