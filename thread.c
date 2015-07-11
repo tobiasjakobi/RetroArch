@@ -152,13 +152,6 @@ bool scond_wait_timeout(scond_t *cond, slock_t *lock, int64_t timeout_us)
 {
    struct timespec now = {0};
 
-#if defined(__mips__)
-   struct timeval tm;
-   gettimeofday(&tm, NULL);
-   now.tv_sec = tm.tv_sec;
-   now.tv_nsec = tm.tv_usec * 1000;
-#endif
-
    now.tv_sec += timeout_us / 1000000LL;
    now.tv_nsec += timeout_us * 1000LL;
 

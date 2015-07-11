@@ -27,10 +27,6 @@
 #include <time.h>
 #endif
 
-#if defined(__mips__)
-#include <sys/time.h>
-#endif
-
 #if defined(BSD)
 #include <sys/sysctl.h>
 #endif
@@ -120,10 +116,6 @@ retro_perf_tick_t rarch_get_perf_counter(void)
    __asm__ volatile( "mrc p15, 0, %0, c9, c13, 0" : "=r"(time) );
 #elif defined(__powerpc__) || defined(__ppc__) || defined(__POWERPC__)
    time = __mftb();
-#elif defined(__mips__)
-   struct timeval tv;
-   gettimeofday(&tv,NULL);
-   time = (1000000 * tv.tv_sec + tv.tv_usec);
 #endif
 
    return time;
@@ -136,10 +128,6 @@ retro_time_t rarch_get_time_usec(void)
    if (clock_gettime(CLOCK_MONOTONIC, &tv) < 0)
       return 0;
    return tv.tv_sec * INT64_C(1000000) + (tv.tv_nsec + 500) / 1000;
-#elif defined(__mips__)
-   struct timeval tv;
-   gettimeofday(&tv,NULL);
-   return (1000000 * tv.tv_sec + tv.tv_usec);
 #else
 #error "Your platform does not have a timer function implemented in rarch_get_time_usec(). Cannot continue."
 #endif
