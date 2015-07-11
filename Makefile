@@ -311,7 +311,8 @@ ifneq ($(V),1)
    Q := @
 endif
 
-OPTIMIZE_FLAG = -O2 -ffast-math
+# Use memcmp() from glibc (faster than gcc's builtin version)
+OPTIMIZE_FLAG = -O2 -ffast-math -fno-builtin-memcmp
 ifeq ($(DEBUG), 1)
    OPTIMIZE_FLAG = -O0
 endif
