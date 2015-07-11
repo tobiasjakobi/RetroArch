@@ -1057,8 +1057,10 @@ static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
   pdata->blit_w = width;
   pdata->blit_h = height;
 
-  for (i = 0; i < pdata->num_pages; ++i)
-    pdata->pages[i].clear = exynos_buffer_partial;
+  for (i = 0; i < pdata->num_pages; ++i) {
+    if (pdata->pages[i].clear == exynos_buffer_non)
+      pdata->pages[i].clear = exynos_buffer_partial;
+  }
 }
 
 static void exynos_set_fake_blit(struct exynos_data *pdata) {
