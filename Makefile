@@ -294,7 +294,7 @@ ifeq ($(HAVE_XKBCOMMON), 1)
 endif
 
 ifeq ($(HAVE_NEON),1)
-   OBJ += audio/sinc_neon.o
+   OBJ += audio/sinc_neon.o mem/neon/memcmp-neon.o
    # When compiled without this, tries to attempt to compile sinc lerp,
    # which will error out
    DEFINES += -DSINC_LOWER_QUALITY

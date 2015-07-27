@@ -20,6 +20,13 @@
 #include <stdio.h>
 #include "general.h"
 
+#if (HAVE_NEON == 1)
+extern void *memcmp_neon(void *dst, const void *src, size_t n);
+#define memcmp_impl memcmp_neon
+#else
+#define memcmp_impl memcmp
+#endif
+
 struct autosave
 {
    volatile bool quit;
@@ -45,7 +52,7 @@ static void autosave_thread(void *data)
    while (!save->quit)
    {
       autosave_lock(save);
-      bool differ = memcmp(save->buffer, save->retro_buffer, save->bufsize) != 0;
+      bool differ = memcmp_impl(save->buffer, save->retro_buffer, save->bufsize) != 0;
       if (differ)
          memcpy(save->buffer, save->retro_buffer, save->bufsize);
       autosave_unlock(save);
