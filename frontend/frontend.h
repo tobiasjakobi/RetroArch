@@ -20,16 +20,17 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "frontend_context.h"
+#include <stdbool.h>
 
 #define args_type() void*
 #define signature() int argc, char *argv[]
 #define returntype int
 
+typedef void (*environment_get_t)(int *argc, char *argv[], void *args, void *params_data);
+
 int main_entry_iterate(signature(), args_type() args);
 void main_exit(args_type() args);
 returntype main_entry(signature());
-bool main_load_content(int argc, char **argv, args_type() args, environment_get_t environ_get,
-      process_args_t process_args);
+bool main_load_content(int argc, char **argv, args_type() args, environment_get_t environ_get);
 
 #endif

@@ -30,7 +30,6 @@
 #include "gfx/shader_parse.h"
 #include "audio/dsp_filter.h"
 #include "input/overlay.h"
-#include "frontend/frontend_context.h"
 #include "miscellaneous.h"
 
 #include "driver_menu.h"
@@ -349,7 +348,6 @@ enum rarch_display_type
 
 typedef struct driver
 {
-   const frontend_ctx_driver_t *frontend_ctx;
    const audio_driver_t *audio;
    const video_driver_t *video;
    const input_driver_t *input;

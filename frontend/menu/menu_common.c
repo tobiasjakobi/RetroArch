@@ -195,8 +195,7 @@ bool load_menu_content(void)
 {
    load_menu_content_prepare();
 
-   if (!(main_load_content(0, NULL, NULL, menu_environment_get,
-         driver.frontend_ctx->process_args)))
+   if (!(main_load_content(0, NULL, NULL, menu_environment_get)))
    {
       char name[PATH_MAX], msg[PATH_MAX];
 
