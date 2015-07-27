@@ -4,3 +4,5 @@ remove/cleanup:
 - dynamic (make hard requirement)
 - clang
 - bsd
+- remove unnecessary casting of void pointers (e.g. when allocating memory via malloc/calloc)
+- remove excessive global labels from asm code (e.g. sinc_neon.S)
