@@ -29,7 +29,6 @@
 #include "gfx/filters/softfilter.h"
 #include "gfx/shader_parse.h"
 #include "audio/dsp_filter.h"
-#include "input/overlay.h"
 #include "miscellaneous.h"
 
 #include "driver_menu.h"
@@ -101,7 +100,6 @@ enum // RetroArch specific bind IDs.
    RARCH_ENABLE_HOTKEY,
    RARCH_VOLUME_UP,
    RARCH_VOLUME_DOWN,
-   RARCH_OVERLAY_NEXT,
    RARCH_DISK_EJECT_TOGGLE,
    RARCH_DISK_NEXT,
    RARCH_GRAB_MOUSE_TOGGLE,
@@ -263,18 +261,6 @@ typedef struct input_driver
 
 struct rarch_viewport;
 
-#ifdef HAVE_OVERLAY
-typedef struct video_overlay_interface
-{
-   void (*enable)(void *data, bool state);
-   bool (*load)(void *data, const struct texture_image *images, unsigned num_images);
-   void (*tex_geom)(void *data, unsigned image, float x, float y, float w, float h);
-   void (*vertex_geom)(void *data, unsigned image, float x, float y, float w, float h);
-   void (*full_screen)(void *data, bool enable);
-   void (*set_alpha)(void *data, unsigned image, float mod);
-} video_overlay_interface_t;
-#endif
-
 struct font_params
 {
    float x;
@@ -334,9 +320,6 @@ typedef struct video_driver
    // Reads out in BGR byte order (24bpp).
    bool (*read_viewport)(void *data, uint8_t *buffer);
 
-#ifdef HAVE_OVERLAY
-   void (*overlay_interface)(void *data, const video_overlay_interface_t **iface);
-#endif
    void (*poke_interface)(void *data, const video_poke_interface_t **iface);
 } video_driver_t;
 
@@ -408,11 +391,6 @@ typedef struct driver
    // Kinda hackish to place it here, it is only used for GLES.
    // TODO: Refactor this better.
    bool gfx_use_rgba;
-
-#ifdef HAVE_OVERLAY
-   input_overlay_t *overlay;
-   input_overlay_state_t overlay_state;
-#endif
 
    // Interface for "poking".
    const video_poke_interface_t *video_poke;

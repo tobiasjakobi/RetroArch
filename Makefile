@@ -21,7 +21,6 @@ OBJ = frontend/frontend.o \
 		gfx/fonts/bitmapfont.o \
 		input/input_common.o \
 		input/keyboard_line.o \
-		input/overlay.o \
 		patch.o \
 		fifo_buffer.o \
 		core_options.o \
@@ -53,7 +52,7 @@ JOYCONFIG_OBJ = tools/retroarch-joyconfig.o \
 
 HEADERS = $(wildcard */*/*.h) $(wildcard */*.h) $(wildcard *.h)
 
-DEFINES = -DHAVE_CONFIG_H -DHAVE_CC_RESAMPLER -DHAVE_OVERLAY
+DEFINES = -DHAVE_CONFIG_H -DHAVE_CC_RESAMPLER
 
 LIBS += -lm
 

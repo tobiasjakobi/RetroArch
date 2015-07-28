@@ -328,9 +328,6 @@ uint64_t menu_input(void)
       {
          input_state |= input_input_state_func(binds,
                0, RETRO_DEVICE_JOYPAD, 0, i) ? (1ULL << i) : 0;
-#ifdef HAVE_OVERLAY
-         input_state |= (driver.overlay_state.buttons & (UINT64_C(1) << i)) ? (1ULL << i) : 0;
-#endif
       }
    }
    input_state |= input_key_pressed_func(RARCH_MENU_TOGGLE) ? (1ULL << RARCH_MENU_TOGGLE) : 0;

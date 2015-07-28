@@ -31,14 +31,6 @@ enum thread_cmd
    CMD_SET_ROTATION,
    CMD_READ_VIEWPORT,
 
-#ifdef HAVE_OVERLAY
-   CMD_OVERLAY_ENABLE,
-   CMD_OVERLAY_LOAD,
-   CMD_OVERLAY_TEX_GEOM,
-   CMD_OVERLAY_VERTEX_GEOM,
-   CMD_OVERLAY_FULL_SCREEN,
-#endif
-
    CMD_POKE_SET_FILTERING,
 #ifdef HAVE_FBO
    CMD_POKE_SET_FBO_STATE,
@@ -59,9 +51,6 @@ typedef struct thread_video
    video_info_t info;
    const video_driver_t *driver;
 
-#ifdef HAVE_OVERLAY
-   const video_overlay_interface_t *overlay;
-#endif
    const video_poke_interface_t *poke;
 
    void *driver_data;
@@ -186,18 +175,6 @@ static void thread_update_driver_state(thread_video_t *thr)
       thr->poke->set_texture_enable(thr->driver_data, thr->texture.enable, thr->texture.full_screen);
 #endif
 
-#if defined(HAVE_OVERLAY)
-   slock_lock(thr->alpha_lock);
-   if (thr->alpha_update)
-   {
-      unsigned i;
-      for (i = 0; i < thr->alpha_mods; i++)
-         thr->overlay->set_alpha(thr->driver_data, i, thr->alpha_mod[i]);
-      thr->alpha_update = false;
-   }
-   slock_unlock(thr->alpha_lock);
-#endif
-
    if (thr->apply_state_changes)
    {
       thr->poke->apply_state_changes(thr->driver_data);
@@ -279,49 +256,6 @@ static void thread_loop(void *data)
             thr->cmd_data.b = thr->driver->alive(thr->driver_data);
             thread_reply(thr, CMD_ALIVE);
             break;
-
-#ifdef HAVE_OVERLAY
-         case CMD_OVERLAY_ENABLE:
-            thr->overlay->enable(thr->driver_data, thr->cmd_data.b);
-            thread_reply(thr, CMD_OVERLAY_ENABLE);
-            break;
-
-         case CMD_OVERLAY_LOAD:
-            thr->cmd_data.b = thr->overlay->load(thr->driver_data,
-                  thr->cmd_data.image.data,
-                  thr->cmd_data.image.num);
-            thr->alpha_mods = thr->cmd_data.image.num;
-            thr->alpha_mod = (float*)realloc(thr->alpha_mod, thr->alpha_mods * sizeof(float));
-            for (i = 0; i < thr->alpha_mods; i++) // Avoid temporary garbage data.
-               thr->alpha_mod[i] = 1.0f;
-            thread_reply(thr, CMD_OVERLAY_LOAD);
-            break;
-
-         case CMD_OVERLAY_TEX_GEOM:
-            thr->overlay->tex_geom(thr->driver_data,
-                  thr->cmd_data.rect.index,
-                  thr->cmd_data.rect.x,
-                  thr->cmd_data.rect.y,
-                  thr->cmd_data.rect.w,
-                  thr->cmd_data.rect.h);
-            thread_reply(thr, CMD_OVERLAY_TEX_GEOM);
-            break;
-
-         case CMD_OVERLAY_VERTEX_GEOM:
-            thr->overlay->vertex_geom(thr->driver_data,
-                  thr->cmd_data.rect.index,
-                  thr->cmd_data.rect.x,
-                  thr->cmd_data.rect.y,
-                  thr->cmd_data.rect.w,
-                  thr->cmd_data.rect.h);
-            thread_reply(thr, CMD_OVERLAY_VERTEX_GEOM);
-            break;
-
-         case CMD_OVERLAY_FULL_SCREEN:
-            thr->overlay->full_screen(thr->driver_data, thr->cmd_data.b);
-            thread_reply(thr, CMD_OVERLAY_FULL_SCREEN);
-            break;
-#endif
 
          case CMD_POKE_SET_FILTERING:
             thr->poke->set_filtering(thr->driver_data,
@@ -610,84 +544,6 @@ static void thread_free(void *data)
    free(thr);
 }
 
-#ifdef HAVE_OVERLAY
-static void thread_overlay_enable(void *data, bool state)
-{
-   thread_video_t *thr = (thread_video_t*)data;
-   thr->cmd_data.b = state;
-   thread_send_cmd(thr, CMD_OVERLAY_ENABLE);
-   thread_wait_reply(thr, CMD_OVERLAY_ENABLE);
-}
-
-static bool thread_overlay_load(void *data, const struct texture_image *images, unsigned num_images)
-{
-   thread_video_t *thr = (thread_video_t*)data;
-   thr->cmd_data.image.data = images;
-   thr->cmd_data.image.num = num_images;
-   thread_send_cmd(thr, CMD_OVERLAY_LOAD);
-   thread_wait_reply(thr, CMD_OVERLAY_LOAD);
-   return thr->cmd_data.b;
-}
-
-static void thread_overlay_tex_geom(void *data, unsigned index, float x, float y, float w, float h)
-{
-   thread_video_t *thr = (thread_video_t*)data;
-   thr->cmd_data.rect.index = index;
-   thr->cmd_data.rect.x = x;
-   thr->cmd_data.rect.y = y;
-   thr->cmd_data.rect.w = w;
-   thr->cmd_data.rect.h = h;
-   thread_send_cmd(thr, CMD_OVERLAY_TEX_GEOM);
-   thread_wait_reply(thr, CMD_OVERLAY_TEX_GEOM);
-}
-
-static void thread_overlay_vertex_geom(void *data, unsigned index, float x, float y, float w, float h)
-{
-   thread_video_t *thr = (thread_video_t*)data;
-   thr->cmd_data.rect.index = index;
-   thr->cmd_data.rect.x = x;
-   thr->cmd_data.rect.y = y;
-   thr->cmd_data.rect.w = w;
-   thr->cmd_data.rect.h = h;
-   thread_send_cmd(thr, CMD_OVERLAY_VERTEX_GEOM);
-   thread_wait_reply(thr, CMD_OVERLAY_VERTEX_GEOM);
-}
-
-static void thread_overlay_full_screen(void *data, bool enable)
-{
-   thread_video_t *thr = (thread_video_t*)data;
-   thr->cmd_data.b = enable;
-   thread_send_cmd(thr, CMD_OVERLAY_FULL_SCREEN);
-   thread_wait_reply(thr, CMD_OVERLAY_FULL_SCREEN);
-}
-
-// We cannot wait for this to complete. Totally blocks the main thread.
-static void thread_overlay_set_alpha(void *data, unsigned index, float mod)
-{
-   thread_video_t *thr = (thread_video_t*)data;
-   slock_lock(thr->alpha_lock);
-   thr->alpha_mod[index] = mod;
-   thr->alpha_update = true;
-   slock_unlock(thr->alpha_lock);
-}
-
-static const video_overlay_interface_t thread_overlay = {
-   thread_overlay_enable,
-   thread_overlay_load,
-   thread_overlay_tex_geom,
-   thread_overlay_vertex_geom,
-   thread_overlay_full_screen,
-   thread_overlay_set_alpha,
-};
-
-static void thread_get_overlay_interface(void *data, const video_overlay_interface_t **iface)
-{
-   thread_video_t *thr = (thread_video_t*)data;
-   *iface = &thread_overlay;
-   thr->driver->overlay_interface(thr->driver_data, &thr->overlay);
-}
-#endif
-
 static void thread_set_filtering(void *data, unsigned index, bool smooth)
 {
    thread_video_t *thr = (thread_video_t*)data;
@@ -802,9 +658,6 @@ static const video_driver_t video_thread = {
    .set_rotation = thread_set_rotation,
    .viewport_info = thread_viewport_info,
    .read_viewport = thread_read_viewport,
-#ifdef HAVE_OVERLAY
-   .overlay_interface = thread_get_overlay_interface,
-#endif
    .poke_interface = thread_get_poke_interface,
 };
 
@@ -818,10 +671,6 @@ static void thread_set_callbacks(thread_video_t *thr, const video_driver_t *driv
       thr->video_thread.set_rotation = NULL;
    if (!driver->set_shader)
       thr->video_thread.set_shader = NULL;
-#ifdef HAVE_OVERLAY
-   if (!driver->overlay_interface)
-      thr->video_thread.overlay_interface = NULL;
-#endif
 
    // Might have to optionally disable poke_interface features as well.
    if (!thr->video_thread.poke_interface)

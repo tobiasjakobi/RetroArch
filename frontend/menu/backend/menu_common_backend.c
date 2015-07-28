@@ -267,9 +267,6 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          file_list_push(menu->selection_buf, "Font Options", "", MENU_SETTINGS_FONT_OPTIONS, 0);
          file_list_push(menu->selection_buf, "Audio Options", "", MENU_SETTINGS_AUDIO_OPTIONS, 0);
          file_list_push(menu->selection_buf, "Input Options", "", MENU_SETTINGS_INPUT_OPTIONS, 0);
-#ifdef HAVE_OVERLAY
-         file_list_push(menu->selection_buf, "Overlay Options", "", MENU_SETTINGS_OVERLAY_OPTIONS, 0);
-#endif
          file_list_push(menu->selection_buf, "User Options", "", MENU_SETTINGS_USER_OPTIONS, 0);
 #ifdef HAVE_NETPLAY
          file_list_push(menu->selection_buf, "Netplay Options", "", MENU_SETTINGS_NETPLAY_OPTIONS, 0);
@@ -285,12 +282,6 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          file_list_clear(menu->selection_buf);
          file_list_push(menu->selection_buf, "Disk Index", "", MENU_SETTINGS_DISK_INDEX, 0);
          file_list_push(menu->selection_buf, "Disk Image Append", "", MENU_SETTINGS_DISK_APPEND, 0);
-         break;
-      case MENU_SETTINGS_OVERLAY_OPTIONS:
-         file_list_clear(menu->selection_buf);
-         file_list_push(menu->selection_buf, "", "input_overlay", MENU_SETTINGS_OVERLAY_PRESET, 0);
-         file_list_push(menu->selection_buf, "", "input_overlay_opacity", MENU_SETTINGS_OVERLAY_OPACITY, 0);
-         file_list_push(menu->selection_buf, "", "input_overlay_scale", MENU_SETTINGS_OVERLAY_SCALE, 0);
          break;
       case MENU_SETTINGS_USER_OPTIONS:
          file_list_clear(menu->selection_buf);
@@ -326,9 +317,6 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
 #endif
          file_list_push(menu->selection_buf, "", "savestate_directory", MENU_SAVESTATE_DIR_PATH, 0);
          file_list_push(menu->selection_buf, "", "savefile_directory", MENU_SAVEFILE_DIR_PATH, 0);
-#ifdef HAVE_OVERLAY
-         file_list_push(menu->selection_buf, "", "overlay_directory", MENU_OVERLAY_DIR_PATH, 0);
-#endif
          file_list_push(menu->selection_buf, "", "system_directory", MENU_SYSTEM_DIR_PATH, 0);
          file_list_push(menu->selection_buf, "", "screenshot_directory", MENU_SCREENSHOT_DIR_PATH, 0);
          file_list_push(menu->selection_buf, "Autoconfig Directory", "", MENU_AUTOCONFIG_DIR_PATH, 0);
@@ -965,12 +953,6 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
          snprintf(msg, sizeof(msg),
                " -- Decreases audio volume.");
          break;
-      case MENU_SETTINGS_BIND_BEGIN + RARCH_OVERLAY_NEXT:
-         snprintf(msg, sizeof(msg),
-               " -- Toggles to next overlay.\n"
-               " \n"
-               "Wraps around.");
-         break;
       case MENU_SETTINGS_BIND_BEGIN + RARCH_DISK_EJECT_TOGGLE:
          snprintf(msg, sizeof(msg),
                " -- Toggles eject for disks.\n"
@@ -1245,7 +1227,6 @@ static unsigned menu_common_type_is(unsigned type)
       type == MENU_SETTINGS_AUDIO_OPTIONS ||
       type == MENU_SETTINGS_DISK_OPTIONS ||
       type == MENU_SETTINGS_PATH_OPTIONS ||
-      type == MENU_SETTINGS_OVERLAY_OPTIONS ||
       type == MENU_SETTINGS_USER_OPTIONS ||
       type == MENU_SETTINGS_NETPLAY_OPTIONS ||
       type == MENU_SETTINGS_OPTIONS ||
@@ -1284,7 +1265,6 @@ static unsigned menu_common_type_is(unsigned type)
       type == MENU_LIBRETRO_INFO_DIR_PATH ||
       type == MENU_CONFIG_DIR_PATH ||
       type == MENU_SAVEFILE_DIR_PATH ||
-      type == MENU_OVERLAY_DIR_PATH ||
       type == MENU_SCREENSHOT_DIR_PATH ||
       type == MENU_AUTOCONFIG_DIR_PATH ||
       type == MENU_EXTRACTION_DIR_PATH ||
@@ -1434,7 +1414,6 @@ static int menu_settings_iterate(unsigned action, rarch_setting_t *setting)
             menu_common_type_is(menu_type) == MENU_FILE_DIRECTORY ||
             menu_type == MENU_SETTINGS_VIDEO_SOFTFILTER ||
             menu_type == MENU_SETTINGS_AUDIO_DSP_FILTER ||
-            menu_type == MENU_SETTINGS_OVERLAY_PRESET ||
             menu_type == MENU_CONTENT_HISTORY_PATH ||
             menu_type == MENU_SETTINGS_CORE ||
             menu_type == MENU_SETTINGS_CONFIG ||
@@ -1445,7 +1424,6 @@ static int menu_settings_iterate(unsigned action, rarch_setting_t *setting)
       if (
                menu_type == MENU_SETTINGS_INPUT_OPTIONS
             || menu_type == MENU_SETTINGS_PATH_OPTIONS
-            || menu_type == MENU_SETTINGS_OVERLAY_OPTIONS
             || menu_type == MENU_SETTINGS_NETPLAY_OPTIONS
             || menu_type == MENU_SETTINGS_USER_OPTIONS
             || menu_type == MENU_SETTINGS_OPTIONS
@@ -1729,8 +1707,6 @@ static void menu_parse_and_resolve(unsigned menu_type)
                exts = EXT_EXECUTABLES;
             else if (menu_type == MENU_SETTINGS_AUDIO_DSP_FILTER)
                exts = "dsp";
-            else if (menu_type == MENU_SETTINGS_OVERLAY_PRESET)
-               exts = "cfg";
             else if (menu_type == MENU_CONTENT_HISTORY_PATH)
                exts = "cfg";
             else if (menu_common_type_is(menu_type) == MENU_FILE_DIRECTORY)
@@ -2174,7 +2150,6 @@ static int menu_common_iterate(unsigned action)
          if (
                menu_common_type_is(type) == MENU_SETTINGS_SHADER_OPTIONS ||
                menu_common_type_is(type) == MENU_FILE_DIRECTORY ||
-               type == MENU_SETTINGS_OVERLAY_PRESET ||
                type == MENU_SETTINGS_VIDEO_SOFTFILTER ||
                type == MENU_SETTINGS_AUDIO_DSP_FILTER ||
                type == MENU_CONTENT_HISTORY_PATH ||
@@ -2264,15 +2239,6 @@ static int menu_common_iterate(unsigned action)
                   ret = -1;
                }
             }
-#ifdef HAVE_OVERLAY
-            else if (menu_type == MENU_SETTINGS_OVERLAY_PRESET)
-            {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "input_overlay")))
-                  menu_common_setting_set_current_string_path(current_setting, dir, path);
-
-               menu_flush_stack_type(MENU_SETTINGS_OPTIONS);
-            }
-#endif
             else if (menu_type == MENU_SETTINGS_DISK_APPEND)
             {
                char image[PATH_MAX];
@@ -2331,14 +2297,6 @@ static int menu_common_iterate(unsigned action)
                   menu_common_setting_set_current_string_dir(current_setting, dir);
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
             }
-#ifdef HAVE_OVERLAY
-            else if (menu_type == MENU_OVERLAY_DIR_PATH)
-            {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "overlay_directory")))
-                  menu_common_setting_set_current_string_dir(current_setting, dir);
-               menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
-            }
-#endif
             else if (menu_type == MENU_SETTINGS_VIDEO_SOFTFILTER)
             {
                fill_pathname_join(g_settings.video.filter_path, dir, path, sizeof(g_settings.video.filter_path));
@@ -2468,7 +2426,6 @@ static int menu_common_iterate(unsigned action)
    if (driver.menu->need_refresh && (menu_type == MENU_FILE_DIRECTORY ||
             menu_common_type_is(menu_type) == MENU_SETTINGS_SHADER_OPTIONS ||
             menu_common_type_is(menu_type) == MENU_FILE_DIRECTORY ||
-            menu_type == MENU_SETTINGS_OVERLAY_PRESET ||
             menu_type == MENU_CONTENT_HISTORY_PATH ||
             menu_type == MENU_SETTINGS_VIDEO_SOFTFILTER ||
             menu_type == MENU_SETTINGS_AUDIO_DSP_FILTER ||
@@ -3172,12 +3129,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             if (action == MENU_ACTION_OK)
                menu_save_new_config();
             break;
-#ifdef HAVE_OVERLAY
-         case MENU_SETTINGS_OVERLAY_PRESET:
-            if (setting)
-               menu_common_setting_set_current_path_selection(setting, g_extern.overlay_dir, id, action);
-            break;
-#endif
          case MENU_CONTENT_HISTORY_PATH:
             if (setting)
                menu_common_setting_set_current_path_selection(setting, "", id, action);
@@ -3413,12 +3364,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             if (action == MENU_ACTION_START)
                strlcpy(g_extern.savefile_dir, g_defaults.sram_dir, sizeof(g_extern.savefile_dir));
             break;
-#ifdef HAVE_OVERLAY
-         case MENU_OVERLAY_DIR_PATH:
-            if (action == MENU_ACTION_START)
-               strlcpy(g_extern.overlay_dir, g_defaults.overlay_dir, sizeof(g_extern.overlay_dir));
-            break;
-#endif
          case MENU_SAVESTATE_DIR_PATH:
             if (action == MENU_ACTION_START)
                strlcpy(g_extern.savestate_dir, g_defaults.savestate_dir, sizeof(g_extern.savestate_dir));
@@ -3925,11 +3870,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
          case MENU_SAVEFILE_DIR_PATH:
             strlcpy(type_str, *g_extern.savefile_dir ? g_extern.savefile_dir : "<Content dir>", type_str_size);
             break;
-#ifdef HAVE_OVERLAY
-         case MENU_OVERLAY_DIR_PATH:
-            strlcpy(type_str, *g_extern.overlay_dir ? g_extern.overlay_dir : "<default>", type_str_size);
-            break;
-#endif
          case MENU_SAVESTATE_DIR_PATH:
             strlcpy(type_str, *g_extern.savestate_dir ? g_extern.savestate_dir : "<Content dir>", type_str_size);
             break;
@@ -3998,7 +3938,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
          case MENU_SETTINGS_DISK_APPEND:
          case MENU_SETTINGS_INPUT_OPTIONS:
          case MENU_SETTINGS_PATH_OPTIONS:
-         case MENU_SETTINGS_OVERLAY_OPTIONS:
          case MENU_SETTINGS_NETPLAY_OPTIONS:
          case MENU_SETTINGS_USER_OPTIONS:
          case MENU_SETTINGS_OPTIONS:
@@ -4019,17 +3958,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
          case MENU_SETTINGS_AUDIO_DSP_FILTER:
             strlcpy(type_str, path_basename(g_settings.audio.dsp_plugin), type_str_size);
             break;
-#ifdef HAVE_OVERLAY
-         case MENU_SETTINGS_OVERLAY_PRESET:
-            strlcpy(type_str, path_basename(g_settings.input.overlay), type_str_size);
-            break;
-         case MENU_SETTINGS_OVERLAY_OPACITY:
-            snprintf(type_str, type_str_size, "%.2f", g_settings.input.overlay_opacity);
-            break;
-         case MENU_SETTINGS_OVERLAY_SCALE:
-            snprintf(type_str, type_str_size, "%.2f", g_settings.input.overlay_scale);
-            break;
-#endif
          case MENU_CONTENT_HISTORY_PATH:
             strlcpy(type_str, g_settings.content_history_path ? g_settings.content_history_path : "<None>", type_str_size);
             break;

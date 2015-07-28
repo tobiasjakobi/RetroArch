@@ -163,8 +163,6 @@ static void rmenu_render(void)
 #endif
    else if (menu_type == MENU_SETTINGS_AUDIO_OPTIONS)
       strlcpy(title, "AUDIO OPTIONS", sizeof(title));
-   else if (menu_type == MENU_SETTINGS_OVERLAY_OPTIONS)
-      strlcpy(title, "OVERLAY OPTIONS", sizeof(title));
    else if (menu_type == MENU_SETTINGS_NETPLAY_OPTIONS)
       strlcpy(title, "NETPLAY OPTIONS", sizeof(title));
    else if (menu_type == MENU_SETTINGS_USER_OPTIONS)
@@ -201,10 +199,6 @@ static void rmenu_render(void)
       strlcpy(title, "LOAD HISTORY", sizeof(title));
    else if (menu_type == MENU_INFO_SCREEN)
       strlcpy(title, "INFO", sizeof(title));
-#ifdef HAVE_OVERLAY
-   else if (menu_type == MENU_SETTINGS_OVERLAY_PRESET)
-      snprintf(title, sizeof(title), "OVERLAY %s", dir);
-#endif
    else if (menu_type == MENU_SETTINGS_VIDEO_SOFTFILTER)
       snprintf(title, sizeof(title), "FILTER %s", dir);
    else if (menu_type == MENU_SETTINGS_AUDIO_DSP_FILTER)
@@ -233,10 +227,6 @@ static void rmenu_render(void)
       snprintf(title, sizeof(title), "CONFIG DIR %s", dir);
    else if (menu_type == MENU_SAVEFILE_DIR_PATH)
       snprintf(title, sizeof(title), "SAVEFILE DIR %s", dir);
-#ifdef HAVE_OVERLAY
-   else if (menu_type == MENU_OVERLAY_DIR_PATH)
-      snprintf(title, sizeof(title), "OVERLAY DIR %s", dir);
-#endif
    else if (menu_type == MENU_SYSTEM_DIR_PATH)
       snprintf(title, sizeof(title), "SYSTEM DIR %s", dir);
    else if (menu_type == MENU_ASSETS_DIR_PATH)
@@ -353,9 +343,6 @@ static void rmenu_render(void)
          }
       }
       else if (menu_type == MENU_SETTINGS_CONFIG ||
-#ifdef HAVE_OVERLAY
-            menu_type == MENU_SETTINGS_OVERLAY_PRESET ||
-#endif
             menu_type == MENU_SETTINGS_VIDEO_SOFTFILTER ||
             menu_type == MENU_SETTINGS_AUDIO_DSP_FILTER ||
             menu_type == MENU_SETTINGS_DISK_APPEND ||

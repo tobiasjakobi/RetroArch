@@ -192,8 +192,6 @@ static unsigned aspect_ratio_idx = ASPECT_RATIO_CONFIG; // Use g_settings.video.
 // Save configuration file on exit
 static bool config_save_on_exit = true;
 
-static const bool default_overlay_enable = false;
-
 static const char *default_filter_dir     = NULL;
 static const char *default_dsp_filter_dir = NULL;
 
@@ -443,7 +441,6 @@ static const bool input_autodetect_enable = true;
 #define RETRO_LBL_ENABLE_HOTKEY "Enable Hotkey"
 #define RETRO_LBL_VOLUME_UP "Volume Up"
 #define RETRO_LBL_VOLUME_DOWN "Volume Down"
-#define RETRO_LBL_OVERLAY_NEXT "Next Overlay"
 #define RETRO_LBL_DISK_EJECT_TOGGLE "Disk Eject Toggle"
 #define RETRO_LBL_DISK_NEXT "Disk Swap Next"
 #define RETRO_LBL_GRAB_MOUSE_TOGGLE "Grab mouse toggle"
@@ -504,7 +501,6 @@ static const struct retro_keybind retro_keybinds_1[] = {
    { true, RARCH_ENABLE_HOTKEY,            RETRO_LBL_ENABLE_HOTKEY,        RETROK_UNKNOWN, NO_BTN, 0, AXIS_NONE },
    { true, RARCH_VOLUME_UP,                RETRO_LBL_VOLUME_UP,            RETROK_KP_PLUS, NO_BTN, 0, AXIS_NONE },
    { true, RARCH_VOLUME_DOWN,              RETRO_LBL_VOLUME_DOWN,          RETROK_KP_MINUS,NO_BTN, 0, AXIS_NONE },
-   { true, RARCH_OVERLAY_NEXT,             RETRO_LBL_OVERLAY_NEXT,         RETROK_UNKNOWN, NO_BTN, 0, AXIS_NONE },
    { true, RARCH_DISK_EJECT_TOGGLE,        RETRO_LBL_DISK_EJECT_TOGGLE,    RETROK_UNKNOWN, NO_BTN, 0, AXIS_NONE },
    { true, RARCH_DISK_NEXT,                RETRO_LBL_DISK_NEXT,            RETROK_UNKNOWN, NO_BTN, 0, AXIS_NONE },
    { true, RARCH_GRAB_MOUSE_TOGGLE,        RETRO_LBL_GRAB_MOUSE_TOGGLE,    RETROK_F11,     NO_BTN, 0, AXIS_NONE },

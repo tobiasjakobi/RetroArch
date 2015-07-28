@@ -261,8 +261,6 @@ void config_set_defaults(void)
    g_settings.input.turbo_period = turbo_period;
    g_settings.input.turbo_duty_cycle = turbo_duty_cycle;
 
-   g_settings.input.overlay_opacity = 0.7f;
-   g_settings.input.overlay_scale = 1.0f;
    g_settings.input.autodetect_enable = input_autodetect_enable;
    *g_settings.input.keyboard_layout = '\0';
 
@@ -297,7 +295,6 @@ void config_set_defaults(void)
    *g_settings.system_directory = '\0';
    *g_settings.extraction_directory = '\0';
    *g_settings.input.autoconfig_dir = '\0';
-   *g_settings.input.overlay = '\0';
    *g_settings.content_directory = '\0';
    *g_settings.assets_directory = '\0';
    *g_settings.video.shader_path = '\0';
@@ -341,14 +338,6 @@ void config_set_defaults(void)
       strlcpy(g_settings.libretro, g_defaults.core_path, sizeof(g_settings.libretro));
    if (*g_defaults.core_info_dir)
       fill_pathname_expand_special(g_settings.libretro_info_path, g_defaults.core_info_dir, sizeof(g_settings.libretro_info_path));
-#ifdef HAVE_OVERLAY
-   if (*g_defaults.overlay_dir)
-   {
-      fill_pathname_expand_special(g_extern.overlay_dir, g_defaults.overlay_dir, sizeof(g_extern.overlay_dir));
-      if (!*g_settings.input.overlay)
-            fill_pathname_join(g_settings.input.overlay, g_extern.overlay_dir, "gamepads/retropad/retropad.cfg", sizeof(g_settings.input.overlay));
-   }
-#endif
 #ifdef HAVE_MENU
    if (*g_defaults.menu_config_dir)
       strlcpy(g_settings.menu_config_directory, g_defaults.menu_config_dir, sizeof(g_settings.menu_config_directory));
@@ -806,16 +795,6 @@ bool config_load_file(const char *path, bool set_defaults)
 
    CONFIG_GET_BOOL_EXTERN(perfcnt_enable, "perfcnt_enable");
 
-#ifdef HAVE_OVERLAY
-   CONFIG_GET_PATH_EXTERN(overlay_dir, "overlay_directory");
-   if (!strcmp(g_extern.overlay_dir, "default"))
-      *g_extern.overlay_dir = '\0';
-
-   CONFIG_GET_PATH(input.overlay, "input_overlay");
-   CONFIG_GET_FLOAT(input.overlay_opacity, "input_overlay_opacity");
-   CONFIG_GET_FLOAT(input.overlay_scale, "input_overlay_scale");
-#endif
-
    CONFIG_GET_BOOL(rewind_enable, "rewind_enable");
 
    int buffer_size = 0;
@@ -1175,13 +1154,6 @@ bool config_save_file(const char *path)
    config_set_int(conf, "game_history_size", g_settings.content_history_size);
    config_set_path(conf, "joypad_autoconfig_dir", g_settings.input.autoconfig_dir);
    config_set_bool(conf, "input_autodetect_enable", g_settings.input.autodetect_enable);
-
-#ifdef HAVE_OVERLAY
-   config_set_path(conf, "overlay_directory", *g_extern.overlay_dir ? g_extern.overlay_dir : "default");
-   config_set_path(conf, "input_overlay", g_settings.input.overlay);
-   config_set_float(conf, "input_overlay_opacity", g_settings.input.overlay_opacity);
-   config_set_float(conf, "input_overlay_scale", g_settings.input.overlay_scale);
-#endif
 
    config_set_bool(conf, "gamma_correction", g_extern.console.screen.gamma_correction);
    bool triple_buffering_enable_val = g_extern.lifecycle_state & (1ULL << MODE_VIDEO_TRIPLE_BUFFERING_ENABLE);

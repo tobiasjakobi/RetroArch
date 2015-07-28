@@ -243,16 +243,6 @@ typedef struct gl
    bool egl_images;
    video_info_t video_info;
 
-#ifdef HAVE_OVERLAY
-   unsigned overlays;
-   bool overlay_enable;
-   bool overlay_full_screen;
-   GLuint *overlay_tex;
-   GLfloat *overlay_vertex_coord;
-   GLfloat *overlay_tex_coord;
-   GLfloat *overlay_color_coord;
-#endif
-
 #ifdef HAVE_GL_ASYNC_READBACK
    // PBOs used for asynchronous viewport readbacks.
    GLuint pbo_readback[4];

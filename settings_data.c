@@ -785,10 +785,6 @@ static void general_read_handler(const void *data)
         strlcpy(setting->value.string, g_settings.video.font_path, setting->size);
     else if (!strcmp(setting->name, "video_font_size"))
         *setting->value.fraction = g_settings.video.font_size;
-#ifdef HAVE_OVERLAY
-    else if (!strcmp(setting->name, "input_overlay_opacity"))
-        *setting->value.fraction = g_settings.input.overlay_opacity;
-#endif
     else if (!strcmp(setting->name, "audio_enable"))
         *setting->value.boolean = g_settings.audio.enable;
     else if (!strcmp(setting->name, "audio_sync"))
@@ -855,12 +851,6 @@ static void general_read_handler(const void *data)
     else if (!strcmp(setting->name, "netplay_client_swap_input"))
         *setting->value.boolean = g_settings.input.netplay_client_swap_input;
 #endif
-#ifdef HAVE_OVERLAY
-    else if (!strcmp(setting->name, "input_overlay"))
-        strlcpy(setting->value.string, g_settings.input.overlay, setting->size);
-    else if (!strcmp(setting->name, "input_overlay_scale"))
-       *setting->value.fraction = g_settings.input.overlay_scale;
-#endif
     else if (!strcmp(setting->name, "video_allow_rotate"))
         g_settings.video.allow_rotate = *setting->value.boolean;
     else if (!strcmp(setting->name, "video_windowed_fullscreen"))
@@ -893,10 +883,6 @@ static void general_read_handler(const void *data)
         *setting->value.boolean = g_settings.video.post_filter_record;
     else if (!strcmp(setting->name, "video_gpu_record"))
         *setting->value.boolean = g_settings.video.gpu_record;
-#ifdef HAVE_OVERLAY
-    else if (!strcmp(setting->name, "overlay_directory"))
-        strlcpy(setting->value.string, g_extern.overlay_dir, setting->size);
-#endif
     else if (!strcmp(setting->name, "joypad_autoconfig_dir"))
         strlcpy(setting->value.string, g_settings.input.autoconfig_dir, setting->size);
     else if (!strcmp(setting->name, "screenshot_directory"))
@@ -984,8 +970,6 @@ static void general_write_handler(const void *data)
    bool has_set_reinit            = false;
    bool has_set_rewind            = false;
    bool has_set_autosave          = false;
-   bool has_set_overlay_init      = false;
-   bool has_set_overlay_free      = false;
    bool has_set_dsp_init          = false;
    bool has_set_libretro_dir      = false;
    const rarch_setting_t *setting = (const rarch_setting_t*)data;
@@ -1057,15 +1041,6 @@ static void general_write_handler(const void *data)
       strlcpy(g_settings.video.font_path, setting->value.string, sizeof(g_settings.video.font_path));
    else if (!strcmp(setting->name, "video_font_size"))
       g_settings.video.font_size = *setting->value.fraction;
-#ifdef HAVE_OVERLAY
-   else if (!strcmp(setting->name, "input_overlay_opacity"))
-   {
-      g_settings.input.overlay_opacity = *setting->value.fraction;
-      if (driver.overlay)
-         input_overlay_set_alpha_mod(driver.overlay,
-               g_settings.input.overlay_opacity);
-   }
-#endif
    else if (!strcmp(setting->name, "audio_enable"))
       g_settings.audio.enable = *setting->value.boolean;
    else if (!strcmp(setting->name, "audio_sync"))
@@ -1148,28 +1123,6 @@ static void general_write_handler(const void *data)
    else if (!strcmp(setting->name, "netplay_client_swap_input"))
       g_settings.input.netplay_client_swap_input = *setting->value.boolean;
 #endif
-#ifdef HAVE_OVERLAY
-   else if (!strcmp(setting->name, "input_overlay"))
-   {
-      strlcpy(g_settings.input.overlay, setting->value.string, sizeof(g_settings.input.overlay));
-
-      has_set_overlay_free = true;
-      has_set_overlay_init = true;
-   }
-   else if (!strcmp(setting->name, "input_overlay_scale"))
-   {
-      if (*setting->value.fraction < setting->min) // Avoid potential divide by zero.
-         g_settings.input.overlay_scale = setting->min;
-      else if (*setting->value.fraction > setting->max)
-         g_settings.input.overlay_scale = setting->max;
-      else
-         g_settings.input.overlay_scale = *setting->value.fraction;
-
-      if (driver.overlay)
-         input_overlay_set_scale_factor(driver.overlay,
-               g_settings.input.overlay_scale);
-   }
-#endif
    else if (!strcmp(setting->name, "video_allow_rotate"))
       g_settings.video.allow_rotate = *setting->value.boolean;
    else if (!strcmp(setting->name, "video_windowed_fullscreen"))
@@ -1219,10 +1172,6 @@ static void general_write_handler(const void *data)
       g_settings.video.post_filter_record = *setting->value.boolean;
    else if (!strcmp(setting->name, "video_gpu_record"))
       g_settings.video.gpu_record = *setting->value.boolean;
-#ifdef HAVE_OVERLAY
-   else if (!strcmp(setting->name, "overlay_directory"))
-      strlcpy(g_extern.overlay_dir, setting->value.string, sizeof(g_extern.overlay_dir));
-#endif
    else if (!strcmp(setting->name, "joypad_autoconfig_dir"))
       strlcpy(g_settings.input.autoconfig_dir, setting->value.string, sizeof(g_settings.input.autoconfig_dir));
    else if (!strcmp(setting->name, "screenshot_directory"))
@@ -1323,10 +1272,6 @@ static void general_write_handler(const void *data)
       rarch_main_command(RARCH_CMD_REWIND);
    if (has_set_autosave)
       rarch_main_command(RARCH_CMD_AUTOSAVE);
-   if (has_set_overlay_free)
-      rarch_main_command(RARCH_CMD_OVERLAY_DEINIT);
-   if (has_set_overlay_init)
-      rarch_main_command(RARCH_CMD_OVERLAY_INIT);
    if (has_set_dsp_init)
       rarch_main_command(RARCH_CMD_DSP_FILTER_INIT);
    if (has_set_libretro_dir)
@@ -1610,19 +1555,6 @@ rarch_setting_t* setting_data_get_list(void)
          END_SUB_GROUP()
          END_GROUP()
 
-#ifdef HAVE_OVERLAY
-         /*******************/
-         /* OVERLAY OPTIONS */
-         /*******************/
-         START_GROUP("Overlay Options")
-         START_SUB_GROUP("State")
-         CONFIG_PATH(g_settings.input.overlay,              "input_overlay",              "Overlay Preset",              "", GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_FLAGS(SD_FLAG_ALLOW_EMPTY) WITH_VALUES("cfg")
-         CONFIG_FLOAT(g_settings.input.overlay_opacity,     "input_overlay_opacity",      "Overlay Opacity",            0.7f, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_RANGE(0, 1, 0.1, true, true)
-         CONFIG_FLOAT(g_settings.input.overlay_scale,       "input_overlay_scale",        "Overlay Scale",              1.0f, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_RANGE(0, 2, 0.1, true, true)
-         END_SUB_GROUP()
-         END_GROUP()
-#endif
-
 #ifdef HAVE_NETPLAY
          /*******************/
          /* NETPLAY OPTIONS */
@@ -1675,9 +1607,6 @@ rarch_setting_t* setting_data_get_list(void)
 
          CONFIG_DIR(g_settings.video.shader_dir,           "video_shader_dir",           "Shader Directory",           g_defaults.shader_dir ? g_defaults.shader_dir : "", GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)  WITH_FLAGS(SD_FLAG_ALLOW_EMPTY | SD_FLAG_PATH_DIR)
 
-#ifdef HAVE_OVERLAY
-         CONFIG_DIR(g_extern.overlay_dir,                  "overlay_directory",          "Overlay Directory",          g_defaults.overlay_dir ? g_defaults.overlay_dir : "", GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_FLAGS(SD_FLAG_ALLOW_EMPTY | SD_FLAG_PATH_DIR)
-#endif
          CONFIG_DIR(g_settings.screenshot_directory,       "screenshot_directory",       "Screenshot Directory",       "", GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)                WITH_FLAGS(SD_FLAG_ALLOW_EMPTY | SD_FLAG_PATH_DIR)
          CONFIG_DIR(g_settings.input.autoconfig_dir,       "joypad_autoconfig_dir",      "Joypad Autoconfig Directory", "", GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)          WITH_FLAGS(SD_FLAG_ALLOW_EMPTY | SD_FLAG_PATH_DIR)
        CONFIG_DIR(g_extern.savefile_dir, "savefile_directory", "Savefile Directory", "", GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler);

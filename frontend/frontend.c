@@ -216,8 +216,6 @@ static void check_defaults_dirs(void)
       path_mkdir(g_defaults.core_dir);
    if (*g_defaults.core_info_dir)
       path_mkdir(g_defaults.core_info_dir);
-   if (*g_defaults.overlay_dir)
-      path_mkdir(g_defaults.overlay_dir);
    if (*g_defaults.port_dir)
       path_mkdir(g_defaults.port_dir);
    if (*g_defaults.shader_dir)

@@ -71,8 +71,6 @@ enum basic_event
    RARCH_CMD_AUTOSAVE,
    RARCH_CMD_AUDIO_STOP,
    RARCH_CMD_AUDIO_START,
-   RARCH_CMD_OVERLAY_INIT,
-   RARCH_CMD_OVERLAY_DEINIT,
    RARCH_CMD_DSP_FILTER_INIT,
    RARCH_CMD_DSP_FILTER_DEINIT,
    RARCH_CMD_RECORD_INIT,
@@ -121,7 +119,6 @@ struct defaults
    char assets_dir[PATH_MAX];
    char core_dir[PATH_MAX];
    char core_info_dir[PATH_MAX];
-   char overlay_dir[PATH_MAX];
    char port_dir[PATH_MAX];
    char shader_dir[PATH_MAX];
    char savestate_dir[PATH_MAX];
@@ -240,10 +237,6 @@ struct settings
 
       unsigned turbo_period;
       unsigned turbo_duty_cycle;
-
-      char overlay[PATH_MAX];
-      float overlay_opacity;
-      float overlay_scale;
 
       char autoconfig_dir[PATH_MAX];
    } input;
@@ -379,10 +372,6 @@ struct global
    // Used on reentrancy to use a savestate dir.
    char savefile_dir[PATH_MAX];
    char savestate_dir[PATH_MAX];
-
-#ifdef HAVE_OVERLAY
-   char overlay_dir[PATH_MAX];
-#endif
 
    bool block_patch;
    bool ups_pref;
@@ -685,7 +674,6 @@ void rarch_main_deinit(void);
 void rarch_render_cached_frame(void);
 void rarch_deinit_msg_queue(void);
 void rarch_input_poll(void);
-void rarch_check_overlay(void);
 void rarch_check_block_hotkey(void);
 bool rarch_check_fullscreen(void);
 void rarch_disk_control_set_eject(bool state, bool log);

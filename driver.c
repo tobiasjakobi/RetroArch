@@ -1000,20 +1000,11 @@ void init_video_input(void)
       }
    }
 
-#ifdef HAVE_OVERLAY
-   rarch_main_command(RARCH_CMD_OVERLAY_DEINIT);
-   rarch_main_command(RARCH_CMD_OVERLAY_INIT);
-#endif
-
    g_extern.measure_data.frame_time_samples_count = 0;
 }
 
 void uninit_video_input(void)
 {
-#ifdef HAVE_OVERLAY
-   rarch_main_command(RARCH_CMD_OVERLAY_DEINIT);
-#endif
-
    if (!driver.input_data_own && driver.input_data != driver.video_data && driver.input && driver.input->free)
       input_free_func();
 
