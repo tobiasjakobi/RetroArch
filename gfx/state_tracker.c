@@ -64,7 +64,7 @@ struct state_tracker
 state_tracker_t* state_tracker_init(const struct state_tracker_info *info)
 {
    unsigned i;
-   state_tracker_t *tracker = (state_tracker_t*)calloc(1, sizeof(*tracker));
+   state_tracker_t *tracker = calloc(1, sizeof(*tracker));
    if (!tracker)
       return NULL;
 
@@ -81,7 +81,7 @@ state_tracker_t* state_tracker_init(const struct state_tracker_info *info)
    }
 #endif
 
-   tracker->info = (struct state_tracker_internal*)calloc(info->info_elem, sizeof(struct state_tracker_internal));
+   tracker->info = calloc(info->info_elem, sizeof(struct state_tracker_internal));
    tracker->info_elem = info->info_elem;
 
    for (i = 0; i < info->info_elem; i++)

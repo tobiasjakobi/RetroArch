@@ -185,7 +185,7 @@ static inline void add_to(const audio_frame_float_t *source, audio_frame_float_t
 static void resampler_CC_downsample(void *re_, struct resampler_data *data)
 {
    float ratio, b;
-   rarch_CC_resampler_t *re     = (rarch_CC_resampler_t*)re_;
+   rarch_CC_resampler_t *re     = re_;
 
    audio_frame_float_t *inp     = (audio_frame_float_t*)data->data_in;
    audio_frame_float_t *inp_max = (audio_frame_float_t*)(inp + data->input_frames);
@@ -228,7 +228,7 @@ static void resampler_CC_downsample(void *re_, struct resampler_data *data)
 static void resampler_CC_upsample(void *re_, struct resampler_data *data)
 {
    float b, ratio;
-   rarch_CC_resampler_t *re = (rarch_CC_resampler_t*)re_;
+   rarch_CC_resampler_t *re = re_;
 
    audio_frame_float_t *inp     = (audio_frame_float_t*)data->data_in;
    audio_frame_float_t *inp_max = (audio_frame_float_t*)(inp + data->input_frames);
@@ -271,13 +271,13 @@ static void resampler_CC_upsample(void *re_, struct resampler_data *data)
 
 static void resampler_CC_process(void *re_, struct resampler_data *data)
 {
-   rarch_CC_resampler_t *re = (rarch_CC_resampler_t*)re_;
+   rarch_CC_resampler_t *re = re_;
    re->process(re_, data);
 }
 
 static void resampler_CC_free(void *re_)
 {
-   rarch_CC_resampler_t *re = (rarch_CC_resampler_t*)re_;
+   rarch_CC_resampler_t *re = re_;
    if (re)
       free(re);
 }
@@ -285,7 +285,7 @@ static void resampler_CC_free(void *re_)
 static void *resampler_CC_init(double bandwidth_mod)
 {
    int i;
-   rarch_CC_resampler_t *re = (rarch_CC_resampler_t*)calloc(1, sizeof(rarch_CC_resampler_t));
+   rarch_CC_resampler_t *re = calloc(1, sizeof(rarch_CC_resampler_t));
    if (!re)
       return NULL;
 

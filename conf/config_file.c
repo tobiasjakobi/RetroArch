@@ -57,7 +57,7 @@ static config_file_t *config_file_new_internal(const char *path, unsigned depth)
 
 static char *getaline(FILE *file)
 {
-   char *newline = (char*)malloc(9);
+   char *newline = malloc(9);
    size_t cur_size = 8;
    size_t index = 0;
 
@@ -67,7 +67,7 @@ static char *getaline(FILE *file)
       if (index == cur_size)
       {
          cur_size *= 2;
-         newline = (char*)realloc(newline, cur_size + 1);
+         newline = realloc(newline, cur_size + 1);
       }
 
       newline[index++] = in;
@@ -162,7 +162,7 @@ static void add_child_list(config_file_t *parent, config_file_t *child)
 static void add_include_list(config_file_t *conf, const char *path)
 {
    struct include_list *head = conf->includes;
-   struct include_list *node = (struct include_list*)calloc(1, sizeof(*node));
+   struct include_list *node = calloc(1, sizeof(*node));
    node->path = strdup(path);
 
    if (head)
@@ -268,7 +268,7 @@ static bool parse_line(config_file_t *conf, struct config_entry_list *list, char
    while (isspace(*line))
       line++;
 
-   char *key = (char*)malloc(9);
+   char *key = malloc(9);
    size_t cur_size = 8;
    size_t index = 0;
 
@@ -277,7 +277,7 @@ static bool parse_line(config_file_t *conf, struct config_entry_list *list, char
       if (index == cur_size)
       {
          cur_size *= 2;
-         key = (char*)realloc(key, cur_size + 1);
+         key = realloc(key, cur_size + 1);
       }
 
       key[index++] = *line++;
@@ -315,7 +315,7 @@ bool config_append_file(config_file_t *conf, const char *path)
 
 static config_file_t *config_file_new_internal(const char *path, unsigned depth)
 {
-   struct config_file *conf = (struct config_file*)calloc(1, sizeof(*conf));
+   struct config_file *conf = calloc(1, sizeof(*conf));
    if (!conf)
       return NULL;
 
@@ -341,7 +341,7 @@ static config_file_t *config_file_new_internal(const char *path, unsigned depth)
 
    while (!feof(file))
    {
-      struct config_entry_list *list = (struct config_entry_list*)calloc(1, sizeof(*list));
+      struct config_entry_list *list = calloc(1, sizeof(*list));
       char *line = getaline(file);
 
       if (line)
@@ -374,7 +374,7 @@ static config_file_t *config_file_new_internal(const char *path, unsigned depth)
 config_file_t *config_file_new_from_string(const char *from_string)
 {
    size_t i;
-   struct config_file *conf = (struct config_file*)calloc(1, sizeof(*conf));
+   struct config_file *conf = calloc(1, sizeof(*conf));
    if (!conf)
       return NULL;
 
@@ -390,7 +390,7 @@ config_file_t *config_file_new_from_string(const char *from_string)
 
    for (i = 0; i < lines->size; i++)
    {
-      struct config_entry_list *list = (struct config_entry_list*)calloc(1, sizeof(*list));
+      struct config_entry_list *list = calloc(1, sizeof(*list));
       
       char* line = lines->elems[i].data;
     
@@ -689,7 +689,7 @@ void config_set_string(config_file_t *conf, const char *key, const char *val)
       list = list->next;
    }
 
-   struct config_entry_list *elem = (struct config_entry_list*)calloc(1, sizeof(*elem));
+   struct config_entry_list *elem = calloc(1, sizeof(*elem));
    elem->key = strdup(key);
    elem->value = strdup(val);
 

@@ -35,13 +35,13 @@ typedef struct alsa
 
 static bool alsa_use_float(void *data)
 {
-   alsa_t *alsa = (alsa_t*)data;
+   alsa_t *alsa = data;
    return alsa->has_float;
 }
 
 static bool find_float_format(snd_pcm_t *pcm, void *data)
 {
-   snd_pcm_hw_params_t *params = (snd_pcm_hw_params_t*)data;
+   snd_pcm_hw_params_t *params = data;
    if (snd_pcm_hw_params_test_format(pcm, params, SND_PCM_FORMAT_FLOAT) == 0)
    {
       RARCH_LOG("ALSA: Using floating point format.\n");
@@ -53,7 +53,7 @@ static bool find_float_format(snd_pcm_t *pcm, void *data)
 
 static void *alsa_init(const char *device, unsigned rate, unsigned latency)
 {
-   alsa_t *alsa = (alsa_t*)calloc(1, sizeof(alsa_t));
+   alsa_t *alsa = calloc(1, sizeof(alsa_t));
    if (!alsa)
       return NULL;
 
@@ -128,8 +128,8 @@ error:
 
 static ssize_t alsa_write(void *data, const void *buf_, size_t size_)
 {
-   alsa_t *alsa = (alsa_t*)data;
-   const uint8_t *buf = (const uint8_t*)buf_;
+   alsa_t *alsa = data;
+   const uint8_t *buf = buf_;
 
    bool eagain_retry         = true;
    snd_pcm_sframes_t written = 0;
@@ -198,7 +198,7 @@ static ssize_t alsa_write(void *data, const void *buf_, size_t size_)
 
 static bool alsa_stop(void *data)
 {
-   alsa_t *alsa = (alsa_t*)data;
+   alsa_t *alsa = data;
    if (alsa->can_pause && !alsa->is_paused)
    {
       if (snd_pcm_pause(alsa->pcm, 1) == 0)
@@ -215,13 +215,13 @@ static bool alsa_stop(void *data)
 
 static void alsa_set_nonblock_state(void *data, bool state)
 {
-   alsa_t *alsa = (alsa_t*)data;
+   alsa_t *alsa = data;
    alsa->nonblock = state;
 }
 
 static bool alsa_start(void *data)
 {
-   alsa_t *alsa = (alsa_t*)data;
+   alsa_t *alsa = data;
    if (alsa->can_pause && alsa->is_paused)
    {
       int ret = snd_pcm_pause(alsa->pcm, 0);
@@ -242,7 +242,7 @@ static bool alsa_start(void *data)
 
 static void alsa_free(void *data)
 {
-   alsa_t *alsa = (alsa_t*)data;
+   alsa_t *alsa = data;
 
    if (alsa)
    {
@@ -257,7 +257,7 @@ static void alsa_free(void *data)
 
 static size_t alsa_write_avail(void *data)
 {
-   alsa_t *alsa = (alsa_t*)data;
+   alsa_t *alsa = data;
 
    snd_pcm_sframes_t avail = snd_pcm_avail(alsa->pcm);
    if (avail < 0)
@@ -271,7 +271,7 @@ static size_t alsa_write_avail(void *data)
 
 static size_t alsa_buffer_size(void *data)
 {
-   alsa_t *alsa = (alsa_t*)data;
+   alsa_t *alsa = data;
    return alsa->buffer_size;
 }
 

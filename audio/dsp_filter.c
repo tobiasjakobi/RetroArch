@@ -70,7 +70,7 @@ struct dsp_userdata
 
 static int get_float(void *userdata, const char *key_str, float *value, float default_value)
 {
-   struct dsp_userdata *dsp = (struct dsp_userdata*)userdata;
+   struct dsp_userdata *dsp = userdata;
 
    char key[2][256];
    snprintf(key[0], sizeof(key[0]), "%s_%s", dsp->prefix[0], key_str);
@@ -86,7 +86,7 @@ static int get_float(void *userdata, const char *key_str, float *value, float de
 
 static int get_int(void *userdata, const char *key_str, int *value, int default_value)
 {
-   struct dsp_userdata *dsp = (struct dsp_userdata*)userdata;
+   struct dsp_userdata *dsp = userdata;
 
    char key[2][256];
    snprintf(key[0], sizeof(key[0]), "%s_%s", dsp->prefix[0], key_str);
@@ -102,7 +102,7 @@ static int get_int(void *userdata, const char *key_str, int *value, int default_
 
 // Yup, still C >__<
 #define get_array_setup() \
-   struct dsp_userdata *dsp = (struct dsp_userdata*)userdata; \
+   struct dsp_userdata *dsp = userdata; \
  \
    char key[2][256]; \
    snprintf(key[0], sizeof(key[0]), "%s_%s", dsp->prefix[0], key_str); \
@@ -117,7 +117,7 @@ static int get_int(void *userdata, const char *key_str, int *value, int default_
    { \
       unsigned i; \
       struct string_list *list = string_split(str, " "); \
-      *values = (T*)calloc(list->size, sizeof(T)); \
+      *values = calloc(list->size, sizeof(T)); \
       for (i = 0; i < list->size; i++) \
          (*values)[i] = (T)strtod(list->elems[i].data, NULL); \
       *out_num_values = list->size; \
@@ -126,7 +126,7 @@ static int get_int(void *userdata, const char *key_str, int *value, int default_
    } \
    else \
    { \
-      *values = (T*)calloc(num_default_values, sizeof(T)); \
+      *values = calloc(num_default_values, sizeof(T)); \
       memcpy(*values, default_values, sizeof(T) * num_default_values); \
       *out_num_values = num_default_values; \
       return false; \
@@ -187,7 +187,7 @@ static bool create_filter_graph(rarch_dsp_filter_t *dsp, float sample_rate)
    if (!config_get_uint(dsp->conf, "filters", &filters))
       return false;
 
-   dsp->instances = (struct rarch_dsp_instance*)calloc(filters, sizeof(*dsp->instances));
+   dsp->instances = calloc(filters, sizeof(*dsp->instances));
    if (!dsp->instances)
       return false;
 
@@ -252,7 +252,7 @@ static bool append_plugs(rarch_dsp_filter_t *dsp, struct string_list *list)
          continue;
       }
 
-      struct rarch_dsp_plug *new_plugs = (struct rarch_dsp_plug*)realloc(dsp->plugs, sizeof(*dsp->plugs) * (dsp->num_plugs + 1));
+      struct rarch_dsp_plug *new_plugs = realloc(dsp->plugs, sizeof(*dsp->plugs) * (dsp->num_plugs + 1));
       if (!new_plugs)
       {
          dylib_close(lib);
@@ -278,7 +278,7 @@ rarch_dsp_filter_t *rarch_dsp_filter_new(const char *filter_config, float sample
 #endif
    struct string_list *plugs = NULL;
 
-   rarch_dsp_filter_t *dsp = (rarch_dsp_filter_t*)calloc(1, sizeof(*dsp));
+   rarch_dsp_filter_t *dsp = calloc(1, sizeof(*dsp));
    if (!dsp)
       return NULL;
 

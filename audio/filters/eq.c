@@ -49,7 +49,7 @@ struct eq_gain
 
 static void eq_free(void *data)
 {
-   struct eq_data *eq = (struct eq_data*)data;
+   struct eq_data *eq = data;
    if (!eq)
       return;
 
@@ -64,7 +64,7 @@ static void eq_free(void *data)
 static void eq_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
-   struct eq_data *eq = (struct eq_data*)data;
+   struct eq_data *eq = data;
 
    output->samples = eq->buffer;
    output->frames  = 0;
@@ -114,8 +114,8 @@ static void eq_process(void *data, struct dspfilter_output *output,
 
 static int gains_cmp(const void *a_, const void *b_)
 {
-   const struct eq_gain *a = (const struct eq_gain*)a_;
-   const struct eq_gain *b = (const struct eq_gain*)b_;
+   const struct eq_gain *a = a_;
+   const struct eq_gain *b = b_;
    if (a->freq < b->freq)
       return -1;
    else if (a->freq > b->freq)
@@ -224,7 +224,7 @@ static void create_filter(struct eq_data *eq, unsigned size_log2,
    double window_mod = 1.0 / kaiser_window(0.0, beta);
 
    fft_t *fft = fft_new(size_log2);
-   float *time_filter = (float*)calloc(eq->block_size * 2 + 1, sizeof(*time_filter));
+   float *time_filter = calloc(eq->block_size * 2 + 1, sizeof(*time_filter));
    if (!fft || !time_filter)
       goto end;
 
@@ -282,7 +282,7 @@ static void *eq_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
    unsigned i;
-   struct eq_data *eq = (struct eq_data*)calloc(1, sizeof(*eq));
+   struct eq_data *eq = calloc(1, sizeof(*eq));
    if (!eq)
       return NULL;
 
@@ -311,7 +311,7 @@ static void *eq_init(const struct dspfilter_info *info,
 
    num_gain = num_freq = min(num_gain, num_freq);
 
-   gains = (struct eq_gain*)calloc(num_gain, sizeof(*gains));
+   gains = calloc(num_gain, sizeof(*gains));
    if (!gains)
       goto error;
 
@@ -325,10 +325,10 @@ static void *eq_init(const struct dspfilter_info *info,
 
    eq->block_size = size;
 
-   eq->save     = (float*)calloc(    size, 2 * sizeof(*eq->save));
-   eq->block    = (float*)calloc(2 * size, 2 * sizeof(*eq->block));
-   eq->fftblock = (fft_complex_t*)calloc(2 * size, sizeof(*eq->fftblock));
-   eq->filter   = (fft_complex_t*)calloc(2 * size, sizeof(*eq->filter));
+   eq->save     = calloc(    size, 2 * sizeof(*eq->save));
+   eq->block    = calloc(2 * size, 2 * sizeof(*eq->block));
+   eq->fftblock = calloc(2 * size, sizeof(*eq->fftblock));
+   eq->filter   = calloc(2 * size, sizeof(*eq->filter));
 
    // Use an FFT which is twice the block size with zero-padding
    // to make circular convolution => proper convolution.
@@ -367,4 +367,3 @@ const struct dspfilter_implementation *dspfilter_get_implementation(dspfilter_si
 }
 
 #undef dspfilter_get_implementation
-

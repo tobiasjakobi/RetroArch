@@ -61,7 +61,7 @@ static void iir_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
    unsigned i;
-   struct iir_data *iir = (struct iir_data*)data;
+   struct iir_data *iir = data;
 
    output->samples = input->samples;
    output->frames  = input->frames;
@@ -151,7 +151,7 @@ static void make_poly_from_roots(
 static void iir_filter_init(struct iir_data *iir,
       float sample_rate, float freq, float qual, float gain, enum IIRFilter filter_type)
 {
-	double omega = 2.0 * M_PI * freq / sample_rate;
+   double omega = 2.0 * M_PI * freq / sample_rate;
    double cs = cos(omega);
    double sn = sin(omega);
    double a1pha = sn / (2.0 * qual);
@@ -316,7 +316,7 @@ static void iir_filter_init(struct iir_data *iir,
 static void *iir_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
-   struct iir_data *iir = (struct iir_data*)calloc(1, sizeof(*iir));
+   struct iir_data *iir = calloc(1, sizeof(*iir));
    if (!iir)
       return NULL;
 

@@ -113,7 +113,7 @@ struct netplay
 
 static bool send_all(int fd, const void *data_, size_t size)
 {
-   const uint8_t *data = (const uint8_t*)data_;
+   const uint8_t *data = data_;
    while (size)
    {
       ssize_t ret = send(fd, CONST_CAST data, size, 0);
@@ -129,7 +129,7 @@ static bool send_all(int fd, const void *data_, size_t size)
 
 static bool recv_all(int fd, void *data_, size_t size)
 {
-   uint8_t *data = (uint8_t*)data_;
+   uint8_t *data = data_;
    while (size)
    {
       ssize_t ret = recv(fd, NONCONST_CAST data, size, 0);
@@ -603,7 +603,7 @@ static uint32_t *bsv_header_generate(size_t *size, uint32_t magic)
    size_t header_size = sizeof(bsv_header) + serialize_size;
    *size = header_size;
 
-   uint32_t *header = (uint32_t*)malloc(header_size);
+   uint32_t *header = malloc(header_size);
    if (!header)
       return NULL;
 
@@ -715,7 +715,7 @@ static bool get_info_spectate(netplay_t *handle)
 static void init_buffers(netplay_t *handle)
 {
    unsigned i;
-   handle->buffer = (struct delta_frame*)calloc(handle->buffer_size, sizeof(*handle->buffer));
+   handle->buffer = calloc(handle->buffer_size, sizeof(*handle->buffer));
    handle->state_size = pretro_serialize_size();
    for (i = 0; i < handle->buffer_size; i++)
    {
@@ -733,7 +733,7 @@ netplay_t *netplay_new(const char *server, uint16_t port,
    if (frames > UDP_FRAME_PACKETS)
       frames = UDP_FRAME_PACKETS;
 
-   netplay_t *handle = (netplay_t*)calloc(1, sizeof(*handle));
+   netplay_t *handle = calloc(1, sizeof(*handle));
    if (!handle)
       return NULL;
 
@@ -1230,7 +1230,7 @@ static void netplay_set_spectate_input(netplay_t *handle, int16_t input)
    {
       handle->spectate_input_size++;
       handle->spectate_input_size *= 2;
-      handle->spectate_input = (uint16_t*)realloc(handle->spectate_input,
+      handle->spectate_input = realloc(handle->spectate_input,
             handle->spectate_input_size * sizeof(uint16_t));
    }
 
@@ -1461,14 +1461,14 @@ int getaddrinfo_rarch__(const char *node, const char *service,
       const struct addrinfo *hints,
       struct addrinfo **res)
 {
-   struct addrinfo *info = (struct addrinfo*)calloc(1, sizeof(*info));
+   struct addrinfo *info = calloc(1, sizeof(*info));
    if (!info)
       return -1;
 
    info->ai_family = AF_INET;
    info->ai_socktype = hints->ai_socktype;
 
-   struct sockaddr_in *in_addr = (struct sockaddr_in*)calloc(1, sizeof(*in_addr));
+   struct sockaddr_in *in_addr = calloc(1, sizeof(*in_addr));
    if (!in_addr)
    {
       free(info);

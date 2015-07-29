@@ -45,7 +45,7 @@ static int process_cb(jack_nframes_t nframes, void *data)
 {
    int i;
    jack_nframes_t f;
-   jack_t *jd = (jack_t*)data;
+   jack_t *jd = data;
    if (nframes <= 0)
    {
       pthread_cond_signal(&jd->cond);
@@ -62,7 +62,7 @@ static int process_cb(jack_nframes_t nframes, void *data)
 
    for (i = 0; i < 2; i++)
    {
-      jack_default_audio_sample_t *out = (jack_default_audio_sample_t*)jack_port_get_buffer(jd->ports[i], nframes);
+      jack_default_audio_sample_t *out = jack_port_get_buffer(jd->ports[i], nframes);
       assert(out);
       jack_ringbuffer_read(jd->buffer[i], (char*)out, min_avail * sizeof(jack_default_audio_sample_t));
 
@@ -77,7 +77,7 @@ static int process_cb(jack_nframes_t nframes, void *data)
 
 static void shutdown_cb(void *data)
 {
-   jack_t *jd = (jack_t*)data;
+   jack_t *jd = data;
    jd->shutdown = true;
    pthread_cond_signal(&jd->cond);
 }
@@ -130,7 +130,7 @@ static size_t find_buffersize(jack_t *jd, int latency)
 static void *ja_init(const char *device, unsigned rate, unsigned latency)
 {
    int i;
-   jack_t *jd = (jack_t*)calloc(1, sizeof(jack_t));
+   jack_t *jd = calloc(1, sizeof(jack_t));
    if (!jd)
       return NULL;
 
@@ -262,7 +262,7 @@ static size_t write_buffer(jack_t *jd, const float *buf, size_t size)
 
 static ssize_t ja_write(void *data, const void *buf, size_t size)
 {
-   jack_t *jd = (jack_t*)data;
+   jack_t *jd = data;
 
    return write_buffer(jd, (const float*)buf, size);
 }
@@ -275,7 +275,7 @@ static bool ja_stop(void *data)
 
 static void ja_set_nonblock_state(void *data, bool state)
 {
-   jack_t *jd = (jack_t*)data;
+   jack_t *jd = data;
    jd->nonblock = state;
 }
 
@@ -288,7 +288,7 @@ static bool ja_start(void *data)
 static void ja_free(void *data)
 {
    int i;
-   jack_t *jd = (jack_t*)data;
+   jack_t *jd = data;
 
    jd->shutdown = true;
 
@@ -315,13 +315,13 @@ static bool ja_use_float(void *data)
 
 static size_t ja_write_avail(void *data)
 {
-   jack_t *jd = (jack_t*)data;
+   jack_t *jd = data;
    return jack_ringbuffer_write_space(jd->buffer[0]);
 }
 
 static size_t ja_buffer_size(void *data)
 {
-   jack_t *jd = (jack_t*)data;
+   jack_t *jd = data;
    return jd->buffer_size;
 }
 
@@ -337,4 +337,3 @@ const audio_driver_t audio_jack = {
    .write_avail = ja_write_avail,
    .buffer_size = ja_buffer_size,
 };
-

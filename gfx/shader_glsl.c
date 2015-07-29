@@ -271,7 +271,7 @@ static void print_shader_log(GLuint obj)
    if (max_len == 0)
       return;
 
-   char *info_log = (char*)malloc(max_len);
+   char *info_log = malloc(max_len);
    if (!info_log)
       return;
 
@@ -293,7 +293,7 @@ static void print_linker_log(GLuint obj)
    if (max_len == 0)
       return;
 
-   char *info_log = (char*)malloc(max_len);
+   char *info_log = malloc(max_len);
    if (!info_log)
       return;
 
@@ -470,7 +470,7 @@ static void gl_glsl_set_vbo(GLfloat **buffer, size_t *buffer_elems, const GLfloa
    {
       if (elems > *buffer_elems)
       {
-         GLfloat *new_buffer = (GLfloat*)realloc(*buffer, elems * sizeof(GLfloat));
+         GLfloat *new_buffer = realloc(*buffer, elems * sizeof(GLfloat));
          rarch_assert(new_buffer);
          *buffer = new_buffer;
       }
@@ -672,7 +672,7 @@ static bool gl_glsl_init(void *data, const char *path)
    }
 #endif
 
-   glsl_shader = (struct gfx_shader*)calloc(1, sizeof(*glsl_shader));
+   glsl_shader = calloc(1, sizeof(*glsl_shader));
    if (!glsl_shader)
       return false;
 
@@ -1045,7 +1045,7 @@ static bool gl_glsl_set_coords(const struct gl_coords *coords)
    GLfloat short_buffer[4 * (2 + 2 + 4 + 2)];
    GLfloat *buffer = short_buffer;
    if (coords->vertices > 4)
-      buffer = (GLfloat*)calloc(coords->vertices * (2 + 2 + 4 + 2), sizeof(*buffer));
+      buffer = calloc(coords->vertices * (2 + 2 + 4 + 2), sizeof(*buffer));
 
    if (!buffer)
       return false;
@@ -1222,4 +1222,3 @@ const gl_shader_backend_t gl_glsl_backend = {
 
    RARCH_SHADER_GLSL,
 };
-

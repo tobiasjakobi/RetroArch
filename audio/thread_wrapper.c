@@ -43,7 +43,7 @@ typedef struct audio_thread
 
 static void audio_thread_loop(void *data)
 {
-   audio_thread_t *thr = (audio_thread_t*)data;
+   audio_thread_t *thr = data;
 
    RARCH_LOG("[Audio Thread]: Initializing audio driver.\n");
    thr->driver_data = thr->driver->init(thr->device, thr->out_rate, thr->latency);
@@ -110,7 +110,7 @@ static void audio_thread_unblock(audio_thread_t *thr)
 
 static void audio_thread_free(void *data)
 {
-   audio_thread_t *thr = (audio_thread_t*)data;
+   audio_thread_t *thr = data;
    if (!thr)
       return;
 
@@ -134,7 +134,7 @@ static void audio_thread_free(void *data)
 
 static bool audio_thread_stop(void *data)
 {
-   audio_thread_t *thr = (audio_thread_t*)data;
+   audio_thread_t *thr = data;
    audio_thread_block(thr);
    g_extern.system.audio_callback.set_state(false);
    return true;
@@ -142,7 +142,7 @@ static bool audio_thread_stop(void *data)
 
 static bool audio_thread_start(void *data)
 {
-   audio_thread_t *thr = (audio_thread_t*)data;
+   audio_thread_t *thr = data;
    g_extern.system.audio_callback.set_state(true);
    audio_thread_unblock(thr);
    return true;
@@ -156,13 +156,13 @@ static void audio_thread_set_nonblock_state(void *data, bool state)
 
 static bool audio_thread_use_float(void *data)
 {
-   audio_thread_t *thr = (audio_thread_t*)data;
+   audio_thread_t *thr = data;
    return thr->use_float;
 }
 
 static ssize_t audio_thread_write(void *data, const void *buf, size_t size)
 {
-   audio_thread_t *thr = (audio_thread_t*)data;
+   audio_thread_t *thr = data;
    ssize_t ret = thr->driver->write(thr->driver_data, buf, size);
    if (ret < 0)
    {
@@ -193,7 +193,7 @@ bool rarch_threaded_audio_init(const audio_driver_t **out_driver, void **out_dat
       const char *device, unsigned out_rate, unsigned latency,
       const audio_driver_t *driver)
 {
-   audio_thread_t *thr = (audio_thread_t*)calloc(1, sizeof(*thr));
+   audio_thread_t *thr = calloc(1, sizeof(*thr));
    if (!thr)
       return false;
 
@@ -232,4 +232,3 @@ error:
    audio_thread_free(thr);
    return false;
 }
-

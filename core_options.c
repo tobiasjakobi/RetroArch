@@ -73,7 +73,7 @@ void core_option_get(core_option_manager_t *opt, struct retro_variable *var)
 static bool parse_variable(core_option_manager_t *opt, size_t index, const struct retro_variable *var)
 {
    size_t i;
-   struct core_option *option = (struct core_option*)&opt->opts[index];
+   struct core_option *option = &opt->opts[index];
    option->key = strdup(var->key);
 
    char *value = strdup(var->value);
@@ -128,7 +128,7 @@ static bool parse_variable(core_option_manager_t *opt, size_t index, const struc
 core_option_manager_t *core_option_new(const char *conf_path, const struct retro_variable *vars)
 {
    const struct retro_variable *var;
-   core_option_manager_t *opt = (core_option_manager_t*)calloc(1, sizeof(*opt));
+   core_option_manager_t *opt = calloc(1, sizeof(*opt));
    if (!opt)
       return NULL;
 
@@ -147,7 +147,7 @@ core_option_manager_t *core_option_new(const char *conf_path, const struct retro
    for (var = vars; var->key && var->value; var++)
       size++;
 
-   opt->opts = (struct core_option*)calloc(size, sizeof(*opt->opts));
+   opt->opts = calloc(size, sizeof(*opt->opts));
    if (!opt->opts)
       goto error;
 
@@ -177,7 +177,7 @@ void core_option_flush(core_option_manager_t *opt)
    size_t i;
    for (i = 0; i < opt->size; i++)
    {
-      struct core_option *option = (struct core_option*)&opt->opts[i];
+      struct core_option *option = &opt->opts[i];
       config_set_string(opt->conf, option->key, core_option_get_val(opt, i));
    }
    config_file_write(opt->conf, opt->conf_path);
@@ -195,7 +195,7 @@ const char *core_option_get_desc(core_option_manager_t *opt, size_t index)
 
 const char *core_option_get_val(core_option_manager_t *opt, size_t index)
 {
-   struct core_option *option = (struct core_option*)&opt->opts[index];
+   struct core_option *option = &opt->opts[index];
    return option->vals->elems[option->index].data;
 }
 
@@ -206,21 +206,21 @@ struct string_list *core_option_get_vals(core_option_manager_t *opt, size_t inde
 
 void core_option_set_val(core_option_manager_t *opt, size_t index, size_t val_index)
 {
-   struct core_option *option= (struct core_option*)&opt->opts[index];
+   struct core_option *option= &opt->opts[index];
    option->index = val_index % option->vals->size;
    opt->updated = true;
 }
 
 void core_option_next(core_option_manager_t *opt, size_t index)
 {
-   struct core_option *option = (struct core_option*)&opt->opts[index];
+   struct core_option *option = &opt->opts[index];
    option->index = (option->index + 1) % option->vals->size;
    opt->updated = true;
 }
 
 void core_option_prev(core_option_manager_t *opt, size_t index)
 {
-   struct core_option *option = (struct core_option*)&opt->opts[index];
+   struct core_option *option = &opt->opts[index];
    option->index = (option->index + option->vals->size - 1) % option->vals->size;
    opt->updated = true;
 }
@@ -230,5 +230,3 @@ void core_option_set_default(core_option_manager_t *opt, size_t index)
    opt->opts[index].index = 0;
    opt->updated = true;
 }
-
-

@@ -65,7 +65,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
       {
          file_list_clear(menu->selection_buf);
 
-         struct gfx_shader *shader = (struct gfx_shader*)shader_manager_get_current_shader(menu, menu_type);
+         struct gfx_shader *shader = shader_manager_get_current_shader(menu, menu_type);
          if (shader)
             for (i = 0; i < shader->num_parameters; i++)
                file_list_push(menu->selection_buf, shader->parameters[i].desc, "", MENU_SETTINGS_SHADER_PARAMETER_0 + i, 0);
@@ -74,7 +74,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
       }
       case MENU_SETTINGS_SHADER_OPTIONS:
       {
-         struct gfx_shader *shader = (struct gfx_shader*)menu->shader;
+         struct gfx_shader *shader = menu->shader;
 
          if (!shader)
             return;
@@ -188,7 +188,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          break;
       case MENU_SETTINGS_CORE_INFO:
          {
-            core_info_t *info = (core_info_t*)menu->core_info_current;
+            core_info_t *info = menu->core_info_current;
             file_list_clear(menu->selection_buf);
 
             if (info->data)
@@ -367,7 +367,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
       case MENU_SETTINGS_PERFORMANCE_COUNTERS_LIBRETRO:
          file_list_clear(menu->selection_buf);
          {
-            const struct retro_perf_counter **counters = (const struct retro_perf_counter**)perf_counters_libretro;
+            const struct retro_perf_counter **counters = perf_counters_libretro;
             unsigned num = perf_ptr_libretro;
 
             if (!counters || num == 0)
@@ -381,7 +381,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
       case MENU_SETTINGS_PERFORMANCE_COUNTERS_FRONTEND:
          file_list_clear(menu->selection_buf);
          {
-            const struct retro_perf_counter **counters = (const struct retro_perf_counter**)perf_counters_rarch;
+            const struct retro_perf_counter **counters = perf_counters_rarch;
             unsigned num = perf_ptr_rarch;
 
             if (!counters || num == 0)
@@ -445,7 +445,7 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
 {
    char msg[PATH_MAX];
    rarch_setting_t *current_setting;
-   rarch_setting_t *setting_data = (rarch_setting_t *)setting_data_get_list();
+   rarch_setting_t *setting_data = setting_data_get_list();
 
    if (!driver.menu || !setting_data)
       return 0;
@@ -456,27 +456,27 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
    switch (driver.menu->info_selection)
    {
       case MENU_SETTINGS_LIBRETRO_LOG_LEVEL:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "libretro_log_level")))
+         if ((current_setting = setting_data_find_setting(setting_data, "libretro_log_level")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_LOGGING_VERBOSITY:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "log_verbosity")))
+         if ((current_setting = setting_data_find_setting(setting_data, "log_verbosity")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_PERFORMANCE_COUNTERS_ENABLE:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "perfcnt_enable")))
+         if ((current_setting = setting_data_find_setting(setting_data, "perfcnt_enable")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SYSTEM_DIR_PATH:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "system_directory")))
+         if ((current_setting = setting_data_find_setting(setting_data, "system_directory")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_START_SCREEN:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "rgui_show_start_screen")))
+         if ((current_setting = setting_data_find_setting(setting_data, "rgui_show_start_screen")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_CONFIG_SAVE_ON_EXIT:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "config_save_on_exit")))
+         if ((current_setting = setting_data_find_setting(setting_data, "config_save_on_exit")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_OPEN_FILEBROWSER:
@@ -500,47 +500,47 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                );
          break;
       case MENU_SETTINGS_PER_CORE_CONFIG:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "core_specific_config")))
+         if ((current_setting = setting_data_find_setting(setting_data, "core_specific_config")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_WINDOW_SCALE:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_scale")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_scale")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_VSYNC:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_vsync")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_vsync")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_HARD_SYNC:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_hard_sync")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_hard_sync")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_HARD_SYNC_FRAMES:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_hard_sync_frames")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_hard_sync_frames")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_BLACK_FRAME_INSERTION:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_black_frame_insertion")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_black_frame_insertion")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_THREADED:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_threaded")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_threaded")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_INTEGER_SCALE:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_scale_integer")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_scale_integer")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_CROP_OVERSCAN:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_crop_overscan")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_crop_overscan")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_MONITOR_INDEX:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_monitor_index")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_monitor_index")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_ROTATION:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_rotation")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_rotation")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_AUDIO_CONTROL_RATE_DELTA:
@@ -558,7 +558,7 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                " input rate * (1.0 +/- (rate control delta))");
          break;
       case MENU_SETTINGS_AUDIO_VOLUME:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "audio_volume")))
+         if ((current_setting = setting_data_find_setting(setting_data, "audio_volume")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_SOFTFILTER:
@@ -568,19 +568,19 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                "Path to a dynamic library.");
          break;
       case MENU_SETTINGS_BLOCK_SRAM_OVERWRITE:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "block_sram_overwrite")))
+         if ((current_setting = setting_data_find_setting(setting_data, "block_sram_overwrite")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_REWIND_ENABLE:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "rewind_enable")))
+         if ((current_setting = setting_data_find_setting(setting_data, "rewind_enable")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_REWIND_GRANULARITY:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "rewind_granularity")))
+         if ((current_setting = setting_data_find_setting(setting_data, "rewind_granularity")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_DEVICE_AUTODETECT_ENABLE:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "input_autodetect_enable")))
+         if ((current_setting = setting_data_find_setting(setting_data, "input_autodetect_enable")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_INPUT_AXIS_THRESHOLD:
@@ -739,27 +739,27 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                " -- Toggles fullscreen.");
          break;
       case MENU_SETTINGS_SLOWMOTION_RATIO:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "slowmotion_ratio")))
+         if ((current_setting = setting_data_find_setting(setting_data, "slowmotion_ratio")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_FASTFORWARD_RATIO:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "fastforward_ratio")))
+         if ((current_setting = setting_data_find_setting(setting_data, "fastforward_ratio")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_PAUSE_IF_WINDOW_FOCUS_LOST:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "pause_nonactive")))
+         if ((current_setting = setting_data_find_setting(setting_data, "pause_nonactive")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_GPU_SCREENSHOT:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_gpu_screenshot")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_gpu_screenshot")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_SRAM_AUTOSAVE:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "autosave_interval")))
+         if ((current_setting = setting_data_find_setting(setting_data, "autosave_interval")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SCREENSHOT_DIR_PATH:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "screenshot_directory")))
+         if ((current_setting = setting_data_find_setting(setting_data, "screenshot_directory")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_DRIVER_AUDIO_DEVICE:
@@ -779,19 +779,19 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                );
          break;
       case MENU_ASSETS_DIR_PATH:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "assets_directory")))
+         if ((current_setting = setting_data_find_setting(setting_data, "assets_directory")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_SAVESTATE_AUTO_SAVE:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "savestate_auto_save")))
+         if ((current_setting = setting_data_find_setting(setting_data, "savestate_auto_save")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_SWAP_INTERVAL:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_swap_interval")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_swap_interval")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_VIDEO_REFRESH_RATE_AUTO:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_refresh_rate_auto")))
+         if ((current_setting = setting_data_find_setting(setting_data, "video_refresh_rate_auto")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_LIBRETRO_DIR_PATH:
@@ -802,11 +802,11 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
                "libretro core implementations.");
          break;
       case MENU_SAVEFILE_DIR_PATH:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "savefile_directory")))
+         if ((current_setting = setting_data_find_setting(setting_data, "savefile_directory")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SAVESTATE_DIR_PATH:
-         if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "savestate_directory")))
+         if ((current_setting = setting_data_find_setting(setting_data, "savestate_directory")))
             setting_data_get_description(current_setting, msg, sizeof(msg));
          break;
       case MENU_SETTINGS_BIND_BEGIN + RARCH_ANALOG_LEFT_X_PLUS:
@@ -1467,14 +1467,14 @@ static int menu_viewport_iterate(unsigned action, rarch_setting_t *setting)
    struct retro_game_geometry *geom;
    const char *base_msg = NULL;
    unsigned menu_type = 0;
-   rarch_viewport_t *custom = (rarch_viewport_t*)&g_extern.console.screen.viewports.custom_vp;
+   rarch_viewport_t *custom = &g_extern.console.screen.viewports.custom_vp;
 
    if (!driver.menu)
       return 0;
 
    file_list_get_last(driver.menu->menu_stack, NULL, &menu_type, setting);
 
-   geom = (struct retro_game_geometry*)&g_extern.system.av_info.geometry;
+   geom = &g_extern.system.av_info.geometry;
    stride_x = g_settings.video.scale_integer ?
       geom->base_width : 1;
    stride_y = g_settings.video.scale_integer ?
@@ -1764,7 +1764,7 @@ static void menu_parse_and_resolve(unsigned menu_type)
    {
       case MENU_SETTINGS_CORE:
          dir = NULL;
-         list = (file_list_t*)driver.menu->selection_buf;
+         list = driver.menu->selection_buf;
          file_list_get_last(driver.menu->menu_stack, &dir, &menu_type, setting);
          list_size = file_list_get_size(list);
          for (i = 0; i < list_size; i++)
@@ -1816,7 +1816,7 @@ static void menu_parse_and_resolve(unsigned menu_type)
 static int menu_custom_bind_iterate(void *data, unsigned action)
 {
    char msg[256];
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    (void)action; // Have to ignore action here. Only bind that should work here is Quit RetroArch or something like that.
    (void)msg;
@@ -1853,7 +1853,7 @@ static int menu_custom_bind_iterate_keyboard(void *data, unsigned action)
 {
    char msg[256];
    bool timed_out = false;
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    (void)action; // Have to ignore action here.
    (void)msg;
@@ -2066,7 +2066,7 @@ static int menu_common_iterate(unsigned action)
       return 0;
    }
 
-   setting_data = (rarch_setting_t *)setting_data_get_list();
+   setting_data = setting_data_get_list();
 
    file_list_get_last(driver.menu->menu_stack, &dir, &menu_type, setting);
 
@@ -2179,7 +2179,7 @@ static int menu_common_iterate(unsigned action)
                }
                else
                {
-                  struct gfx_shader *shader = (struct gfx_shader*)driver.menu->shader;
+                  struct gfx_shader *shader = driver.menu->shader;
                   unsigned pass = (menu_type - MENU_SETTINGS_SHADER_0) / 3;
 
                   fill_pathname_join(shader->pass[pass].source.path,
@@ -2258,42 +2258,42 @@ static int menu_common_iterate(unsigned action)
             }
             else if (menu_type == MENU_CONTENT_HISTORY_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "game_history_path")))
+               if ((current_setting = setting_data_find_setting(setting_data, "game_history_path")))
                   menu_common_setting_set_current_string_path(current_setting, dir, path);
 
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
             }
             else if (menu_type == MENU_BROWSER_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "rgui_browser_directory")))
+               if ((current_setting = setting_data_find_setting(setting_data, "rgui_browser_directory")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
             }
             else if (menu_type == MENU_CONTENT_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "content_directory")))
+               if ((current_setting = setting_data_find_setting(setting_data, "content_directory")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
             }
             else if (menu_type == MENU_ASSETS_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "assets_directory")))
+               if ((current_setting = setting_data_find_setting(setting_data, "assets_directory")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
             }
             else if (menu_type == MENU_SCREENSHOT_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "screenshot_directory")))
+               if ((current_setting = setting_data_find_setting(setting_data, "screenshot_directory")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
             }
             else if (menu_type == MENU_SAVEFILE_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "savefile_directory")))
+               if ((current_setting = setting_data_find_setting(setting_data, "savefile_directory")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
             }
@@ -2305,20 +2305,20 @@ static int menu_common_iterate(unsigned action)
             }
             else if (menu_type == MENU_SETTINGS_AUDIO_DSP_FILTER)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "audio_dsp_plugin")))
+               if ((current_setting = setting_data_find_setting(setting_data, "audio_dsp_plugin")))
                   menu_common_setting_set_current_string_path(current_setting, dir, path);
                menu_flush_stack_type(MENU_SETTINGS_AUDIO_OPTIONS);
             }
             else if (menu_type == MENU_SAVESTATE_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "savestate_directory")))
+               if ((current_setting = setting_data_find_setting(setting_data, "savestate_directory")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
             }
             else if (menu_type == MENU_LIBRETRO_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "libretro_dir_path")))
+               if ((current_setting = setting_data_find_setting(setting_data, "libretro_dir_path")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                if (driver.menu_ctx && driver.menu_ctx->init_core_info)
@@ -2332,7 +2332,7 @@ static int menu_common_iterate(unsigned action)
             }
             else if (menu_type == MENU_LIBRETRO_INFO_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "libretro_info_path")))
+               if ((current_setting = setting_data_find_setting(setting_data, "libretro_info_path")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                if (driver.menu_ctx && driver.menu_ctx->init_core_info)
@@ -2341,7 +2341,7 @@ static int menu_common_iterate(unsigned action)
             }
             else if (menu_type == MENU_SHADER_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "video_shader_dir")))
+               if ((current_setting = setting_data_find_setting(setting_data, "video_shader_dir")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
@@ -2358,7 +2358,7 @@ static int menu_common_iterate(unsigned action)
             }
             else if (menu_type == MENU_SYSTEM_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "system_directory")))
+               if ((current_setting = setting_data_find_setting(setting_data, "system_directory")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
@@ -2370,7 +2370,7 @@ static int menu_common_iterate(unsigned action)
             }
             else if (menu_type == MENU_EXTRACTION_DIR_PATH)
             {
-               if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "extraction_directory")))
+               if ((current_setting = setting_data_find_setting(setting_data, "extraction_directory")))
                   menu_common_setting_set_current_string_dir(current_setting, dir);
 
                menu_flush_stack_type(MENU_SETTINGS_PATH_OPTIONS);
@@ -2454,7 +2454,7 @@ static void menu_common_shader_manager_init(menu_handle_t *menu)
    char cgp_path[PATH_MAX];
    config_file_t *conf = NULL;
    const char *config_path = NULL;
-   struct gfx_shader *shader = (struct gfx_shader*)menu->shader;
+   struct gfx_shader *shader = menu->shader;
 
    if (*g_extern.core_specific_config_path && g_settings.core_specific_config)
       config_path = g_extern.core_specific_config_path;
@@ -2580,7 +2580,7 @@ static void menu_common_shader_manager_get_str(struct gfx_shader *shader, char *
       // menu->parameter_shader here.
       if (shader)
       {
-         const struct gfx_shader_parameter *param = (const struct gfx_shader_parameter*)&shader->parameters[type - MENU_SETTINGS_SHADER_PARAMETER_0];
+         const struct gfx_shader_parameter *param = &shader->parameters[type - MENU_SETTINGS_SHADER_PARAMETER_0];
          snprintf(type_str, type_str_size, "%.2f [%.2f %.2f]", param->current, param->minimum, param->maximum);
       }
       else
@@ -2684,7 +2684,7 @@ static void menu_common_shader_manager_save_preset(const char *basename, bool ap
       config_directory,
    };
 
-   if (!(conf = (config_file_t*)config_file_new(NULL)))
+   if (!(conf = config_file_new(NULL)))
       return;
    gfx_shader_write_conf_cgp(conf, driver.menu->shader);
 
@@ -2767,7 +2767,7 @@ static int menu_common_shader_manager_setting_toggle(unsigned id,
 #ifdef HAVE_SHADER_MANAGER
    rarch_setting_t *current_setting;
 
-   rarch_setting_t *setting_data = (rarch_setting_t *)setting_data_get_list();
+   rarch_setting_t *setting_data = setting_data_get_list();
 
    unsigned dist_shader = id - MENU_SETTINGS_SHADER_0;
    unsigned dist_filter = id - MENU_SETTINGS_SHADER_0_FILTER;
@@ -2785,7 +2785,7 @@ static int menu_common_shader_manager_setting_toggle(unsigned id,
       struct gfx_shader *shader;
       struct gfx_shader_parameter *param;
 
-      if (!(shader = (struct gfx_shader*)driver.menu->parameter_shader))
+      if (!(shader = driver.menu->parameter_shader))
          return 0;
 
       if (!(param = &shader->parameters[id - MENU_SETTINGS_SHADER_PARAMETER_0]))
@@ -2816,7 +2816,7 @@ static int menu_common_shader_manager_setting_toggle(unsigned id,
       driver.menu_ctx->backend->setting_set(id, action, setting);
    else if (((dist_shader % 3) == 0 || id == MENU_SETTINGS_SHADER_PRESET))
    {
-      struct gfx_shader *shader = (struct gfx_shader*)driver.menu->shader;
+      struct gfx_shader *shader = driver.menu->shader;
       struct gfx_shader_pass *pass = NULL;
 
       dist_shader /= 3;
@@ -2841,8 +2841,8 @@ static int menu_common_shader_manager_setting_toggle(unsigned id,
    else if ((dist_filter % 3) == 0)
    {
       dist_filter /= 3;
-      struct gfx_shader *shader = (struct gfx_shader*)driver.menu->shader;
-      struct gfx_shader_pass *pass = (struct gfx_shader_pass*)&shader->pass[dist_filter];
+      struct gfx_shader *shader = driver.menu->shader;
+      struct gfx_shader_pass *pass = &shader->pass[dist_filter];
 
       switch (action)
       {
@@ -2868,8 +2868,8 @@ static int menu_common_shader_manager_setting_toggle(unsigned id,
    else if ((dist_scale % 3) == 0)
    {
       dist_scale /= 3;
-      struct gfx_shader *shader = (struct gfx_shader*)driver.menu->shader;
-      struct gfx_shader_pass *pass = (struct gfx_shader_pass*)&shader->pass[dist_scale];
+      struct gfx_shader *shader = driver.menu->shader;
+      struct gfx_shader_pass *pass = &shader->pass[dist_scale];
 
       switch (action)
       {
@@ -2997,7 +2997,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
       }
       else
       {
-         struct retro_keybind *bind = (struct retro_keybind*)&g_settings.input.binds[port][id - MENU_SETTINGS_BIND_BEGIN];
+         struct retro_keybind *bind = &g_settings.input.binds[port][id - MENU_SETTINGS_BIND_BEGIN];
 
          if (action == MENU_ACTION_OK)
          {
@@ -3092,7 +3092,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
 
                if (step)
                {
-                  const struct retro_disk_control_callback *control = (const struct retro_disk_control_callback*)&g_extern.system.disk_control;
+                  const struct retro_disk_control_callback *control = &g_extern.system.disk_control;
                   unsigned num_disks = control->get_num_images();
                   unsigned current   = control->get_image_index();
                   unsigned next_index = (current + num_disks + 1 + step) % (num_disks + 1);
@@ -3326,7 +3326,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             if (action == MENU_ACTION_OK)
             {
                unsigned i;
-               struct retro_keybind *target = (struct retro_keybind*)&g_settings.input.binds[port][0];
+               struct retro_keybind *target = &g_settings.input.binds[port][0];
                const struct retro_keybind *def_binds = port ? retro_keybinds_rest : retro_keybinds_1;
 
                driver.menu->binds.begin = MENU_SETTINGS_BIND_BEGIN;
@@ -3507,7 +3507,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
 #ifdef HAVE_SHADER_MANAGER
          case MENU_SETTINGS_SHADER_PASSES:
             {
-               struct gfx_shader *shader = (struct gfx_shader*)driver.menu->shader;
+               struct gfx_shader *shader = driver.menu->shader;
 
                switch (action)
                {
@@ -3544,7 +3544,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             break;
          case MENU_SETTINGS_SHADER_APPLY:
             {
-               struct gfx_shader *shader = (struct gfx_shader*)driver.menu->shader;
+               struct gfx_shader *shader = driver.menu->shader;
                unsigned type = RARCH_SHADER_NONE;
 
                if (!driver.video || !driver.video->set_shader || action != MENU_ACTION_OK)
@@ -3660,9 +3660,8 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
             type - MENU_SETTINGS_LIBRETRO_PERF_COUNTERS_BEGIN);
    else if (type >= MENU_SETTINGS_BIND_BEGIN && type <= MENU_SETTINGS_BIND_ALL_LAST)
    {
-      const struct retro_keybind *auto_bind = 
-         (const struct retro_keybind*)input_get_auto_bind(driver.menu->current_pad,
-               type - MENU_SETTINGS_BIND_BEGIN);
+      const struct retro_keybind *auto_bind = input_get_auto_bind(driver.menu->current_pad,
+         type - MENU_SETTINGS_BIND_BEGIN);
 
       input_get_bind_string(type_str, &g_settings.input.binds[driver.menu->current_pad][type - MENU_SETTINGS_BIND_BEGIN], auto_bind, type_str_size);
    }

@@ -29,7 +29,7 @@
 static PyObject* py_read_wram(PyObject *self, PyObject *args)
 {
    (void)self;
-   const uint8_t *data = (const uint8_t*)pretro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
+   const uint8_t *data = pretro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
    if (!data)
    {
       Py_INCREF(Py_None);
@@ -54,7 +54,7 @@ static PyObject* py_read_wram(PyObject *self, PyObject *args)
 static PyObject* py_read_vram(PyObject *self, PyObject *args)
 {
    (void)self;
-   const uint8_t *data = (const uint8_t*)pretro_get_memory_data(RETRO_MEMORY_VIDEO_RAM);
+   const uint8_t *data = pretro_get_memory_data(RETRO_MEMORY_VIDEO_RAM);
    if (!data)
    {
       Py_INCREF(Py_None);
@@ -189,7 +189,7 @@ static char *dupe_newline(const char *str)
       return NULL;
 
    unsigned size = strlen(str) + 2;
-   char *ret = (char*)malloc(size);
+   char *ret = malloc(size);
    if (!ret)
       return NULL;
 
@@ -207,7 +207,7 @@ static char *align_program(const char *program)
       return NULL;
 
    size_t prog_size = strlen(program) + 1;
-   char *new_prog = (char*)calloc(1, prog_size);
+   char *new_prog = calloc(1, prog_size);
    if (!new_prog)
    {
       free(prog);
@@ -249,7 +249,7 @@ py_state_t *py_state_new(const char *script, unsigned is_file, const char *pycla
    Py_Initialize();
    RARCH_LOG("Initialized Python runtime.\n");
 
-   py_state_t *handle = (py_state_t*)calloc(1, sizeof(*handle));
+   py_state_t *handle = calloc(1, sizeof(*handle));
    PyObject *hook = NULL;
 
    handle->main = PyImport_AddModule("__main__");
@@ -366,4 +366,3 @@ float py_state_get(py_state_t *handle, const char *id,
    Py_DECREF(ret);
    return retval;
 }
-

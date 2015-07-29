@@ -56,16 +56,16 @@ static unsigned blargg_ntsc_snes_composite_generic_output_fmts(unsigned input_fm
 
 static unsigned blargg_ntsc_snes_composite_generic_threads(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    return filt->threads;
 }
 
 static void blargg_ntsc_snes_composite_initialize(void *data)
 {
    snes_ntsc_setup_t setup;
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
 
-   filt->ntsc = (snes_ntsc_t*)calloc(1, sizeof(*filt->ntsc));
+   filt->ntsc = calloc(1, sizeof(*filt->ntsc));
    setup = snes_ntsc_composite;
    setup.merge_fields = 1;
    snes_ntsc_init(filt->ntsc, &setup);
@@ -80,10 +80,10 @@ static void *blargg_ntsc_snes_composite_generic_create(unsigned in_fmt, unsigned
 {
    (void)simd;
 
-   struct filter_data *filt = (struct filter_data*)calloc(1, sizeof(*filt));
+   struct filter_data *filt = calloc(1, sizeof(*filt));
    if (!filt)
       return NULL;
-   filt->workers = (struct softfilter_thread_data*)calloc(threads, sizeof(struct softfilter_thread_data));
+   filt->workers = calloc(threads, sizeof(struct softfilter_thread_data));
    filt->threads = threads;
    filt->in_fmt  = in_fmt;
    if (!filt->workers)
@@ -106,11 +106,9 @@ static void blargg_ntsc_snes_composite_generic_output(void *data, unsigned *out_
 
 static void blargg_ntsc_snes_composite_generic_destroy(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
 
-   if(filt->ntsc)
-      free(filt->ntsc);
-
+   free(filt->ntsc);
    free(filt->workers);
    free(filt);
 }
@@ -119,7 +117,7 @@ static void blargg_ntsc_snes_composite_render_rgb565(void *data, int width, int 
       int first, int last,
       uint16_t *input, int pitch, uint16_t *output, int outpitch)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    if(width <= 256)
       snes_ntsc_blit(filt->ntsc, input, pitch, filt->burst, width, height, output, outpitch * 2, first, last);
    else
@@ -136,14 +134,13 @@ static void blargg_ntsc_snes_composite_rgb565(void *data, unsigned width, unsign
          first, last,
          src, src_stride,
          dst, dst_stride);
-
 }
 
 static void blargg_ntsc_snes_composite_work_cb_rgb565(void *data, void *thread_data)
 {
-   struct softfilter_thread_data *thr = (struct softfilter_thread_data*)thread_data;
-   uint16_t *input = (uint16_t*)thr->in_data;
-   uint16_t *output = (uint16_t*)thr->out_data;
+   struct softfilter_thread_data *thr = thread_data;
+   uint16_t *input = thr->in_data;
+   uint16_t *output = thr->out_data;
    unsigned width = thr->width;
    unsigned height = thr->height;
 
@@ -156,11 +153,11 @@ static void blargg_ntsc_snes_composite_generic_packets(void *data,
       void *output, size_t output_stride,
       const void *input, unsigned width, unsigned height, size_t input_stride)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    unsigned i;
    for (i = 0; i < filt->threads; i++)
    {
-      struct softfilter_thread_data *thr = (struct softfilter_thread_data*)&filt->workers[i];
+      struct softfilter_thread_data *thr = &filt->workers[i];
 
       unsigned y_start = (height * i) / filt->threads;
       unsigned y_end = (height * (i + 1)) / filt->threads;

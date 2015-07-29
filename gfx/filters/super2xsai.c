@@ -53,7 +53,7 @@ static unsigned supertwoxsai_generic_output_fmts(unsigned input_fmts)
 
 static unsigned supertwoxsai_generic_threads(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    return filt->threads;
 }
 
@@ -63,10 +63,10 @@ static void *supertwoxsai_generic_create(unsigned in_fmt, unsigned out_fmt,
 {
    (void)simd;
 
-   struct filter_data *filt = (struct filter_data*)calloc(1, sizeof(*filt));
+   struct filter_data *filt = calloc(1, sizeof(*filt));
    if (!filt)
       return NULL;
-   filt->workers = (struct softfilter_thread_data*)calloc(threads, sizeof(struct softfilter_thread_data));
+   filt->workers = calloc(threads, sizeof(struct softfilter_thread_data));
    filt->threads = threads;
    filt->in_fmt  = in_fmt;
    if (!filt->workers)
@@ -86,7 +86,7 @@ static void supertwoxsai_generic_output(void *data, unsigned *out_width, unsigne
 
 static void supertwoxsai_generic_destroy(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    free(filt->workers);
    free(filt);
 }
@@ -194,8 +194,8 @@ static void supertwoxsai_generic_xrgb8888(unsigned width, unsigned height,
 
    for (; height; height--)
    {
-      uint32_t *in  = (uint32_t*)src;
-      uint32_t *out = (uint32_t*)dst;
+      uint32_t *in  = src;
+      uint32_t *out = dst;
 
       for (finish = width; finish; finish -= 1)
       {
@@ -224,8 +224,8 @@ static void supertwoxsai_generic_rgb565(unsigned width, unsigned height,
 
    for (; height; height--)
    {
-      uint16_t *in  = (uint16_t*)src;
-      uint16_t *out = (uint16_t*)dst;
+      uint16_t *in  = src;
+      uint16_t *out = dst;
 
       for (finish = width; finish; finish -= 1)
       {
@@ -247,9 +247,9 @@ static void supertwoxsai_generic_rgb565(unsigned width, unsigned height,
 
 static void supertwoxsai_work_cb_rgb565(void *data, void *thread_data)
 {
-   struct softfilter_thread_data *thr = (struct softfilter_thread_data*)thread_data;
-   uint16_t *input = (uint16_t*)thr->in_data;
-   uint16_t *output = (uint16_t*)thr->out_data;
+   struct softfilter_thread_data *thr = thread_data;
+   uint16_t *input = thr->in_data;
+   uint16_t *output = thr->out_data;
    unsigned width = thr->width;
    unsigned height = thr->height;
 
@@ -259,9 +259,9 @@ static void supertwoxsai_work_cb_rgb565(void *data, void *thread_data)
 
 static void supertwoxsai_work_cb_xrgb8888(void *data, void *thread_data)
 {
-   struct softfilter_thread_data *thr = (struct softfilter_thread_data*)thread_data;
-   uint32_t *input = (uint32_t*)thr->in_data;
-   uint32_t *output = (uint32_t*)thr->out_data;
+   struct softfilter_thread_data *thr = thread_data;
+   uint32_t *input = thr->in_data;
+   uint32_t *output = thr->out_data;
    unsigned width = thr->width;
    unsigned height = thr->height;
 
@@ -274,11 +274,11 @@ static void supertwoxsai_generic_packets(void *data,
       void *output, size_t output_stride,
       const void *input, unsigned width, unsigned height, size_t input_stride)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    unsigned i;
    for (i = 0; i < filt->threads; i++)
    {
-      struct softfilter_thread_data *thr = (struct softfilter_thread_data*)&filt->workers[i];
+      struct softfilter_thread_data *thr = &filt->workers[i];
 
       unsigned y_start = (height * i) / filt->threads;
       unsigned y_end = (height * (i + 1)) / filt->threads;

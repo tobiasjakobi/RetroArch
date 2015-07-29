@@ -30,7 +30,7 @@ void menu_update_system_info(menu_handle_t *menu, bool *load_no_content)
       {
          if (core_info_list_get_info(menu->core_info, menu->core_info_current, g_settings.libretro))
          {
-            const core_info_t *info = (const core_info_t*)menu->core_info_current;
+            const core_info_t *info = menu->core_info_current;
 
             RARCH_LOG("[Core Info]:\n");
             if (info->display_name)
@@ -179,7 +179,7 @@ static void menu_update_libretro_info(menu_handle_t *menu)
 
 static void menu_environment_get(int *argc, char *argv[], void *args, void *params_data)
 {
-   struct rarch_main_wrap *wrap_args = (struct rarch_main_wrap*)params_data;
+   struct rarch_main_wrap *wrap_args = params_data;
 
    wrap_args->no_content    = driver.menu->load_no_content;
    wrap_args->verbose       = g_extern.verbosity;
@@ -230,21 +230,21 @@ bool load_menu_content(void)
 void *menu_init(const void *data)
 {
    menu_handle_t *menu;
-   menu_ctx_driver_t *menu_ctx = (menu_ctx_driver_t*)data;
+   menu_ctx_driver_t *menu_ctx = data;
 
    if (!menu_ctx)
       return NULL;
 
-   if (!(menu = (menu_handle_t*)menu_ctx->init()))
+   if (!(menu = menu_ctx->init()))
       return NULL;
 
    strlcpy(g_settings.menu.driver, menu_ctx->ident, sizeof(g_settings.menu.driver));
 
-   menu->menu_stack = (file_list_t*)calloc(1, sizeof(file_list_t));
-   menu->selection_buf = (file_list_t*)calloc(1, sizeof(file_list_t));
-   menu->core_info_current = (core_info_t*)calloc(1, sizeof(core_info_t));
+   menu->menu_stack = calloc(1, sizeof(file_list_t));
+   menu->selection_buf = calloc(1, sizeof(file_list_t));
+   menu->core_info_current = calloc(1, sizeof(core_info_t));
 #ifdef HAVE_SHADER_MANAGER
-   menu->shader = (struct gfx_shader*)calloc(1, sizeof(struct gfx_shader));
+   menu->shader = calloc(1, sizeof(struct gfx_shader));
 #endif
    file_list_push(menu->menu_stack, "", "", MENU_SETTINGS, 0);
    menu_clear_navigation(menu);
@@ -273,7 +273,7 @@ void *menu_init(const void *data)
 
 void menu_free(void *data)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    if (!menu)
       return;

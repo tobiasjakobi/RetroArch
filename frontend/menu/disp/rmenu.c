@@ -95,7 +95,7 @@ static void rmenu_render(void)
 {
    size_t begin, end;
    struct font_params font_parms;
-   menu_handle_t *menu = (menu_handle_t*)driver.menu;
+   menu_handle_t *menu = driver.menu;
 
    if (!menu)
       return;
@@ -409,7 +409,7 @@ static void rmenu_render(void)
 
 void rmenu_set_texture(void *data)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    if (menu_texture_inited)
       return;
@@ -424,7 +424,7 @@ void rmenu_set_texture(void *data)
 
 static void rmenu_context_reset(void *data)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    if (!menu)
       return;
@@ -438,12 +438,12 @@ static void rmenu_context_reset(void *data)
 
 static void *rmenu_init(void)
 {
-   menu_handle_t *menu = (menu_handle_t*)calloc(1, sizeof(*menu));
+   menu_handle_t *menu = calloc(1, sizeof(*menu));
 
    if (!menu)
       return NULL;
 
-   menu_texture = (struct texture_image*)calloc(1, sizeof(*menu_texture));
+   menu_texture = calloc(1, sizeof(*menu_texture));
    return menu;
 }
 
@@ -458,7 +458,7 @@ static void rmenu_free(void *data)
 
 static int rmenu_input_postprocess(uint64_t old_state)
 {
-   menu_handle_t *menu = (menu_handle_t*)driver.menu;
+   menu_handle_t *menu = driver.menu;
    int ret = 0;
 
    if ((menu->trigger_state & (1ULL << RARCH_MENU_TOGGLE)) &&
@@ -474,7 +474,7 @@ static int rmenu_input_postprocess(uint64_t old_state)
 
 static void rmenu_init_core_info(void *data)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    core_info_list_free(menu->core_info);
    menu->core_info = NULL;

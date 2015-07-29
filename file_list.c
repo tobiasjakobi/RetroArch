@@ -30,7 +30,7 @@ void file_list_push(file_list_t *list,
    {
       list->capacity++;
       list->capacity *= 2;
-      list->list = (struct item_file*)realloc(list->list, list->capacity * sizeof(struct item_file));
+      list->list = realloc(list->list, list->capacity * sizeof(struct item_file));
    }
 
    if (driver.menu_ctx && driver.menu_ctx->list_insert)
@@ -39,10 +39,10 @@ void file_list_push(file_list_t *list,
    list->list[list->size].label = strdup(label);
    list->list[list->size].setting = NULL;
 
-   rarch_setting_t *setting_data = (rarch_setting_t *)setting_data_get_list();
+   rarch_setting_t *setting_data = setting_data_get_list();
 
    if (setting_data)
-      list->list[list->size].setting = (rarch_setting_t*)setting_data_find_setting(setting_data, label);
+      list->list[list->size].setting = setting_data_find_setting(setting_data, label);
 
    if (list->list[list->size].setting)
       list->list[list->size].path = strdup(list->list[list->size].setting->short_description);
@@ -130,8 +130,8 @@ void file_list_get_alt_at_offset(const file_list_t *list, size_t index,
 
 static int file_list_alt_cmp(const void *a_, const void *b_)
 {
-   const struct item_file *a = (const struct item_file*)a_;
-   const struct item_file *b = (const struct item_file*)b_;
+   const struct item_file *a = a_;
+   const struct item_file *b = b_;
    const char *cmp_a = a->alt ? a->alt : a->path;
    const char *cmp_b = b->alt ? b->alt : b->path;
    return strcasecmp(cmp_a, cmp_b);
@@ -162,10 +162,10 @@ void file_list_get_last(const file_list_t *list,
 
 void *file_list_get_last_setting(const file_list_t *list, int index)
 {
-   rarch_setting_t *setting_data = (rarch_setting_t*)setting_data_get_list();
+   rarch_setting_t *setting_data = setting_data_get_list();
 
    if (setting_data)
-      return (rarch_setting_t*)setting_data_find_setting(setting_data, list->list[index].label);
+      return setting_data_find_setting(setting_data, list->list[index].label);
    return NULL;
 }
 
@@ -182,7 +182,7 @@ bool file_list_search(const file_list_t *list, const char *needle, size_t *index
       if (!alt)
          continue;
 
-      str = (const char *)strcasestr(alt, needle);
+      str = strcasestr(alt, needle);
       if (str == alt) // Found match with first chars, best possible match.
       {
          *index = i;

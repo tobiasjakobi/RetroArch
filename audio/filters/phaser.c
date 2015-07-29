@@ -54,7 +54,7 @@ static void phaser_process(void *data, struct dspfilter_output *output,
    unsigned i, c;
    int s;
    float m[2], tmp[2];
-   struct phaser_data *ph = (struct phaser_data*)data;
+   struct phaser_data *ph = data;
 
    output->samples = input->samples;
    output->frames  = input->frames;
@@ -95,7 +95,7 @@ static void phaser_process(void *data, struct dspfilter_output *output,
 static void *phaser_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
-   struct phaser_data *ph = (struct phaser_data*)calloc(1, sizeof(*ph));
+   struct phaser_data *ph = calloc(1, sizeof(*ph));
    if (!ph)
       return NULL;
 

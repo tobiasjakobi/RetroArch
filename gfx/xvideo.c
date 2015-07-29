@@ -80,7 +80,7 @@ typedef struct xv
 
 static void xv_set_nonblock_state(void *data, bool state)
 {
-   xv_t *xv = (xv_t*)data;
+   xv_t *xv = data;
    Atom atom = XInternAtom(xv->display, "XV_SYNC_TO_VBLANK", true);
    if (atom != None && xv->port)
       XvSetPortAttribute(xv->display, xv->port, atom, !state);
@@ -108,9 +108,9 @@ static inline void calculate_yuv(uint8_t *y, uint8_t *u, uint8_t *v, unsigned r,
 static void init_yuv_tables(xv_t *xv)
 {
    unsigned i;
-   xv->ytable = (uint8_t*)malloc(0x10000);
-   xv->utable = (uint8_t*)malloc(0x10000);
-   xv->vtable = (uint8_t*)malloc(0x10000);
+   xv->ytable = malloc(0x10000);
+   xv->utable = malloc(0x10000);
+   xv->vtable = malloc(0x10000);
 
    for (i = 0; i < 0x10000; i++)
    {
@@ -149,7 +149,7 @@ static void xv_init_font(xv_t *xv, const char *font_path, unsigned font_size)
 static void render16_yuy2(xv_t *xv, const void *input_, unsigned width, unsigned height, unsigned pitch)
 {
    unsigned x, y;
-   const uint16_t *input = (const uint16_t*)input_;
+   const uint16_t *input = input_;
    uint8_t *output = (uint8_t*)xv->image->data;
 
    for (y = 0; y < height; y++)
@@ -178,7 +178,7 @@ static void render16_yuy2(xv_t *xv, const void *input_, unsigned width, unsigned
 static void render16_uyvy(xv_t *xv, const void *input_, unsigned width, unsigned height, unsigned pitch)
 {
    unsigned x, y;
-   const uint16_t *input = (const uint16_t*)input_;
+   const uint16_t *input = input_;
    uint8_t *output = (uint8_t*)xv->image->data;
 
    for (y = 0; y < height; y++)
@@ -207,7 +207,7 @@ static void render16_uyvy(xv_t *xv, const void *input_, unsigned width, unsigned
 static void render32_yuy2(xv_t *xv, const void *input_, unsigned width, unsigned height, unsigned pitch)
 {
    unsigned x, y;
-   const uint32_t *input = (const uint32_t*)input_;
+   const uint32_t *input = input_;
    uint8_t *output = (uint8_t*)xv->image->data;
 
    for (y = 0; y < height; y++)
@@ -237,7 +237,7 @@ static void render32_yuy2(xv_t *xv, const void *input_, unsigned width, unsigned
 static void render32_uyvy(xv_t *xv, const void *input_, unsigned width, unsigned height, unsigned pitch)
 {
    unsigned x, y;
-   const uint32_t *input = (const uint32_t*)input_;
+   const uint32_t *input = input_;
    uint16_t *output = (uint16_t*)xv->image->data;
 
    for (y = 0; y < height; y++)
@@ -382,7 +382,7 @@ static void calc_out_rect(bool keep_aspect, struct rarch_viewport *vp, unsigned 
 
 static void *xv_init(const video_info_t *video, const input_driver_t **input, void **input_data)
 {
-   xv_t *xv = (xv_t*)calloc(1, sizeof(*xv));
+   xv_t *xv = calloc(1, sizeof(*xv));
    if (!xv)
       return NULL;
 
@@ -496,7 +496,7 @@ static void *xv_init(const video_info_t *video, const input_driver_t **input, vo
    xv->height = xv->image->height;
 
    xv->shminfo.shmid = shmget(IPC_PRIVATE, xv->image->data_size, IPC_CREAT | 0777);
-   xv->shminfo.shmaddr = xv->image->data = (char*)shmat(xv->shminfo.shmid, NULL, 0);
+   xv->shminfo.shmaddr = xv->image->data = shmat(xv->shminfo.shmid, NULL, 0);
    xv->shminfo.readOnly = false;
    if (!XShmAttach(xv->display, &xv->shminfo))
    {
@@ -585,7 +585,7 @@ static bool check_resize(xv_t *xv, unsigned width, unsigned height)
          return false;
       }
 
-      xv->shminfo.shmaddr = xv->image->data = (char*)shmat(xv->shminfo.shmid, NULL, 0);
+      xv->shminfo.shmaddr = xv->image->data = shmat(xv->shminfo.shmid, NULL, 0);
       xv->shminfo.readOnly = false;
 
       if (!XShmAttach(xv->display, &xv->shminfo))
@@ -703,7 +703,7 @@ static bool xv_frame(void *data, const void *frame, unsigned width, unsigned hei
    if (!frame)
       return true;
 
-   xv_t *xv = (xv_t*)data;
+   xv_t *xv = data;
 
    if (!check_resize(xv, width, height))
       return false;
@@ -735,7 +735,7 @@ static bool xv_frame(void *data, const void *frame, unsigned width, unsigned hei
 
 static bool xv_alive(void *data)
 {
-   xv_t *xv = (xv_t*)data;
+   xv_t *xv = data;
 
    XEvent event;
    while (XPending(xv->display))
@@ -773,13 +773,13 @@ static bool xv_alive(void *data)
 
 static bool xv_focus(void *data)
 {
-   xv_t *xv = (xv_t*)data;
+   xv_t *xv = data;
    return xv->focus;
 }
 
 static void xv_free(void *data)
 {
-   xv_t *xv = (xv_t*)data;
+   xv_t *xv = data;
    x11_destroy_input_context(&xv->xim, &xv->xic);
    XShmDetach(xv->display, &xv->shminfo);
    shmdt(xv->shminfo.shmaddr);
@@ -805,7 +805,7 @@ static void xv_free(void *data)
 
 static void xv_viewport_info(void *data, struct rarch_viewport *vp)
 {
-   xv_t *xv = (xv_t*)data;
+   xv_t *xv = data;
    *vp = xv->vp;
 }
 

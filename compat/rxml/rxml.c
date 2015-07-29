@@ -101,7 +101,7 @@ static char *strdup_range(const char *begin, const char *end)
 {
    ptrdiff_t len = end - begin;
 
-   char *ret = (char*)malloc(len + 1);
+   char *ret = malloc(len + 1);
    if (!ret)
       return NULL;
 
@@ -147,7 +147,7 @@ static struct rxml_attrib_node *rxml_parse_attrs(const char *str)
       if (!attrib || !value)
          goto end;
 
-      struct rxml_attrib_node *new_node = (struct rxml_attrib_node*)calloc(1, sizeof(*new_node));
+      struct rxml_attrib_node *new_node = calloc(1, sizeof(*new_node));
       if (!new_node)
          goto end;
 
@@ -211,7 +211,7 @@ static struct rxml_node *rxml_parse_node(const char **ptr_)
    char *str           = NULL;
    bool is_closing     = false;
 
-   struct rxml_node *node = (struct rxml_node*)calloc(1, sizeof(*node));
+   struct rxml_node *node = calloc(1, sizeof(*node));
    if (!node)
       return NULL;
 
@@ -238,7 +238,7 @@ static struct rxml_node *rxml_parse_node(const char **ptr_)
    if (!is_closing)
    {
       size_t closing_tag_size = strlen(node->name) + 4;
-      char *closing_tag = (char*)malloc(closing_tag_size);
+      char *closing_tag = malloc(closing_tag_size);
 
       const char *cdata_start = NULL;
       const char *child_start = NULL;
@@ -332,7 +332,7 @@ error:
 static char *purge_xml_comments(const char *str)
 {
    size_t len = strlen(str);
-   char *new_str = (char*)malloc(len + 1);
+   char *new_str = malloc(len + 1);
    if (!new_str)
       return NULL;
 
@@ -378,7 +378,7 @@ rxml_document_t *rxml_load_document(const char *path)
    if (!file)
       return NULL;
 
-   rxml_document_t *doc = (rxml_document_t*)calloc(1, sizeof(*doc));
+   rxml_document_t *doc = calloc(1, sizeof(*doc));
    if (!doc)
       goto error;
 
@@ -386,7 +386,7 @@ rxml_document_t *rxml_load_document(const char *path)
    len = ftell(file);
    rewind(file);
 
-   memory_buffer = (char*)malloc(len + 1);
+   memory_buffer = malloc(len + 1);
    if (!memory_buffer)
       goto error;
 

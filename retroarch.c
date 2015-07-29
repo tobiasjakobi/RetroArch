@@ -79,7 +79,7 @@ static bool take_screenshot_viewport(void)
    if (!vp.width || !vp.height)
       return false;
 
-   if (!(buffer = (uint8_t*)malloc(vp.width * vp.height * 3)))
+   if (!(buffer = malloc(vp.width * vp.height * 3)))
       return false;
 
    if (!video_read_viewport_func(buffer))
@@ -226,7 +226,7 @@ static void init_recording(void)
 
    RARCH_LOG("Custom timing given: FPS: %.4f, Sample rate: %.4f\n", (float)g_extern.system.av_info.timing.fps, (float)g_extern.system.av_info.timing.sample_rate);
 
-   const struct retro_system_av_info *info = (const struct retro_system_av_info*)&g_extern.system.av_info;
+   const struct retro_system_av_info *info = &g_extern.system.av_info;
    params.out_width  = info->geometry.base_width;
    params.out_height = info->geometry.base_height;
    params.fb_width   = info->geometry.max_width;
@@ -267,7 +267,7 @@ static void init_recording(void)
       RARCH_LOG("Detected viewport of %u x %u\n",
             vp.width, vp.height);
 
-      g_extern.record_gpu_buffer = (uint8_t*)malloc(vp.width * vp.height * 3);
+      g_extern.record_gpu_buffer = malloc(vp.width * vp.height * 3);
       if (!g_extern.record_gpu_buffer)
       {
          RARCH_ERR("Failed to allocate GPU record buffer.\n");
@@ -1539,7 +1539,7 @@ static void init_autosave(void)
    if (g_settings.autosave_interval < 1 || !g_extern.savefiles)
       return;
 
-   if (!(g_extern.autosave = (autosave_t**)calloc(g_extern.savefiles->size,
+   if (!(g_extern.autosave = calloc(g_extern.savefiles->size,
                sizeof(*g_extern.autosave))))
       return;
 
@@ -1637,7 +1637,7 @@ static void fill_pathnames(void)
    {
       unsigned i, j;
       const struct retro_subsystem_info *info = 
-         (const struct retro_subsystem_info*)libretro_find_subsystem_info(g_extern.system.special, g_extern.system.num_special, g_extern.subsystem);
+         libretro_find_subsystem_info(g_extern.system.special, g_extern.system.num_special, g_extern.subsystem);
 
       // We'll handle this error gracefully later.
       unsigned num_content = min(info ? info->num_roms : 0, g_extern.subsystem_fullpaths ? g_extern.subsystem_fullpaths->size : 0);
@@ -1650,7 +1650,7 @@ static void fill_pathnames(void)
          {
             union string_list_elem_attr attr;
             char path[PATH_MAX], ext[32];
-            const struct retro_subsystem_memory_info *mem = (const struct retro_subsystem_memory_info*)&info->roms[i].memory[j];
+            const struct retro_subsystem_memory_info *mem = &info->roms[i].memory[j];
 
             snprintf(ext, sizeof(ext), ".%s", mem->extension);
 
@@ -2297,7 +2297,7 @@ void rarch_disk_control_append_image(const char *path)
    char msg[512];
    unsigned new_index;
    const struct retro_disk_control_callback *control = 
-      (const struct retro_disk_control_callback*)&g_extern.system.disk_control;
+      &g_extern.system.disk_control;
    struct retro_game_info info = {0};
    rarch_disk_control_set_eject(true, false);
 
@@ -2343,7 +2343,7 @@ void rarch_disk_control_set_eject(bool new_state, bool log)
 {
    char msg[256];
    const struct retro_disk_control_callback *control = 
-      (const struct retro_disk_control_callback*)&g_extern.system.disk_control;
+      &g_extern.system.disk_control;
    bool error = false;
 
    if (!control->get_num_images)
@@ -2380,7 +2380,7 @@ void rarch_disk_control_set_index(unsigned next_index)
    char msg[256];
    unsigned num_disks;
    const struct retro_disk_control_callback *control = 
-      (const struct retro_disk_control_callback*)&g_extern.system.disk_control;
+      &g_extern.system.disk_control;
    bool error = false;
 
    if (!control->get_num_images)
@@ -2423,7 +2423,7 @@ static void check_disk(void)
    static bool old_pressed_eject    = false;
    static bool old_pressed_next     = false;
    const struct retro_disk_control_callback *control = 
-      (const struct retro_disk_control_callback*)&g_extern.system.disk_control;
+      &g_extern.system.disk_control;
 
    if (!control->get_num_images)
       return;

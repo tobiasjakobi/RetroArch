@@ -114,7 +114,7 @@ static void handle_plugged_pad(void)
 {
    int i, rc;
    size_t event_size = sizeof(struct inotify_event) + NAME_MAX + 1;
-   uint8_t *event_buf = (uint8_t*)calloc(1, event_size);
+   uint8_t *event_buf = calloc(1, event_size);
    if (!event_buf)
       return;
 

@@ -158,7 +158,7 @@ static bool setting_data_load_config(const rarch_setting_t* settings, config_fil
             break;         
          case ST_BIND:
             {
-               const char *prefix = (const char *)get_input_config_prefix(setting);
+               const char *prefix = get_input_config_prefix(setting);
                input_config_parse_key       (config, prefix, setting->name, setting->value.keybind);
                input_config_parse_joy_button(config, prefix, setting->name, setting->value.keybind);
                input_config_parse_joy_axis  (config, prefix, setting->name, setting->value.keybind);
@@ -179,7 +179,7 @@ static bool setting_data_load_config(const rarch_setting_t* settings, config_fil
 
 bool setting_data_load_config_path(const rarch_setting_t* settings, const char* path)
 {
-   config_file_t *config = (config_file_t*)config_file_new(path);
+   config_file_t *config = config_file_new(path);
 
    if (!config)
       return NULL;
@@ -445,8 +445,8 @@ rarch_setting_t setting_data_bind_setting(const char* name,
 
 void setting_data_get_description(const void *data, char *msg, size_t sizeof_msg)
 {
-    const rarch_setting_t *setting = (const rarch_setting_t*)data;
-    
+    const rarch_setting_t *setting = data;
+
     if (!setting)
        return;
 
@@ -740,8 +740,8 @@ void setting_data_get_description(const void *data, char *msg, size_t sizeof_msg
 
 static void general_read_handler(const void *data)
 {
-    const rarch_setting_t *setting = (const rarch_setting_t*)data;
-    
+    const rarch_setting_t *setting = data;
+
     if (!setting)
        return;
     
@@ -972,7 +972,7 @@ static void general_write_handler(const void *data)
    bool has_set_autosave          = false;
    bool has_set_dsp_init          = false;
    bool has_set_libretro_dir      = false;
-   const rarch_setting_t *setting = (const rarch_setting_t*)data;
+   const rarch_setting_t *setting = data;
 
    if (!setting)
       return;

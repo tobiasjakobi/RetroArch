@@ -407,7 +407,7 @@ static void process_sinc_neon(rarch_sinc_resampler_t *resamp, float *out_buffer)
 
 static void resampler_sinc_process(void *re_, struct resampler_data *data)
 {
-   rarch_sinc_resampler_t *re = (rarch_sinc_resampler_t*)re_;
+   rarch_sinc_resampler_t *re = re_;
 
    uint32_t ratio = PHASES / data->ratio;
 
@@ -446,7 +446,7 @@ static void resampler_sinc_process(void *re_, struct resampler_data *data)
 
 static void resampler_sinc_free(void *re)
 {
-   rarch_sinc_resampler_t *resampler = (rarch_sinc_resampler_t*)re;
+   rarch_sinc_resampler_t *resampler = re;
    if (resampler)
       aligned_free__(resampler->main_buffer);
    free(resampler);
@@ -454,7 +454,7 @@ static void resampler_sinc_free(void *re)
 
 static void *resampler_sinc_new(double bandwidth_mod)
 {
-   rarch_sinc_resampler_t *re = (rarch_sinc_resampler_t*)calloc(1, sizeof(*re));
+   rarch_sinc_resampler_t *re = calloc(1, sizeof(*re));
    if (!re)
       return NULL;
 
@@ -483,7 +483,7 @@ static void *resampler_sinc_new(double bandwidth_mod)
 #endif
    size_t elems = phase_elems + 4 * re->taps;
 
-   re->main_buffer = (float*)aligned_alloc__(128, sizeof(float) * elems);
+   re->main_buffer = aligned_alloc__(128, sizeof(float) * elems);
    if (!re->main_buffer)
       goto error;
 

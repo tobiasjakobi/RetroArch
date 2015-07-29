@@ -117,7 +117,7 @@ static enum png_chunk_type png_chunk_type(const struct png_chunk *chunk)
 static bool png_read_chunk(FILE *file, struct png_chunk *chunk)
 {
    free(chunk->data);
-   chunk->data = (uint8_t*)calloc(1, chunk->size + sizeof(uint32_t)); // CRC32
+   chunk->data = calloc(1, chunk->size + sizeof(uint32_t)); // CRC32
    if (!chunk->data)
       return false;
 
@@ -389,8 +389,8 @@ static bool png_reverse_filter(uint32_t *data, const struct png_ihdr *ihdr,
    if (inflate_buf_size < pass_size)
       return false;
 
-   uint8_t *prev_scanline    = (uint8_t*)calloc(1, pitch);
-   uint8_t *decoded_scanline = (uint8_t*)calloc(1, pitch);
+   uint8_t *prev_scanline    = calloc(1, pitch);
+   uint8_t *decoded_scanline = calloc(1, pitch);
 
    if (!prev_scanline || !decoded_scanline)
       GOTO_END_ERROR();
@@ -504,7 +504,7 @@ static bool png_reverse_filter_adam7(uint32_t *data, const struct png_ihdr *ihdr
       unsigned pass_width  = (ihdr->width - passes[pass].x + passes[pass].stride_x - 1) / passes[pass].stride_x;
       unsigned pass_height = (ihdr->height - passes[pass].y + passes[pass].stride_y - 1) / passes[pass].stride_y;
 
-      uint32_t *tmp_data = (uint32_t*)malloc(pass_width * pass_height * sizeof(uint32_t));
+      uint32_t *tmp_data = malloc(pass_width * pass_height * sizeof(uint32_t));
       if (!tmp_data)
          return false;
 
@@ -539,7 +539,7 @@ static bool png_reverse_filter_adam7(uint32_t *data, const struct png_ihdr *ihdr
 
 static bool png_append_idat(FILE *file, const struct png_chunk *chunk, struct idat_buffer *buf)
 {
-   uint8_t *new_buffer = (uint8_t*)realloc(buf->data, buf->size + chunk->size);
+   uint8_t *new_buffer = realloc(buf->data, buf->size + chunk->size);
    if (!new_buffer)
       return false;
 
@@ -684,7 +684,7 @@ bool rpng_load_image_argb(const char *path, uint32_t **data, unsigned *width, un
    if (ihdr.interlace == 1) // To be sure.
       inflate_buf_size *= 2;
 
-   inflate_buf = (uint8_t*)malloc(inflate_buf_size);
+   inflate_buf = malloc(inflate_buf_size);
    if (!inflate_buf)
       GOTO_END_ERROR();
 
@@ -702,7 +702,7 @@ bool rpng_load_image_argb(const char *path, uint32_t **data, unsigned *width, un
 
    *width  = ihdr.width;
    *height = ihdr.height;
-   *data = (uint32_t*)malloc(ihdr.width * ihdr.height * sizeof(uint32_t));
+   *data = malloc(ihdr.width * ihdr.height * sizeof(uint32_t));
    if (!*data)
       GOTO_END_ERROR();
 
@@ -914,19 +914,19 @@ static bool rpng_save_image(const char *path, const uint8_t *data,
       GOTO_END_ERROR();
 
    encode_buf_size = (width * bpp + 1) * height;
-   encode_buf = (uint8_t*)malloc(encode_buf_size);
+   encode_buf = malloc(encode_buf_size);
    if (!encode_buf)
       GOTO_END_ERROR();
 
-   prev_encoded = (uint8_t*)calloc(1, width * bpp);
+   prev_encoded = calloc(1, width * bpp);
    if (!prev_encoded)
       GOTO_END_ERROR();
 
-   rgba_line      = (uint8_t*)malloc(width * bpp);
-   up_filtered    = (uint8_t*)malloc(width * bpp);
-   sub_filtered   = (uint8_t*)malloc(width * bpp);
-   avg_filtered   = (uint8_t*)malloc(width * bpp);
-   paeth_filtered = (uint8_t*)malloc(width * bpp);
+   rgba_line      = malloc(width * bpp);
+   up_filtered    = malloc(width * bpp);
+   sub_filtered   = malloc(width * bpp);
+   avg_filtered   = malloc(width * bpp);
+   paeth_filtered = malloc(width * bpp);
    if (!rgba_line || !up_filtered || !sub_filtered || !avg_filtered || !paeth_filtered)
       GOTO_END_ERROR();
 
@@ -986,7 +986,7 @@ static bool rpng_save_image(const char *path, const uint8_t *data,
       memcpy(prev_encoded, rgba_line, width * bpp);
    }
 
-   deflate_buf = (uint8_t*)malloc(encode_buf_size * 2); // Just to be sure.
+   deflate_buf = malloc(encode_buf_size * 2); // Just to be sure.
    if (!deflate_buf)
       GOTO_END_ERROR();
 
@@ -1034,7 +1034,7 @@ bool rpng_save_image_argb(const char *path, const uint32_t *data,
 bool rpng_save_image_bgr24(const char *path, const uint8_t *data,
       unsigned width, unsigned height, unsigned pitch)
 {
-   return rpng_save_image(path, (const uint8_t*)data, width, height, pitch, 3);
+   return rpng_save_image(path, data, width, height, pitch, 3);
 }
 
 #endif

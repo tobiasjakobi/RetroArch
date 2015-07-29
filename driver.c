@@ -399,7 +399,7 @@ static void init_menu(void)
       return;
 
    find_menu_driver();
-   if (!(driver.menu = (menu_handle_t*)menu_init(driver.menu_ctx)))
+   if (!(driver.menu = menu_init(driver.menu_ctx)))
    {
       RARCH_ERR("Cannot initialize menu.\n");
       rarch_fail(1, "init_menu()");
@@ -534,14 +534,14 @@ void init_audio(void)
    size_t outsamples_max = max_bufsamples * AUDIO_MAX_RATIO * g_settings.slowmotion_ratio;
 
    // Used for recording even if audio isn't enabled.
-   rarch_assert(g_extern.audio_data.conv_outsamples = (int16_t*)malloc(outsamples_max * sizeof(int16_t)));
+   rarch_assert(g_extern.audio_data.conv_outsamples = malloc(outsamples_max * sizeof(int16_t)));
 
    g_extern.audio_data.block_chunk_size    = AUDIO_CHUNK_SIZE_BLOCKING;
    g_extern.audio_data.nonblock_chunk_size = AUDIO_CHUNK_SIZE_NONBLOCKING;
    g_extern.audio_data.chunk_size          = g_extern.audio_data.block_chunk_size;
 
    // Needs to be able to hold full content of a full max_bufsamples in addition to its own.
-   rarch_assert(g_extern.audio_data.rewind_buf = (int16_t*)malloc(max_bufsamples * sizeof(int16_t)));
+   rarch_assert(g_extern.audio_data.rewind_buf = malloc(max_bufsamples * sizeof(int16_t)));
    g_extern.audio_data.rewind_size             = max_bufsamples;
 
    if (!g_settings.audio.enable)
@@ -605,12 +605,12 @@ void init_audio(void)
       g_extern.audio_active = false;
    }
 
-   rarch_assert(g_extern.audio_data.data = (float*)malloc(max_bufsamples * sizeof(float)));
+   rarch_assert(g_extern.audio_data.data = malloc(max_bufsamples * sizeof(float)));
 
    g_extern.audio_data.data_ptr = 0;
 
    rarch_assert(g_settings.audio.out_rate < g_extern.audio_data.in_rate * AUDIO_MAX_RATIO);
-   rarch_assert(g_extern.audio_data.outsamples = (float*)malloc(outsamples_max * sizeof(float)));
+   rarch_assert(g_extern.audio_data.outsamples = malloc(outsamples_max * sizeof(float)));
 
    g_extern.audio_data.rate_control = false;
    if (!g_extern.system.audio_callback.callback && g_extern.audio_active && g_settings.audio.rate_control)

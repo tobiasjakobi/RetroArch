@@ -43,7 +43,7 @@ void input_keyboard_line_free(input_keyboard_line_t *state)
 input_keyboard_line_t *input_keyboard_line_new(void *userdata,
       input_keyboard_line_complete_t cb)
 {
-   input_keyboard_line_t *state = (input_keyboard_line_t*)calloc(1, sizeof(*state));
+   input_keyboard_line_t *state = calloc(1, sizeof(*state));
    if (!state)
       return NULL;
 
@@ -75,7 +75,7 @@ bool input_keyboard_line_event(input_keyboard_line_t *state, uint32_t character)
    // Handle left/right here when suitable
    else if (isprint(c))
    {
-      char *newbuf = (char*)realloc(state->buffer, state->size + 2);
+      char *newbuf = realloc(state->buffer, state->size + 2);
       if (!newbuf)
          return false;
 

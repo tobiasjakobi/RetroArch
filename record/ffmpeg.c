@@ -318,7 +318,7 @@ static bool ffmpeg_init_audio(ffmpeg_t *handle)
    if (!audio->codec->frame_size) // If not set (PCM), just set something.
       audio->codec->frame_size = 1024;
 
-   audio->buffer = (uint8_t*)av_malloc(
+   audio->buffer = av_malloc(
          audio->codec->frame_size *
          audio->codec->channels *
          audio->sample_size);
@@ -329,7 +329,7 @@ static bool ffmpeg_init_audio(ffmpeg_t *handle)
       return false;
 
    audio->outbuf_size = FF_MIN_BUFFER_SIZE;
-   audio->outbuf = (uint8_t*)av_malloc(audio->outbuf_size);
+   audio->outbuf = av_malloc(audio->outbuf_size);
    if (!audio->outbuf)
       return false;
 
@@ -447,12 +447,12 @@ static bool ffmpeg_init_video(ffmpeg_t *handle)
 
    // Allocate a big buffer :p ffmpeg API doesn't seem to give us some clues how big this buffer should be.
    video->outbuf_size = 1 << 23;
-   video->outbuf = (uint8_t*)av_malloc(video->outbuf_size);
+   video->outbuf = av_malloc(video->outbuf_size);
 
    video->frame_drop_ratio = params->frame_drop_ratio;
 
    size_t size = avpicture_get_size(video->pix_fmt, param->out_width, param->out_height);
-   video->conv_frame_buf = (uint8_t*)av_malloc(size);
+   video->conv_frame_buf = av_malloc(size);
    video->conv_frame = av_frame_alloc();
    avpicture_fill((AVPicture*)video->conv_frame, video->conv_frame_buf, video->pix_fmt,
          param->out_width, param->out_height);
@@ -640,7 +640,7 @@ static void deinit_thread_buf(ffmpeg_t *handle)
 
 static void ffmpeg_free(void *data)
 {
-   ffmpeg_t *handle = (ffmpeg_t*)data;
+   ffmpeg_t *handle = data;
    if (!handle)
       return;
 
@@ -692,7 +692,7 @@ static void *ffmpeg_new(const struct ffemu_params *params)
    av_register_all();
    avformat_network_init();
 
-   ffmpeg_t *handle = (ffmpeg_t*)calloc(1, sizeof(*handle));
+   ffmpeg_t *handle = calloc(1, sizeof(*handle));
    if (!handle)
       goto error;
 
@@ -727,7 +727,7 @@ static bool ffmpeg_push_video(void *data, const struct ffemu_video_data *video_d
 {
    unsigned y;
    bool drop_frame;
-   ffmpeg_t *handle = (ffmpeg_t*)data;
+   ffmpeg_t *handle = data;
 
    if (!handle || !video_data)
       return false;
@@ -788,7 +788,7 @@ static bool ffmpeg_push_video(void *data, const struct ffemu_video_data *video_d
 
 static bool ffmpeg_push_audio(void *data, const struct ffemu_audio_data *audio_data)
 {
-   ffmpeg_t *handle = (ffmpeg_t*)data;
+   ffmpeg_t *handle = data;
 
    if (!handle || !audio_data)
       return false;
@@ -1212,7 +1212,7 @@ static void ffmpeg_flush_buffers(ffmpeg_t *handle)
 
 static bool ffmpeg_finalize(void *data)
 {
-   ffmpeg_t *handle = (ffmpeg_t*)data;
+   ffmpeg_t *handle = data;
 
    if (!handle)
       return false;
@@ -1232,7 +1232,7 @@ static bool ffmpeg_finalize(void *data)
 
 static void ffmpeg_thread(void *data)
 {
-   ffmpeg_t *ff = (ffmpeg_t*)data;
+   ffmpeg_t *ff = data;
 
    // For some reason, FFmpeg has a tendency to crash if we don't overallocate a bit. :s
    void *video_buf = av_malloc(2 * ff->params.fb_width * ff->params.fb_height * ff->video.pix_size);
@@ -1311,4 +1311,3 @@ const ffemu_backend_t ffemu_ffmpeg = {
    ffmpeg_finalize,
    "ffmpeg",
 };
-

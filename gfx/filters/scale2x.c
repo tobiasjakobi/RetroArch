@@ -104,8 +104,8 @@ static void scale2x_generic_rgb565(unsigned width, unsigned height,
 {
    unsigned x, y;
    uint16_t *out0, *out1;
-   out0 = (uint16_t*)dst;
-   out1 = (uint16_t*)(dst + dst_stride);
+   out0 = dst;
+   out1 = dst + dst_stride;
    SCALE2X_GENERIC(uint16_t, width, height, first, last, src, src_stride, dst, dst_stride, out0, out1);
 }
 
@@ -116,8 +116,8 @@ static void scale2x_generic_xrgb8888(unsigned width, unsigned height,
 {
    unsigned x, y;
    uint32_t *out0, *out1;
-   out0 = (uint32_t*)dst;
-   out1 = (uint32_t*)(dst + dst_stride);
+   out0 = dst;
+   out1 = dst + dst_stride;
    SCALE2X_GENERIC(uint32_t, width, height, first, last, src, src_stride, dst, dst_stride, out0, out1);
 }
 
@@ -133,7 +133,7 @@ static unsigned scale2x_generic_output_fmts(unsigned input_fmts)
 
 static unsigned scale2x_generic_threads(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    return filt->threads;
 }
 
@@ -145,10 +145,10 @@ static void *scale2x_generic_create(unsigned in_fmt, unsigned out_fmt,
    (void)simd;
 #endif
 
-   struct filter_data *filt = (struct filter_data*)calloc(1, sizeof(*filt));
+   struct filter_data *filt = calloc(1, sizeof(*filt));
    if (!filt)
       return NULL;
-   filt->workers = (struct softfilter_thread_data*)calloc(threads, sizeof(struct softfilter_thread_data));
+   filt->workers = calloc(threads, sizeof(struct softfilter_thread_data));
    filt->threads = threads;
    filt->in_fmt  = in_fmt;
    if (!filt->workers)
@@ -168,16 +168,16 @@ static void scale2x_generic_output(void *data, unsigned *out_width, unsigned *ou
 
 static void scale2x_generic_destroy(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    free(filt->workers);
    free(filt);
 }
 
 static void scale2x_work_cb_xrgb8888(void *data, void *thread_data)
 {
-   struct softfilter_thread_data *thr = (struct softfilter_thread_data*)thread_data;
-   const uint32_t *input = (const uint32_t*)thr->in_data;
-   uint32_t *output = (uint32_t*)thr->out_data;
+   struct softfilter_thread_data *thr = thread_data;
+   const uint32_t *input = thr->in_data;
+   uint32_t *output = thr->out_data;
    unsigned width = thr->width;
    unsigned height = thr->height;
 
@@ -187,9 +187,9 @@ static void scale2x_work_cb_xrgb8888(void *data, void *thread_data)
 
 static void scale2x_work_cb_rgb565(void *data, void *thread_data)
 {
-   struct softfilter_thread_data *thr = (struct softfilter_thread_data*)thread_data;
-   const uint16_t *input = (const uint16_t*)thr->in_data;
-   uint16_t *output = (uint16_t*)thr->out_data;
+   struct softfilter_thread_data *thr = thread_data;
+   const uint16_t *input = thr->in_data;
+   uint16_t *output = hr->out_data;
    unsigned width = thr->width;
    unsigned height = thr->height;
 
@@ -202,11 +202,11 @@ static void scale2x_generic_packets(void *data,
       void *output, size_t output_stride,
       const void *input, unsigned width, unsigned height, size_t input_stride)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    unsigned i;
    for (i = 0; i < filt->threads; i++)
    {
-      struct softfilter_thread_data *thr = (struct softfilter_thread_data*)&filt->workers[i];
+      struct softfilter_thread_data *thr = &filt->workers[i];
 
       unsigned y_start = (height * i) / filt->threads;
       unsigned y_end = (height * (i + 1)) / filt->threads;
@@ -259,7 +259,7 @@ static void scale2x_neon_packets(void *data,
       void *output, size_t output_stride,
       const void *input, unsigned width, unsigned height, size_t input_stride)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    struct softfilter_thread_data *thr;
    unsigned i;
 

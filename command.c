@@ -113,7 +113,7 @@ static bool cmd_init_stdin(rarch_cmd_t *handle)
 
 rarch_cmd_t *rarch_cmd_new(bool stdin_enable, bool network_enable, uint16_t port)
 {
-   rarch_cmd_t *handle = (rarch_cmd_t*)calloc(1, sizeof(*handle));
+   rarch_cmd_t *handle = calloc(1, sizeof(*handle));
    if (!handle)
       return NULL;
 
@@ -530,5 +530,3 @@ bool network_cmd_send(const char *cmd_)
    return ret;
 }
 #endif
-
-

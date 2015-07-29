@@ -243,7 +243,7 @@ static void reverb_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
    unsigned i;
-   struct reverb_data *rev = (struct reverb_data*)data;
+   struct reverb_data *rev = data;
 
    output->samples = input->samples;
    output->frames  = input->frames;
@@ -261,7 +261,7 @@ static void reverb_process(void *data, struct dspfilter_output *output,
 static void *reverb_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
-   struct reverb_data *rev = (struct reverb_data*)calloc(1, sizeof(*rev));
+   struct reverb_data *rev = calloc(1, sizeof(*rev));
    if (!rev)
       return NULL;
 

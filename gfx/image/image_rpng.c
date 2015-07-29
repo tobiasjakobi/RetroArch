@@ -60,7 +60,7 @@ static bool rpng_image_load_tga_shift(const char *path, struct texture_image *ou
    RARCH_LOG("Loaded TGA: (%ux%u @ %u bpp)\n", width, height, bits);
 
    unsigned size = width * height * sizeof(uint32_t);
-   out_img->pixels = (uint32_t*)malloc(size);
+   out_img->pixels = malloc(size);
    out_img->width = width;
    out_img->height = height;
    if (!out_img->pixels)

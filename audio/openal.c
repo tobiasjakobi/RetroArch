@@ -45,7 +45,7 @@ typedef struct al
 
 static void al_free(void *data)
 {
-   al_t *al = (al_t*)data;
+   al_t *al = data;
    if (!al)
       return;
 
@@ -69,7 +69,7 @@ static void al_free(void *data)
 static void *al_init(const char *device, unsigned rate, unsigned latency)
 {
    (void)device;
-   al_t *al = (al_t*)calloc(1, sizeof(al_t));
+   al_t *al = calloc(1, sizeof(al_t));
    if (!al)
       return NULL;
 
@@ -92,8 +92,8 @@ static void *al_init(const char *device, unsigned rate, unsigned latency)
 
    RARCH_LOG("[OpenAL]: Using %u buffers of %u bytes.\n", (unsigned)al->num_buffers, BUFSIZE);
 
-   al->buffers = (ALuint*)calloc(al->num_buffers, sizeof(ALuint));
-   al->res_buf = (ALuint*)calloc(al->num_buffers, sizeof(ALuint));
+   al->buffers = calloc(al->num_buffers, sizeof(ALuint));
+   al->res_buf = calloc(al->num_buffers, sizeof(ALuint));
    if (al->buffers == NULL || al->res_buf == NULL)
       goto error;
 
@@ -157,8 +157,8 @@ static size_t al_fill_internal_buf(al_t *al, const void *buf, size_t size)
 
 static ssize_t al_write(void *data, const void *buf_, size_t size)
 {
-   al_t *al = (al_t*)data;
-   const uint8_t *buf = (const uint8_t*)buf_;
+   al_t *al = data;
+   const uint8_t *buf = buf_;
 
    size_t written = 0;
    while (size)
@@ -201,7 +201,7 @@ static bool al_stop(void *data)
 
 static void al_set_nonblock_state(void *data, bool state)
 {
-   al_t *al = (al_t*)data;
+   al_t *al = data;
    al->nonblock = state;
 }
 
@@ -213,14 +213,14 @@ static bool al_start(void *data)
 
 static size_t al_write_avail(void *data)
 {
-   al_t *al = (al_t*)data;
+   al_t *al = data;
    al_unqueue_buffers(al);
    return al->res_ptr * BUFSIZE + (BUFSIZE - al->tmpbuf_ptr);
 }
 
 static size_t al_buffer_size(void *data)
 {
-   al_t *al = (al_t*)data;
+   al_t *al = data;
    return (al->num_buffers + 1) * BUFSIZE; // Also got tmpbuf.
 }
 
@@ -235,4 +235,3 @@ const audio_driver_t audio_openal = {
    .write_avail = al_write_avail,
    .buffer_size = al_buffer_size,
 };
-

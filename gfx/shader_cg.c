@@ -486,7 +486,7 @@ static bool load_plain(const char *path)
    if (!load_stock())
       return false;
 
-   cg_shader = (struct gfx_shader*)calloc(1, sizeof(*cg_shader));
+   cg_shader = calloc(1, sizeof(*cg_shader));
    if (!cg_shader)
       return false;
 
@@ -539,7 +539,7 @@ static bool load_imports(void)
       }
    }
 
-   tracker_info.wram = (uint8_t*)pretro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
+   tracker_info.wram = pretro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
    tracker_info.info = cg_shader->variable;
    tracker_info.info_elem = cg_shader->variables;
 
@@ -586,7 +586,7 @@ static bool load_preset(const char *path)
    }
 
    if (!cg_shader)
-      cg_shader = (struct gfx_shader*)calloc(1, sizeof(*cg_shader));
+      cg_shader = calloc(1, sizeof(*cg_shader));
    if (!cg_shader)
       return false;
 

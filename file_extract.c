@@ -50,7 +50,7 @@ typedef struct
 
 static void zlib_file_free(void *handle)
 {
-   zlib_file_data_t *data = (zlib_file_data_t*)handle;
+   zlib_file_data_t *data = handle;
    if (data->data)
       munmap(data->data, data->size);
    if (data->fd >= 0)
@@ -60,19 +60,19 @@ static void zlib_file_free(void *handle)
 
 static const uint8_t *zlib_file_data(void *handle)
 {
-   zlib_file_data_t *data = (zlib_file_data_t*)handle;
-   return (const uint8_t*)data->data;
+   zlib_file_data_t *data = handle;
+   return data->data;
 }
 
 static size_t zlib_file_size(void *handle)
 {
-   zlib_file_data_t *data = (zlib_file_data_t*)handle;
+   zlib_file_data_t *data = handle;
    return data->size;
 }
 
 static void *zlib_file_open(const char *path)
 {
-   zlib_file_data_t *data = (zlib_file_data_t*)calloc(1, sizeof(*data));
+   zlib_file_data_t *data = calloc(1, sizeof(*data));
    if (!data)
       return NULL;
    data->fd = open(path, O_RDONLY);
@@ -114,7 +114,7 @@ typedef struct
 
 static void zlib_file_free(void *handle)
 {
-   zlib_file_data_t *data = (zlib_file_data_t*)handle;
+   zlib_file_data_t *data = handle;
    if (!data)
       return;
    free(data->data);
@@ -123,19 +123,19 @@ static void zlib_file_free(void *handle)
 
 static const uint8_t *zlib_file_data(void *handle)
 {
-   zlib_file_data_t *data = (zlib_file_data_t*)handle;
-   return (const uint8_t*)data->data;
+   zlib_file_data_t *data = handle;
+   return data->data;
 }
 
 static size_t zlib_file_size(void *handle)
 {
-   zlib_file_data_t *data = (zlib_file_data_t*)handle;
+   zlib_file_data_t *data = handle;
    return data->size;
 }
 
 static void *zlib_file_open(const char *path)
 {
-   zlib_file_data_t *data = (zlib_file_data_t*)calloc(1, sizeof(*data));
+   zlib_file_data_t *data = calloc(1, sizeof(*data));
    if (!data)
       return NULL;
    ssize_t ret = read_file(path, &data->data);
@@ -192,7 +192,7 @@ bool zlib_inflate_data_to_file(const char *path, const uint8_t *cdata,
       uint32_t csize, uint32_t size, uint32_t crc32)
 {
    bool ret = true;
-   uint8_t *out_data = (uint8_t*)malloc(size);
+   uint8_t *out_data = malloc(size);
    if (!out_data)
       return false;
 
@@ -318,7 +318,7 @@ struct zip_extract_userdata
 static bool zip_extract_cb(const char *name, const uint8_t *cdata, unsigned cmode, uint32_t csize, uint32_t size,
       uint32_t crc32, void *userdata)
 {
-   struct zip_extract_userdata *data = (struct zip_extract_userdata*)userdata;
+   struct zip_extract_userdata *data = userdata;
 
    // Extract first content that matches our list.
    const char *ext = path_get_extension(name);
@@ -407,7 +407,7 @@ static bool zlib_get_file_list_cb(const char *path, const uint8_t *cdata, unsign
    (void)csize;
    (void)size;
    (void)crc32;
-   struct string_list *list = (struct string_list*)userdata;
+   struct string_list *list = userdata;
    union string_list_elem_attr attr;
    memset(&attr, 0, sizeof(attr));
    return string_list_append(list, path, attr);

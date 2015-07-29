@@ -33,13 +33,13 @@ typedef struct bm_renderer
 
 static const struct font_atlas *font_renderer_get_atlas(void *data)
 {
-   bm_renderer_t *handle = (bm_renderer_t*)data;
+   bm_renderer_t *handle = data;
    return &handle->atlas;
 }
 
 static const struct font_glyph *font_renderer_get_glyph(void *data, uint32_t code)
 {
-   bm_renderer_t *handle = (bm_renderer_t*)data;
+   bm_renderer_t *handle = data;
    return code < ATLAS_SIZE ? &handle->glyphs[code] : NULL;
 }
 
@@ -73,7 +73,7 @@ static void *font_renderer_init(const char *font_path, float font_size)
    (void)font_path;
    unsigned i, glyph_width, glyph_height;
 
-   bm_renderer_t *handle = (bm_renderer_t*)calloc(1, sizeof(*handle));
+   bm_renderer_t *handle = calloc(1, sizeof(*handle));
    if (!handle)
       return NULL;
 
@@ -88,7 +88,7 @@ static void *font_renderer_init(const char *font_path, float font_size)
    handle->atlas.height = glyph_height * ATLAS_ROWS;
    handle->atlas.max_glyph_width  = glyph_width;
    handle->atlas.max_glyph_height = glyph_height;
-   handle->atlas.buffer = (uint8_t*)calloc(handle->atlas.width * handle->atlas.height, 1);
+   handle->atlas.buffer = calloc(handle->atlas.width * handle->atlas.height, 1);
 
    for (i = 0; i < ATLAS_SIZE; i++)
    {
@@ -114,7 +114,7 @@ static void *font_renderer_init(const char *font_path, float font_size)
 
 static void font_renderer_free(void *data)
 {
-   bm_renderer_t *handle = (bm_renderer_t*)data;
+   bm_renderer_t *handle = data;
    if (!handle)
       return;
    free(handle->atlas.buffer);
@@ -134,4 +134,3 @@ const font_renderer_driver_t bitmap_font_renderer = {
    font_renderer_get_default_font,
    "bitmap",
 };
-

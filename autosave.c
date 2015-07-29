@@ -45,7 +45,7 @@ struct autosave
 
 static void autosave_thread(void *data)
 {
-   autosave_t *save = (autosave_t*)data;
+   autosave_t *save = data;
 
    bool first_log = true;
 
@@ -90,7 +90,7 @@ static void autosave_thread(void *data)
 
 autosave_t *autosave_new(const char *path, const void *data, size_t size, unsigned interval)
 {
-   autosave_t *handle = (autosave_t*)calloc(1, sizeof(*handle));
+   autosave_t *handle = calloc(1, sizeof(*handle));
    if (!handle)
       return NULL;
 
@@ -164,5 +164,3 @@ void unlock_autosave(void)
          autosave_unlock(g_extern.autosave[i]);
    }
 }
-
-

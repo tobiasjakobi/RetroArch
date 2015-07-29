@@ -35,7 +35,7 @@ typedef struct sdl_input
 static void *sdl_input_init(void)
 {
    input_init_keyboard_lut(rarch_key_map_sdl);
-   sdl_input_t *sdl = (sdl_input_t*)calloc(1, sizeof(*sdl));
+   sdl_input_t *sdl = calloc(1, sizeof(*sdl));
    if (!sdl)
       return NULL;
 
@@ -89,7 +89,7 @@ static bool sdl_bind_button_pressed(void *data, int key)
 {
    const struct retro_keybind *binds = g_settings.input.binds[0];
    if (key >= 0 && key < RARCH_BIND_LIST_END)
-      return sdl_is_pressed((sdl_input_t*)data, 0, binds, key);
+      return sdl_is_pressed(data, 0, binds, key);
    else
       return false;
 }
@@ -202,7 +202,7 @@ static int16_t sdl_lightgun_device_state(sdl_input_t *sdl, unsigned id)
 
 static int16_t sdl_input_state(void *data_, const struct retro_keybind **binds, unsigned port, unsigned device, unsigned index, unsigned id)
 {
-   sdl_input_t *data = (sdl_input_t*)data_;
+   sdl_input_t *data = data_;
    switch (device)
    {
       case RETRO_DEVICE_JOYPAD:
@@ -237,7 +237,7 @@ static void sdl_input_free(void *data)
    while (SDL_PollEvent(&event));
 #endif
 
-   sdl_input_t *sdl = (sdl_input_t*)data;
+   sdl_input_t *sdl = data;
 
    if (sdl->joypad)
       sdl->joypad->destroy();
@@ -248,7 +248,7 @@ static void sdl_input_free(void *data)
 #ifdef HAVE_SDL2
 static void sdl_grab_mouse(void *data, bool state)
 {
-   sdl_input_t *sdl = (sdl_input_t*)data;
+   sdl_input_t *sdl = data;
 
    if (driver.video == &video_sdl2)
    {
@@ -264,13 +264,13 @@ static void sdl_grab_mouse(void *data, bool state)
 
 static bool sdl_set_rumble(void *data, unsigned port, enum retro_rumble_effect effect, uint16_t strength)
 {
-   sdl_input_t *sdl = (sdl_input_t*)data;
+   sdl_input_t *sdl = data;
    return input_joypad_set_rumble(sdl->joypad, port, effect, strength);
 }
 
 static const rarch_joypad_driver_t *sdl_get_joypad_driver(void *data)
 {
-   sdl_input_t *sdl = (sdl_input_t*)data;
+   sdl_input_t *sdl = data;
    return sdl->joypad;
 }
 
@@ -290,7 +290,7 @@ static void sdl_poll_mouse(sdl_input_t *sdl)
 static void sdl_input_poll(void *data)
 {
    SDL_PumpEvents();
-   sdl_input_t *sdl = (sdl_input_t*)data;
+   sdl_input_t *sdl = data;
 
    if (sdl->joypad)
       sdl->joypad->poll();

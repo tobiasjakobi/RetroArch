@@ -77,9 +77,7 @@ static void sdl2_gfx_free(void *data);
 static inline void sdl_tex_zero(sdl2_tex_t *t)
 {
    if (t->tex)
-   {
       SDL_DestroyTexture(t->tex);
-   }
 
    t->tex = NULL;
    t->w = t->h = t->pitch = 0;
@@ -375,7 +373,7 @@ static void *sdl2_gfx_init(const video_info_t *video, const input_driver_t **inp
    else if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
       return NULL;
 
-   sdl2_video_t *vid = (sdl2_video_t*)calloc(1, sizeof(*vid));
+   sdl2_video_t *vid = calloc(1, sizeof(*vid));
    if (!vid)
       return NULL;
 
@@ -484,7 +482,7 @@ static void check_window(sdl2_video_t *vid)
 static bool sdl2_gfx_frame(void *data, const void *frame, unsigned width,
                            unsigned height, unsigned pitch, const char *msg)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
 
    if (vid->should_resize)
       sdl_refresh_viewport(vid);
@@ -527,7 +525,7 @@ static bool sdl2_gfx_frame(void *data, const void *frame, unsigned width,
 
 static void sdl2_gfx_set_nonblock_state(void *data, bool toggle)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
 
    vid->video.vsync = !toggle;
    sdl_refresh_renderer(vid);
@@ -535,21 +533,21 @@ static void sdl2_gfx_set_nonblock_state(void *data, bool toggle)
 
 static bool sdl2_gfx_alive(void *data)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
    check_window(vid);
    return !vid->quitting;
 }
 
 static bool sdl2_gfx_focus(void *data)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
    unsigned flags = (SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_MOUSE_FOCUS);
    return (SDL_GetWindowFlags(vid->window) & flags) == flags;
 }
 
 static void sdl2_gfx_free(void *data)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
    if (!vid)
       return;
 
@@ -563,19 +561,19 @@ static void sdl2_gfx_free(void *data)
 
 static void sdl2_gfx_set_rotation(void *data, unsigned rotation)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
    vid->rotation = 270 * rotation;
 }
 
 static void sdl2_gfx_viewport_info(void *data, struct rarch_viewport *vp)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
    *vp = vid->vp;
 }
 
 static bool sdl2_gfx_read_viewport(void *data, uint8_t *buffer)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
 
    RARCH_PERFORMANCE_INIT(sdl2_gfx_read_viewport);
    RARCH_PERFORMANCE_START(sdl2_gfx_read_viewport);
@@ -600,7 +598,7 @@ static bool sdl2_gfx_read_viewport(void *data, uint8_t *buffer)
 
 void sdl2_poke_set_filtering(void *data, unsigned index, bool smooth)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
    vid->video.smooth = smooth;
 
 //   sdl_refresh_renderer(vid);
@@ -610,7 +608,7 @@ void sdl2_poke_set_filtering(void *data, unsigned index, bool smooth)
 
 static void sdl2_poke_set_aspect_ratio(void *data, unsigned aspectratio_index)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
 
    switch (aspectratio_index)
    {
@@ -639,14 +637,14 @@ static void sdl2_poke_set_aspect_ratio(void *data, unsigned aspectratio_index)
 
 void sdl2_poke_apply_state_changes(void *data)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
    vid->should_resize = true;
 }
 
 void sdl2_poke_set_texture_frame(void *data, const void *frame, bool rgb32,
                                 unsigned width, unsigned height, float alpha)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
 
    if (frame)
    {
@@ -664,14 +662,14 @@ void sdl2_poke_set_texture_frame(void *data, const void *frame, bool rgb32,
 
 void sdl2_poke_texture_enable(void *data, bool enable, bool full_screen)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
 
    vid->menu.active = enable;
 }
 
 void sdl2_poke_set_osd_msg(void *data, const char *msg, const struct font_params *params)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
    sdl2_render_msg(vid, msg);
    fprintf(stderr, "[SDL]: OSD MSG: %s\n", msg);
 }
@@ -684,7 +682,7 @@ void sdl2_show_mouse(void *data, bool state)
 
 void sdl2_grab_mouse_toggle(void *data)
 {
-   sdl2_video_t *vid = (sdl2_video_t*)data;
+   sdl2_video_t *vid = data;
    SDL_SetWindowGrab(vid->window, SDL_GetWindowGrab(vid->window));
 }
 
@@ -725,4 +723,3 @@ const video_driver_t video_sdl2 = {
    .read_viewport = sdl2_gfx_read_viewport,
    .poke_interface = sdl2_gfx_poke_interface
 };
-

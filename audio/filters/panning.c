@@ -33,7 +33,7 @@ static void panning_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
    unsigned i;
-   struct panning_data *pan = (struct panning_data*)data;
+   struct panning_data *pan = data;
 
    output->samples = input->samples;
    output->frames  = input->frames;
@@ -52,7 +52,7 @@ static void panning_process(void *data, struct dspfilter_output *output,
 static void *panning_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
-   struct panning_data *pan = (struct panning_data*)calloc(1, sizeof(*pan));
+   struct panning_data *pan = calloc(1, sizeof(*pan));
    if (!pan)
       return NULL;
 

@@ -77,14 +77,14 @@ static void patch_rom(uint8_t **buf, ssize_t *size)
    RARCH_LOG("Found %s file in \"%s\", attempting to patch ...\n", patch_desc, patch_path);
 
    size_t target_size = ret_size * 4; // Just to be sure ...
-   uint8_t *patched_rom = (uint8_t*)malloc(target_size);
+   uint8_t *patched_rom = malloc(target_size);
    if (!patched_rom)
    {
       RARCH_ERR("Failed to allocate memory for patched content ...\n");
       goto error;
    }
 
-   err = func((const uint8_t*)patch_data, patch_size, ret_buf, ret_size, patched_rom, &target_size);
+   err = func(patch_data, patch_size, ret_buf, ret_size, patched_rom, &target_size);
    if (err == PATCH_SUCCESS)
    {
       RARCH_LOG("Content patched successfully (%s).\n", patch_desc);
@@ -214,7 +214,7 @@ bool load_state(const char *path)
    if (g_settings.block_sram_overwrite && g_extern.savefiles && g_extern.savefiles->size)
    {
       RARCH_LOG("Blocking SRAM overwrite.\n");
-      blocks = (struct sram_block*)calloc(g_extern.savefiles->size, sizeof(*blocks));
+      blocks = calloc(g_extern.savefiles->size, sizeof(*blocks));
       if (blocks)
       {
          num_blocks = g_extern.savefiles->size;
@@ -307,7 +307,7 @@ static bool load_content(const struct retro_subsystem_info *special, const struc
    unsigned i;
    bool ret = true;
 
-   struct retro_game_info *info = (struct retro_game_info*)calloc(content->size, sizeof(*info));
+   struct retro_game_info *info = calloc(content->size, sizeof(*info));
    if (!info)
       return false;
 
@@ -405,7 +405,7 @@ bool init_rom_file(void)
    union string_list_elem_attr attr;
    attr.i = 0;
 
-   struct string_list *content = (struct string_list*)string_list_new();
+   struct string_list *content = string_list_new();
    if (!content)
       return false;
 
@@ -464,4 +464,3 @@ bool init_rom_file(void)
    string_list_free(content);
    return ret;
 }
-

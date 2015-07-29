@@ -39,7 +39,7 @@ struct echo_data
 static void echo_free(void *data)
 {
    unsigned i;
-   struct echo_data *echo = (struct echo_data*)data;
+   struct echo_data *echo = data;
 
    for (i = 0; i < echo->num_channels; i++)
       free(echo->channels[i].buffer);
@@ -51,7 +51,7 @@ static void echo_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
    unsigned i, c;
-   struct echo_data *echo = (struct echo_data*)data;
+   struct echo_data *echo = data;
 
    output->samples = input->samples;
    output->frames  = input->frames;
@@ -95,7 +95,7 @@ static void *echo_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
    unsigned i;
-   struct echo_data *echo = (struct echo_data*)calloc(1, sizeof(*echo));
+   struct echo_data *echo = calloc(1, sizeof(*echo));
    if (!echo)
       return NULL;
 
@@ -111,7 +111,7 @@ static void *echo_init(const struct dspfilter_info *info,
 
    unsigned channels = num_feedback = num_delay = min(num_delay, num_feedback);
 
-   echo->channels = (struct echo_channel*)calloc(channels, sizeof(*echo->channels));
+   echo->channels = calloc(channels, sizeof(*echo->channels));
    if (!echo->channels)
       goto error;
 
@@ -123,7 +123,7 @@ static void *echo_init(const struct dspfilter_info *info,
       if (!frames)
          goto error;
 
-      echo->channels[i].buffer = (float*)calloc(frames, 2 * sizeof(float));
+      echo->channels[i].buffer = calloc(frames, 2 * sizeof(float));
       if (!echo->channels[i].buffer)
          goto error;
 

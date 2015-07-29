@@ -245,7 +245,7 @@ bool main_load_content(int argc, char **argv, args_type() args, environment_get_
    (void)rarch_argv_ptr;
    (void)ret;
 
-   wrap_args = (struct rarch_main_wrap*)calloc(1, sizeof(*wrap_args));
+   wrap_args = calloc(1, sizeof(*wrap_args));
    rarch_assert(wrap_args);
 
    if (environ_get)

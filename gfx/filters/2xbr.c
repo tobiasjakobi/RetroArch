@@ -75,7 +75,7 @@ static unsigned twoxbr_generic_output_fmts(unsigned input_fmts)
  
 static unsigned twoxbr_generic_threads(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    return filt->threads;
 }
 
@@ -102,7 +102,7 @@ static void SetupFormat(void * data)
 {
    uint16_t r, g, b, y, u, v;
    uint32_t c;
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
 
    filt->tbl_5_to_8[0]  = 0;
    filt->tbl_5_to_8[1]  = 8;
@@ -220,10 +220,10 @@ static void *twoxbr_generic_create(unsigned in_fmt, unsigned out_fmt,
 {
    (void)simd;
  
-   struct filter_data *filt = (struct filter_data*)calloc(1, sizeof(*filt));
+   struct filter_data *filt = calloc(1, sizeof(*filt));
    if (!filt)
       return NULL;
-   filt->workers = (struct softfilter_thread_data*)calloc(threads, sizeof(struct softfilter_thread_data));
+   filt->workers = calloc(threads, sizeof(struct softfilter_thread_data));
    filt->threads = threads;
    filt->in_fmt  = in_fmt;
    if (!filt->workers)
@@ -246,7 +246,7 @@ static void twoxbr_generic_output(void *data, unsigned *out_width, unsigned *out
  
 static void twoxbr_generic_destroy(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    free(filt->workers);
    free(filt);
 }
@@ -575,7 +575,7 @@ static void twoxbr_generic_xrgb8888(void *data, unsigned width, unsigned height,
    uint32_t pg_blue_mask     = BLUE_MASK8888;
    uint32_t pg_lbmask        = PG_LBMASK8888;
    uint32_t pg_alpha_mask    = ALPHA_MASK8888;
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
 
    (void)filt;
 
@@ -583,8 +583,8 @@ static void twoxbr_generic_xrgb8888(void *data, unsigned width, unsigned height,
    
    for (; height; height--)
    {
-      uint32_t *in  = (uint32_t*)src;
-      uint32_t *out = (uint32_t*)dst;
+      uint32_t *in  = src;
+      uint32_t *out = dst;
  
       for (finish = width; finish; finish -= 1)
       {
@@ -611,7 +611,7 @@ static void twoxbr_generic_rgb565(void *data, unsigned width, unsigned height,
 {
    uint16_t pg_red_mask, pg_green_mask, pg_blue_mask, pg_lbmask;
    unsigned nextline, finish;
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
 
    pg_red_mask   = RED_MASK565;
    pg_green_mask = GREEN_MASK565;
@@ -622,8 +622,8 @@ static void twoxbr_generic_rgb565(void *data, unsigned width, unsigned height,
  
    for (; height; height--)
    {
-      uint16_t *in  = (uint16_t*)src;
-      uint16_t *out = (uint16_t*)dst;
+      uint16_t *in  = src;
+      uint16_t *out = dst;
  
       for (finish = width; finish; finish -= 1)
       {
@@ -646,9 +646,9 @@ static void twoxbr_generic_rgb565(void *data, unsigned width, unsigned height,
  
 static void twoxbr_work_cb_rgb565(void *data, void *thread_data)
 {
-   struct softfilter_thread_data *thr = (struct softfilter_thread_data*)thread_data;
-   uint16_t *input = (uint16_t*)thr->in_data;
-   uint16_t *output = (uint16_t*)thr->out_data;
+   struct softfilter_thread_data *thr = thread_data;
+   uint16_t *input = thr->in_data;
+   uint16_t *output = thr->out_data;
    unsigned width = thr->width;
    unsigned height = thr->height;
  
@@ -658,9 +658,9 @@ static void twoxbr_work_cb_rgb565(void *data, void *thread_data)
  
 static void twoxbr_work_cb_xrgb8888(void *data, void *thread_data)
 {
-   struct softfilter_thread_data *thr = (struct softfilter_thread_data*)thread_data;
-   uint32_t *input = (uint32_t*)thr->in_data;
-   uint32_t *output = (uint32_t*)thr->out_data;
+   struct softfilter_thread_data *thr = thread_data;
+   uint32_t *input = thr->in_data;
+   uint32_t *output = thr->out_data;
    unsigned width = thr->width;
    unsigned height = thr->height;
  
@@ -673,11 +673,11 @@ static void twoxbr_generic_packets(void *data,
       void *output, size_t output_stride,
       const void *input, unsigned width, unsigned height, size_t input_stride)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    unsigned i;
    for (i = 0; i < filt->threads; i++)
    {
-      struct softfilter_thread_data *thr = (struct softfilter_thread_data*)&filt->workers[i];
+      struct softfilter_thread_data *thr = &filt->workers[i];
  
       unsigned y_start = (height * i) / filt->threads;
       unsigned y_end = (height * (i + 1)) / filt->threads;

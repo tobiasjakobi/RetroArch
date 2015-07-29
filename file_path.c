@@ -95,7 +95,7 @@ bool read_file_string(const char *path, char **buf)
    len = ftell(file) + 2; // Takes account of being able to read in EOF and '\0' at end.
    rewind(file);
 
-   *buf = (char*)calloc(len, sizeof(char));
+   *buf = calloc(len, sizeof(char));
    if (!*buf)
       goto error;
 
@@ -140,7 +140,7 @@ static bool string_list_capacity(struct string_list *list, size_t cap)
 {
    rarch_assert(cap > list->size);
 
-   struct string_list_elem *new_data = (struct string_list_elem*)realloc(list->elems, cap * sizeof(*new_data));
+   struct string_list_elem *new_data = realloc(list->elems, cap * sizeof(*new_data));
    if (!new_data)
       return false;
 
@@ -151,7 +151,7 @@ static bool string_list_capacity(struct string_list *list, size_t cap)
 
 struct string_list *string_list_new(void)
 {
-   struct string_list *list = (struct string_list*)calloc(1, sizeof(*list));
+   struct string_list *list = calloc(1, sizeof(*list));
    if (!list)
       return NULL;
 
@@ -291,16 +291,16 @@ char *path_remove_extension(char *path)
 
 static int qstrcmp_plain(const void *a_, const void *b_)
 {
-   const struct string_list_elem *a = (const struct string_list_elem*)a_; 
-   const struct string_list_elem *b = (const struct string_list_elem*)b_; 
+   const struct string_list_elem *a = a_; 
+   const struct string_list_elem *b = b_; 
 
    return strcasecmp(a->data, b->data);
 }
 
 static int qstrcmp_dir(const void *a_, const void *b_)
 {
-   const struct string_list_elem *a = (const struct string_list_elem*)a_; 
-   const struct string_list_elem *b = (const struct string_list_elem*)b_; 
+   const struct string_list_elem *a = a_; 
+   const struct string_list_elem *b = b_; 
    int a_dir = a->attr.b;
    int b_dir = b->attr.b;
 
@@ -340,7 +340,7 @@ struct string_list *dir_list_new(const char *dir, const char *ext, bool include_
    DIR *directory = NULL;
    const struct dirent *entry = NULL;
    struct string_list *ext_list = NULL;
-   struct string_list *list = (struct string_list*)string_list_new();
+   struct string_list *list = string_list_new();
 
    if (!list)
       return NULL;

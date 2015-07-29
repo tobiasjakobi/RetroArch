@@ -54,14 +54,11 @@ void content_history_get_index(content_history_t *hist,
 
 static void content_history_free_entry(struct content_history_entry *entry)
 {
-   if (entry->path)
-      free(entry->path);
+   free(entry->path);
    entry->path = NULL;
-   if (entry->core_path)
-      free(entry->core_path);
+   free(entry->core_path);
    entry->core_path = NULL;
-   if (entry->core_name)
-      free(entry->core_name);
+   free(entry->core_name);
    entry->core_name = NULL;
 
    memset(entry, 0, sizeof(*entry));
@@ -221,14 +218,14 @@ end:
 content_history_t *content_history_init(const char *path, size_t size)
 {
    RARCH_LOG("Opening history: %s.\n", path);
-   content_history_t *hist = (content_history_t*)calloc(1, sizeof(*hist));
+   content_history_t *hist = calloc(1, sizeof(*hist));
    if (!hist)
    {
        RARCH_ERR("Cannot initialize content history.\n");
       return NULL;
    }
 
-   hist->entries = (struct content_history_entry*)calloc(size, sizeof(*hist->entries));
+   hist->entries = calloc(size, sizeof(*hist->entries));
    if (!hist->entries)
       goto error;
 

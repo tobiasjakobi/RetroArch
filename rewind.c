@@ -94,7 +94,7 @@ struct state_manager
 
 state_manager_t *state_manager_new(size_t state_size, size_t buffer_size)
 {
-   state_manager_t *state = (state_manager_t*)calloc(1, sizeof(*state));
+   state_manager_t *state = calloc(1, sizeof(*state));
    if (!state)
       return NULL;
 
@@ -105,10 +105,10 @@ state_manager_t *state_manager_new(size_t state_size, size_t buffer_size)
    const int maxcblks = (state->blocksize + maxcblkcover - 1) / maxcblkcover;
    state->maxcompsize = state->blocksize + maxcblks * sizeof(uint16_t) * 2 + sizeof(uint16_t) + sizeof(uint32_t) + sizeof(size_t) * 2;
 
-   state->data = (uint8_t*)malloc(buffer_size);
+   state->data = malloc(buffer_size);
 
-   state->thisblock = (uint8_t*)calloc(state->blocksize + sizeof(uint16_t) * 4 + 16, 1);
-   state->nextblock = (uint8_t*)calloc(state->blocksize + sizeof(uint16_t) * 4 + 16, 1);
+   state->thisblock = calloc(state->blocksize + sizeof(uint16_t) * 4 + 16, 1);
+   state->nextblock = calloc(state->blocksize + sizeof(uint16_t) * 4 + 16, 1);
    if (!state->data || !state->thisblock || !state->nextblock)
       goto error;
 
@@ -243,7 +243,7 @@ static inline size_t find_change(const uint16_t *a, const uint16_t *b)
 	const __m128i *a128 = (const __m128i*)a;
 	const __m128i *b128 = (const __m128i*)b;
 	
-   for (;;)
+	for (;;)
 	{
 		__m128i v0 = _mm_loadu_si128(a128);
 		__m128i v1 = _mm_loadu_si128(b128);

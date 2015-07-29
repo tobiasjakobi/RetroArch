@@ -33,7 +33,7 @@ typedef struct
 
 static void pulse_free(void *data)
 {
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    if (pa)
    {
       if (pa->mainloop)
@@ -61,14 +61,14 @@ static void pulse_free(void *data)
 static void stream_success_cb(pa_stream *s, int success, void *data)
 {
    (void)s;
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    pa->success = success;
    pa_threaded_mainloop_signal(pa->mainloop, 0);
 }
 
 static void context_state_cb(pa_context *c, void *data)
 {
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    switch (pa_context_get_state(c))
    {
       case PA_CONTEXT_READY:
@@ -83,7 +83,7 @@ static void context_state_cb(pa_context *c, void *data)
 
 static void stream_state_cb(pa_stream *s, void *data) 
 {
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    switch (pa_stream_get_state(s))
    {
       case PA_STREAM_READY:
@@ -100,21 +100,21 @@ static void stream_request_cb(pa_stream *s, size_t length, void *data)
 {
    (void)length;
    (void)s;
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    pa_threaded_mainloop_signal(pa->mainloop, 0);
 }
 
 static void stream_latency_update_cb(pa_stream *s, void *data) 
 {
    (void)s;
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    pa_threaded_mainloop_signal(pa->mainloop, 0);
 }
 
 static void underrun_update_cb(pa_stream *s, void *data)
 {
    (void)s;
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    RARCH_LOG("[PulseAudio]: Underrun (Buffer: %u, Writable size: %u).\n",
          (unsigned)pa->buffer_size,
          (unsigned)pa_stream_writable_size(pa->stream));
@@ -122,7 +122,7 @@ static void underrun_update_cb(pa_stream *s, void *data)
 
 static void buffer_attr_cb(pa_stream *s, void *data)
 {
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    const pa_buffer_attr *server_attr = pa_stream_get_buffer_attr(s);
    if (server_attr)
       pa->buffer_size = server_attr->tlength;
@@ -136,7 +136,7 @@ static void *pulse_init(const char *device, unsigned rate, unsigned latency)
    pa_sample_spec spec;
    memset(&spec, 0, sizeof(spec));
    pa_buffer_attr buffer_attr = {0};
-   pa_t *pa = (pa_t*)calloc(1, sizeof(*pa));
+   pa_t *pa = calloc(1, sizeof(*pa));
    if (!pa)
       goto error;
 
@@ -214,8 +214,8 @@ error:
 
 static ssize_t pulse_write(void *data, const void *buf_, size_t size)
 {
-   pa_t *pa = (pa_t*)data;
-   const uint8_t *buf = (const uint8_t*)buf_;
+   pa_t *pa = data;
+   const uint8_t *buf = buf_;
 
    size_t written = 0;
 
@@ -246,7 +246,7 @@ static ssize_t pulse_write(void *data, const void *buf_, size_t size)
 static bool pulse_stop(void *data)
 {
    RARCH_LOG("[PulseAudio]: Pausing.\n");
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    pa->success = true; // In case of spurious wakeup. Not critical.
    pa_threaded_mainloop_lock(pa->mainloop);
    pa_stream_cork(pa->stream, true, stream_success_cb, pa);
@@ -259,7 +259,7 @@ static bool pulse_stop(void *data)
 static bool pulse_start(void *data)
 {
    RARCH_LOG("[PulseAudio]: Unpausing.\n");
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    pa->success = true; // In case of spurious wakeup. Not critical.
    pa_threaded_mainloop_lock(pa->mainloop);
    pa_stream_cork(pa->stream, false, stream_success_cb, pa);
@@ -271,7 +271,7 @@ static bool pulse_start(void *data)
 
 static void pulse_set_nonblock_state(void *data, bool state)
 {
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    pa->nonblock = state;
 }
 
@@ -283,7 +283,7 @@ static bool pulse_use_float(void *data)
 
 static size_t pulse_write_avail(void *data)
 {
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    pa_threaded_mainloop_lock(pa->mainloop);
    size_t length = pa_stream_writable_size(pa->stream);
    g_extern.audio_data.driver_buffer_size = pa->buffer_size; // Can change spuriously.
@@ -293,7 +293,7 @@ static size_t pulse_write_avail(void *data)
 
 static size_t pulse_buffer_size(void *data)
 {
-   pa_t *pa = (pa_t*)data;
+   pa_t *pa = data;
    return pa->buffer_size;
 }
 
@@ -309,4 +309,3 @@ const audio_driver_t audio_pulse = {
    .write_avail = pulse_write_avail,
    .buffer_size = pulse_buffer_size,
 };
-

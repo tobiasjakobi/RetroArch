@@ -41,7 +41,7 @@ static void core_info_list_resolve_all_extensions(core_info_list_t *core_info_li
    if (all_ext_len)
    {
       all_ext_len += strlen("|zip");
-      core_info_list->all_ext = (char*)calloc(1, all_ext_len);
+      core_info_list->all_ext = calloc(1, all_ext_len);
    }
 
    if (core_info_list->all_ext)
@@ -68,7 +68,7 @@ static void core_info_list_resolve_all_firmware(core_info_list_t *core_info_list
    for (i = 0; i < core_info_list->count; i++)
    {
       unsigned count = 0;
-      core_info_t *info = (core_info_t*)&core_info_list->list[i];
+      core_info_t *info = &core_info_list->list[i];
 
       if (!info->data)
          continue;
@@ -76,7 +76,7 @@ static void core_info_list_resolve_all_firmware(core_info_list_t *core_info_list
       if (!config_get_uint(info->data, "firmware_count", &count))
          continue;
 
-      info->firmware = (core_info_firmware_t*)calloc(count, sizeof(*info->firmware));
+      info->firmware = calloc(count, sizeof(*info->firmware));
       if (!info->firmware)
          continue;
 
@@ -100,15 +100,15 @@ core_info_list_t *core_info_list_new(const char *modules_path)
    size_t i;
    core_info_t *core_info = NULL;
    core_info_list_t *core_info_list = NULL;
-   struct string_list *contents = (struct string_list*)dir_list_new(modules_path, EXT_EXECUTABLES, false);
+   struct string_list *contents = dir_list_new(modules_path, EXT_EXECUTABLES, false);
    if (!contents)
       return NULL;
 
-   core_info_list = (core_info_list_t*)calloc(1, sizeof(*core_info_list));
+   core_info_list = calloc(1, sizeof(*core_info_list));
    if (!core_info_list)
       goto error;
 
-   core_info = (core_info_t*)calloc(contents->size, sizeof(*core_info));
+   core_info = calloc(contents->size, sizeof(*core_info));
    if (!core_info)
       goto error;
 
@@ -187,7 +187,7 @@ void core_info_list_free(core_info_list_t *core_info_list)
 
    for (i = 0; i < core_info_list->count; i++)
    {
-      core_info_t *info = (core_info_t*)&core_info_list->list[i];
+      core_info_t *info = &core_info_list->list[i];
 
       free(info->path);
       free(info->display_name);
@@ -299,8 +299,8 @@ static const struct string_list *core_info_tmp_list;
 
 static int core_info_qsort_cmp(const void *a_, const void *b_)
 {
-   const core_info_t *a = (const core_info_t*)a_;
-   const core_info_t *b = (const core_info_t*)b_;
+   const core_info_t *a = a_;
+   const core_info_t *b = b_;
 
    int support_a = core_info_does_support_any_file(a, core_info_tmp_list) ||
       core_info_does_support_file(a, core_info_tmp_path);
@@ -358,7 +358,7 @@ static core_info_t *find_core_info(core_info_list_t *list, const char *core)
 
    for (i = 0; i < list->count; i++)
    {
-      core_info_t *info = (core_info_t*)&list->list[i];
+      core_info_t *info = &list->list[i];
       if (info->path && !strcmp(info->path, core))
          return info;
    }
@@ -368,8 +368,8 @@ static core_info_t *find_core_info(core_info_list_t *list, const char *core)
 
 static int core_info_firmware_cmp(const void *a_, const void *b_)
 {
-   const core_info_firmware_t *a = (const core_info_firmware_t*)a_;
-   const core_info_firmware_t *b = (const core_info_firmware_t*)b_;
+   const core_info_firmware_t *a = a_;
+   const core_info_firmware_t *b = b_;
    int order = b->missing - a->missing;
 
    if (order)

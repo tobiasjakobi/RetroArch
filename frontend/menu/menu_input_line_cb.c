@@ -34,7 +34,7 @@ extern void menu_common_setting_set_current_string(rarch_setting_t *setting, con
 
 void menu_key_start_line(void *data, const char *label, input_keyboard_line_complete_t cb)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    if (!menu)
       return;
@@ -46,7 +46,7 @@ void menu_key_start_line(void *data, const char *label, input_keyboard_line_comp
 
 static void menu_key_end_line(void *data)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    if (!menu)
       return;
@@ -58,7 +58,7 @@ static void menu_key_end_line(void *data)
 
 static void menu_search_callback(void *userdata, const char *str)
 {
-   menu_handle_t *menu = (menu_handle_t*)userdata;
+   menu_handle_t *menu = userdata;
 
    if (str && *str)
       file_list_search(menu->selection_buf, str, &menu->selection_ptr);
@@ -68,7 +68,7 @@ static void menu_search_callback(void *userdata, const char *str)
 #ifdef HAVE_NETPLAY
 void netplay_port_callback(void *userdata, const char *str)
 {
-   menu_handle_t *menu = (menu_handle_t*)userdata;
+   menu_handle_t *menu = userdata;
 
    if (str && *str)
       g_extern.netplay_port = strtoul(str, NULL, 0);
@@ -77,7 +77,7 @@ void netplay_port_callback(void *userdata, const char *str)
 
 void netplay_ipaddress_callback(void *userdata, const char *str)
 {
-   menu_handle_t *menu = (menu_handle_t*)userdata;
+   menu_handle_t *menu = userdata;
 
    if (str && *str)
       strlcpy(g_extern.netplay_server, str, sizeof(g_extern.netplay_server));
@@ -88,13 +88,13 @@ void netplay_ipaddress_callback(void *userdata, const char *str)
 
 void netplay_nickname_callback(void *userdata, const char *str)
 {
-   menu_handle_t *menu = (menu_handle_t*)userdata;
+   menu_handle_t *menu = userdata;
    rarch_setting_t *current_setting;
-   rarch_setting_t *setting_data = (rarch_setting_t *)setting_data_get_list();
+   rarch_setting_t *setting_data = setting_data_get_list();
  
    if (str && *str && setting_data)
    {
-      if ((current_setting = (rarch_setting_t*)setting_data_find_setting(setting_data, "netplay_nickname")))
+      if ((current_setting = setting_data_find_setting(setting_data, "netplay_nickname")))
          menu_common_setting_set_current_string(current_setting, str);
    }
    menu_key_end_line(menu);
@@ -102,7 +102,7 @@ void netplay_nickname_callback(void *userdata, const char *str)
 
 void audio_device_callback(void *userdata, const char *str)
 {
-   menu_handle_t *menu = (menu_handle_t*)userdata;
+   menu_handle_t *menu = userdata;
 
    if (!menu)
    {
@@ -118,7 +118,7 @@ void audio_device_callback(void *userdata, const char *str)
 #ifdef HAVE_SHADER_MANAGER
 void preset_filename_callback(void *userdata, const char *str)
 {
-   menu_handle_t *menu = (menu_handle_t*)userdata;
+   menu_handle_t *menu = userdata;
 
    if (!menu)
    {
@@ -215,8 +215,8 @@ void menu_poll_bind_get_rested_axes(struct menu_bind_state *state)
 static bool menu_poll_find_trigger_pad(struct menu_bind_state *state, struct menu_bind_state *new_state, unsigned p)
 {
    unsigned a, b, h;
-   const struct menu_bind_state_port *n = (const struct menu_bind_state_port*)&new_state->state[p];
-   const struct menu_bind_state_port *o = (const struct menu_bind_state_port*)&state->state[p];
+   const struct menu_bind_state_port *n = &new_state->state[p];
+   const struct menu_bind_state_port *o = &state->state[p];
 
    for (b = 0; b < MENU_MAX_BUTTONS; b++)
    {
@@ -294,7 +294,7 @@ bool menu_poll_find_trigger(struct menu_bind_state *state, struct menu_bind_stat
 
 bool menu_custom_bind_keyboard_cb(void *data, unsigned code)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    if (!menu)
       return false;
@@ -318,7 +318,7 @@ uint64_t menu_input(void)
    input_state = 0;
 
 
-   input_push_analog_dpad((struct retro_keybind*)binds[0], (g_settings.input.analog_dpad_mode[0] == ANALOG_DPAD_NONE) ? ANALOG_DPAD_LSTICK : g_settings.input.analog_dpad_mode[0]);
+   input_push_analog_dpad(binds[0], (g_settings.input.analog_dpad_mode[0] == ANALOG_DPAD_NONE) ? ANALOG_DPAD_LSTICK : g_settings.input.analog_dpad_mode[0]);
    for (i = 0; i < MAX_PLAYERS; i++)
       input_push_analog_dpad(g_settings.input.autoconf_binds[i], g_settings.input.analog_dpad_mode[i]);
 
@@ -332,7 +332,7 @@ uint64_t menu_input(void)
    }
    input_state |= input_key_pressed_func(RARCH_MENU_TOGGLE) ? (1ULL << RARCH_MENU_TOGGLE) : 0;
 
-   input_pop_analog_dpad((struct retro_keybind*)binds[0]);
+   input_pop_analog_dpad(binds[0]);
    for (i = 0; i < MAX_PLAYERS; i++)
       input_pop_analog_dpad(g_settings.input.autoconf_binds[i]);
 

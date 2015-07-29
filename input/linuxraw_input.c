@@ -65,7 +65,7 @@ static void *linuxraw_input_init(void)
       return NULL;
    }
 
-   linuxraw_input_t *linuxraw = (linuxraw_input_t*)calloc(1, sizeof(*linuxraw));
+   linuxraw_input_t *linuxraw = calloc(1, sizeof(*linuxraw));
    if (!linuxraw)
       return NULL;
 
@@ -148,14 +148,14 @@ static int16_t linuxraw_analog_pressed(linuxraw_input_t *linuxraw,
 
 static bool linuxraw_bind_button_pressed(void *data, int key)
 {
-   linuxraw_input_t *linuxraw = (linuxraw_input_t*)data;
+   linuxraw_input_t *linuxraw = data;
    return linuxraw_is_pressed(linuxraw, g_settings.input.binds[0], key) ||
       input_joypad_pressed(linuxraw->joypad, 0, g_settings.input.binds[0], key);
 }
 
 static int16_t linuxraw_input_state(void *data, const struct retro_keybind **binds, unsigned port, unsigned device, unsigned index, unsigned id)
 {
-   linuxraw_input_t *linuxraw = (linuxraw_input_t*)data;
+   linuxraw_input_t *linuxraw = data;
    int16_t ret;
 
    switch (device)
@@ -177,7 +177,7 @@ static int16_t linuxraw_input_state(void *data, const struct retro_keybind **bin
 
 static void linuxraw_input_free(void *data)
 {
-   linuxraw_input_t *linuxraw = (linuxraw_input_t*)data;
+   linuxraw_input_t *linuxraw = data;
 
    if (!linuxraw)
       return;
@@ -191,19 +191,19 @@ static void linuxraw_input_free(void *data)
 
 static bool linuxraw_set_rumble(void *data, unsigned port, enum retro_rumble_effect effect, uint16_t strength)
 {
-   linuxraw_input_t *linuxraw = (linuxraw_input_t*)data;
+   linuxraw_input_t *linuxraw = data;
    return input_joypad_set_rumble(linuxraw->joypad, port, effect, strength);
 }
 
 static const rarch_joypad_driver_t *linuxraw_get_joypad_driver(void *data)
 {
-   linuxraw_input_t *linuxraw = (linuxraw_input_t*)data;
+   linuxraw_input_t *linuxraw = data;
    return linuxraw->joypad;
 }
 
 static void linuxraw_input_poll(void *data)
 {
-   linuxraw_input_t *linuxraw = (linuxraw_input_t*)data;
+   linuxraw_input_t *linuxraw = data;
    uint8_t c;
    uint16_t t;
 

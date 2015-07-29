@@ -460,7 +460,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
       case RETRO_ENVIRONMENT_GET_VARIABLE:
       {
-         struct retro_variable *var = (struct retro_variable*)data;
+         struct retro_variable *var = data;
          RARCH_LOG("Environ GET_VARIABLE %s:\n", var->key);
 
          if (g_extern.system.core_options)
@@ -487,7 +487,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
             core_option_free(g_extern.system.core_options);
          }
 
-         const struct retro_variable *vars = (const struct retro_variable*)data;
+         const struct retro_variable *vars = data;
 
          const char *options_path = g_settings.core_options_path;
          char buf[PATH_MAX];
@@ -503,7 +503,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
       case RETRO_ENVIRONMENT_SET_MESSAGE:
       {
-         const struct retro_message *msg = (const struct retro_message*)data;
+         const struct retro_message *msg = data;
          RARCH_LOG("Environ SET_MESSAGE: %s\n", msg->msg);
          if (g_extern.msg_queue)
          {
@@ -589,7 +589,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       {
          memset(g_extern.system.input_desc_btn, 0, sizeof(g_extern.system.input_desc_btn));
 
-         const struct retro_input_descriptor *desc = (const struct retro_input_descriptor*)data;
+         const struct retro_input_descriptor *desc = data;
          for (; desc->description; desc++)
          {
             if (desc->port >= MAX_PLAYERS)
@@ -631,7 +631,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK:
       {
          RARCH_LOG("Environ SET_KEYBOARD_CALLBACK.\n");
-         const struct retro_keyboard_callback *info = (const struct retro_keyboard_callback*)data;
+         const struct retro_keyboard_callback *info = data;
          g_extern.system.key_event = info->callback;
          break;
       }
@@ -645,7 +645,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_HW_RENDER | RETRO_ENVIRONMENT_EXPERIMENTAL: // ABI compat
       {
          RARCH_LOG("Environ SET_HW_RENDER.\n");
-         struct retro_hw_render_callback *cb = (struct retro_hw_render_callback*)data;
+         struct retro_hw_render_callback *cb = data;
          switch (cb->context_type)
          {
             case RETRO_HW_CONTEXT_NONE:
@@ -730,7 +730,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_AUDIO_CALLBACK:
       {
          RARCH_LOG("Environ SET_AUDIO_CALLBACK.\n");
-         const struct retro_audio_callback *info = (const struct retro_audio_callback*)data;
+         const struct retro_audio_callback *info = data;
 
          if (g_extern.rec) // A/V sync is a must.
             return false;
@@ -754,7 +754,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
             return false;
 #endif
 
-         const struct retro_frame_time_callback *info = (const struct retro_frame_time_callback*)data;
+         const struct retro_frame_time_callback *info = data;
          g_extern.system.frame_time = *info;
          break;
       }
@@ -762,7 +762,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE:
       {
          RARCH_LOG("Environ GET_RUMBLE_INTERFACE.\n");
-         struct retro_rumble_interface *iface = (struct retro_rumble_interface*)data;
+         struct retro_rumble_interface *iface = data;
          iface->set_rumble_state = driver_set_rumble_state;
          break;
       }
@@ -770,7 +770,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
       {
          RARCH_LOG("Environ GET_INPUT_DEVICE_CAPABILITIES.\n");
-         uint64_t *mask = (uint64_t*)data;
+         uint64_t *mask = data;
          if (driver.input && driver.input->get_capabilities && driver.input_data)
             *mask = driver.input->get_capabilities(driver.input_data);
          else
@@ -781,7 +781,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_GET_LOG_INTERFACE:
       {
          RARCH_LOG("Environ GET_LOG_INTERFACE.\n");
-         struct retro_log_callback *cb = (struct retro_log_callback*)data;
+         struct retro_log_callback *cb = data;
          cb->log = rarch_log_libretro;
          break;
       }
@@ -789,7 +789,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_GET_PERF_INTERFACE:
       {
          RARCH_LOG("Environ GET_PERF_INTERFACE.\n");
-         struct retro_perf_callback *cb = (struct retro_perf_callback*)data;
+         struct retro_perf_callback *cb = data;
          cb->get_time_usec    = rarch_get_time_usec;
          cb->get_cpu_features = rarch_get_cpu_features;
          cb->get_perf_counter = rarch_get_perf_counter;
@@ -802,7 +802,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
       case RETRO_ENVIRONMENT_GET_CONTENT_DIRECTORY:
       {
-         const char **dir = (const char**)data;
+         const char **dir = data;
          *dir = *g_settings.content_directory ? g_settings.content_directory : NULL;
          RARCH_LOG("Environ CONTENT_DIRECTORY: \"%s\".\n", g_settings.content_directory);
          break;
@@ -811,14 +811,14 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
       {
          RARCH_LOG("Environ SET_SYSTEM_AV_INFO.\n");
-         return driver_update_system_av_info((const struct retro_system_av_info*)data);
+         return driver_update_system_av_info(data);
       }
 
       case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
       {
          RARCH_LOG("Environ SET_SUBSYSTEM_INFO.\n");
          unsigned i, j;
-         const struct retro_subsystem_info *info = (const struct retro_subsystem_info*)data;
+         const struct retro_subsystem_info *info = data;
          for (i = 0; info[i].ident; i++)
          {
             RARCH_LOG("Special game type: %s\n", info[i].desc);
@@ -833,7 +833,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          }
 
          free(g_extern.system.special);
-         g_extern.system.special = (struct retro_subsystem_info*)calloc(i, sizeof(*g_extern.system.special));
+         g_extern.system.special = calloc(i, sizeof(*g_extern.system.special));
          if (!g_extern.system.special)
             return false;
 
@@ -846,7 +846,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       {
          RARCH_LOG("Environ SET_CONTROLLER_INFO.\n");
          unsigned i, j;
-         const struct retro_controller_info *info = (const struct retro_controller_info*)data;
+         const struct retro_controller_info *info = data;
          for (i = 0; info[i].types; i++)
          {
             RARCH_LOG("Controller port: %u\n", i + 1);
@@ -855,7 +855,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          }
 
          free(g_extern.system.ports);
-         g_extern.system.ports = (struct retro_controller_info*)calloc(i, sizeof(*g_extern.system.ports));
+         g_extern.system.ports = calloc(i, sizeof(*g_extern.system.ports));
          if (!g_extern.system.ports)
             return false;
 
@@ -867,7 +867,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_GEOMETRY:
       {
          RARCH_LOG("Environ SET_GEOMETRY.\n");
-         const struct retro_game_geometry *in_geom = (const struct retro_game_geometry*)data;
+         const struct retro_game_geometry *in_geom = data;
          struct retro_game_geometry *geom = &g_extern.system.av_info.geometry;
 
          // Can potentially be called every frame, don't do anything unless required.
@@ -894,8 +894,8 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_SET_LIBRETRO_PATH:
          RARCH_LOG("Environ (Private) SET_LIBRETRO_PATH.\n");
 
-         if (path_file_exists((const char*)data))
-            strlcpy(g_settings.libretro, (const char*)data, sizeof(g_settings.libretro));
+         if (path_file_exists(data))
+            strlcpy(g_settings.libretro, data, sizeof(g_settings.libretro));
          else
             return false;
          break;
@@ -904,7 +904,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       case RETRO_ENVIRONMENT_EXEC_ESCAPE:
 
          if (data)
-            strlcpy(g_extern.fullpath, (const char*)data, sizeof(g_extern.fullpath));
+            strlcpy(g_extern.fullpath, data, sizeof(g_extern.fullpath));
          else
             *g_extern.fullpath = '\0';
 

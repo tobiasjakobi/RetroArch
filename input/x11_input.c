@@ -48,7 +48,7 @@ static void *x_input_init(void)
       return NULL;
    }
 
-   x11_input_t *x11 = (x11_input_t*)calloc(1, sizeof(*x11));
+   x11_input_t *x11 = calloc(1, sizeof(*x11));
    if (!x11)
       return NULL;
 
@@ -97,7 +97,7 @@ static int16_t x_pressed_analog(x11_input_t *x11, const struct retro_keybind *bi
 
 static bool x_bind_button_pressed(void *data, int key)
 {
-   x11_input_t *x11 = (x11_input_t*)data;
+   x11_input_t *x11 = data;
    return x_is_pressed(x11, g_settings.input.binds[0], key) ||
       input_joypad_pressed(x11->joypad, 0, g_settings.input.binds[0], key);
 }
@@ -186,7 +186,7 @@ static int16_t x_lightgun_state(x11_input_t *x11, unsigned id)
 
 static int16_t x_input_state(void *data, const struct retro_keybind **binds, unsigned port, unsigned device, unsigned index, unsigned id)
 {
-   x11_input_t *x11 = (x11_input_t*)data;
+   x11_input_t *x11 = data;
    int16_t ret;
 
    switch (device)
@@ -221,7 +221,7 @@ static int16_t x_input_state(void *data, const struct retro_keybind **binds, uns
 
 static void x_input_free(void *data)
 {
-   x11_input_t *x11 = (x11_input_t*)data;
+   x11_input_t *x11 = data;
 
    if (x11->joypad)
       x11->joypad->destroy();
@@ -274,7 +274,7 @@ static void x_input_poll_mouse(x11_input_t *x11)
 
 static void x_input_poll(void *data)
 {
-   x11_input_t *x11 = (x11_input_t*)data;
+   x11_input_t *x11 = data;
 
    if (video_focus_func())
       XQueryKeymap(x11->display, x11->state);
@@ -289,19 +289,19 @@ static void x_input_poll(void *data)
 
 static void x_grab_mouse(void *data, bool state)
 {
-   x11_input_t *x11 = (x11_input_t*)data;
+   x11_input_t *x11 = data;
    x11->grab_mouse = state;
 }
 
 static bool x_set_rumble(void *data, unsigned port, enum retro_rumble_effect effect, uint16_t strength)
 {
-   x11_input_t *x11 = (x11_input_t*)data;
+   x11_input_t *x11 = data;
    return input_joypad_set_rumble(x11->joypad, port, effect, strength);
 }
 
 static const rarch_joypad_driver_t *x_get_joypad_driver(void *data)
 {
-   x11_input_t *x11 = (x11_input_t*)data;
+   x11_input_t *x11 = data;
    return x11->joypad;
 }
 

@@ -282,7 +282,7 @@ static void gl_disable_client_arrays(gl_t *gl)
 #ifndef NO_GL_FF_MATRIX
 static void gl_set_mvp(const void *data)
 {
-   const math_matrix *mat = (const math_matrix*)data;
+   const math_matrix *mat = data;
    glMatrixMode(GL_PROJECTION);
    glLoadMatrixf(mat->data);
    glMatrixMode(GL_MODELVIEW);
@@ -853,7 +853,7 @@ void gl_set_viewport(gl_t *gl, unsigned width, unsigned height, bool force_full,
 
 static void gl_set_rotation(void *data, unsigned rotation)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    struct gl_ortho ortho = {0, 1, 0, 1, -1, 1};
 
    if (gl)
@@ -1394,7 +1394,7 @@ static bool gl_frame(void *data, const void *frame, unsigned width, unsigned hei
    RARCH_PERFORMANCE_INIT(frame_run);
    RARCH_PERFORMANCE_START(frame_run);
 
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
 
    if (!gl)
       return true;
@@ -1597,7 +1597,7 @@ static bool gl_frame(void *data, const void *frame, unsigned width, unsigned hei
 
 static void gl_free(void *data)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
 
    if (!gl)
       return;
@@ -1666,7 +1666,7 @@ static void gl_set_nonblock_state(void *data, bool state)
 {
    RARCH_LOG("GL VSync => %s\n", state ? "off" : "on");
 
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
 
    if (gl)
    {
@@ -2008,7 +2008,7 @@ static void gl_begin_debug(gl_t *gl)
 
 static void *gl_init(const video_info_t *video, const input_driver_t **input, void **input_data)
 {
-   gl_t *gl = (gl_t*)calloc(1, sizeof(gl_t));
+   gl_t *gl = calloc(1, sizeof(gl_t));
    if (!gl)
       return NULL;
 
@@ -2217,7 +2217,7 @@ static void *gl_init(const video_info_t *video, const input_driver_t **input, vo
 
 static bool gl_alive(void *data)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    bool quit = false, resize = false;
 
    context_check_window_func(gl, &quit,
@@ -2234,7 +2234,7 @@ static bool gl_alive(void *data)
 
 static bool gl_focus(void *data)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    return gl && context_has_focus_func(gl);
 }
 
@@ -2281,7 +2281,7 @@ static void gl_update_tex_filter_frame(gl_t *gl)
 #if defined(HAVE_GLSL) || defined(HAVE_CG)
 static bool gl_set_shader(void *data, enum rarch_shader_type type, const char *path)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
 
    if (!gl)
       return false;
@@ -2376,7 +2376,7 @@ static bool gl_set_shader(void *data, enum rarch_shader_type type, const char *p
 static void gl_viewport_info(void *data, struct rarch_viewport *vp)
 {
    unsigned top_y, top_dist;
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    *vp = gl->vp;
    vp->full_width  = gl->win_width;
    vp->full_height = gl->win_height;
@@ -2390,7 +2390,7 @@ static void gl_viewport_info(void *data, struct rarch_viewport *vp)
 #ifndef NO_GL_READ_PIXELS
 static bool gl_read_viewport(void *data, uint8_t *buffer)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    if (!gl)
       return false;
 
@@ -2492,20 +2492,20 @@ static bool gl_read_viewport(void *data, uint8_t *buffer)
 #ifdef HAVE_FBO
 static uintptr_t gl_get_current_framebuffer(void *data)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    return gl->hw_render_fbo[(gl->tex_index + 1) % gl->textures];
 }
 
 static retro_proc_address_t gl_get_proc_address(void *data, const char *sym)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    return gl->ctx_driver->get_proc_address(sym);
 }
 #endif
 
 static void gl_set_aspect_ratio(void *data, unsigned aspect_ratio_idx)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
 
    switch (aspect_ratio_idx)
    {
@@ -2539,7 +2539,7 @@ static void gl_set_texture_frame(void *data,
       const void *frame, bool rgb32, unsigned width, unsigned height,
       float alpha)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    if (!gl)
       return;
 
@@ -2583,7 +2583,7 @@ static void gl_set_texture_frame(void *data,
 
 static void gl_set_texture_enable(void *data, bool state, bool full_screen)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
 
    if (gl)
    {
@@ -2595,7 +2595,7 @@ static void gl_set_texture_enable(void *data, bool state, bool full_screen)
 
 static void gl_apply_state_changes(void *data)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
 
    if (gl)
       gl->should_resize = true;
@@ -2603,7 +2603,7 @@ static void gl_apply_state_changes(void *data)
 
 static void gl_set_osd_msg(void *data, const char *msg, const struct font_params *params)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    if (!gl)
       return;
 
@@ -2617,7 +2617,7 @@ static void gl_set_osd_msg(void *data, const char *msg, const struct font_params
 
 static void gl_show_mouse(void *data, bool state)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
 
    if (gl && gl->ctx_driver->show_mouse)
       gl->ctx_driver->show_mouse(gl, state);
@@ -2625,7 +2625,7 @@ static void gl_show_mouse(void *data, bool state)
 
 static struct gfx_shader *gl_get_current_shader(void *data)
 {
-   gl_t *gl = (gl_t*)data;
+   gl_t *gl = data;
    return (gl && gl->shader) ? gl->shader->get_current_shader() : NULL;
 }
 
@@ -2677,4 +2677,3 @@ const video_driver_t video_gl = {
 
    .poke_interface = gl_get_poke_interface
 };
-

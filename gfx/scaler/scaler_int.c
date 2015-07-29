@@ -45,7 +45,7 @@ void scaler_argb8888_vert(const struct scaler_ctx *ctx, void *output_, int strid
 {
    int h, w, y;
    const uint64_t *input = ctx->scaled.frame;
-   uint32_t *output = (uint32_t*)output_;
+   uint32_t *output = output_;
 
    const int16_t *filter_vert = ctx->vert.filter;
 
@@ -89,7 +89,7 @@ void scaler_argb8888_vert(const struct scaler_ctx *ctx, void *output_, int strid
 {
    int h, w, y;
    const uint64_t *input = ctx->scaled.frame;
-   uint32_t *output = (uint32_t*)output_;
+   uint32_t *output = output_;
 
    const int16_t *filter_vert = ctx->vert.filter;
 
@@ -137,7 +137,7 @@ void scaler_argb8888_vert(const struct scaler_ctx *ctx, void *output_, int strid
 void scaler_argb8888_horiz(const struct scaler_ctx *ctx, const void *input_, int stride)
 {
    int h, w, x;
-   const uint32_t *input = (const uint32_t*)input_;
+   const uint32_t *input = input_;
    uint64_t *output      = ctx->scaled.frame;
 
    for (h = 0; h < ctx->scaled.height; h++, input += stride >> 2, output += ctx->scaled.stride >> 3)
@@ -196,7 +196,7 @@ static inline uint64_t build_argb64(uint16_t a, uint16_t r, uint16_t g, uint16_t
 void scaler_argb8888_horiz(const struct scaler_ctx *ctx, const void *input_, int stride)
 {
    int h, w, x;
-   const uint32_t *input = (uint32_t*)input_;
+   const uint32_t *input = input_;
    uint64_t *output      = ctx->scaled.frame;
 
    for (h = 0; h < ctx->scaled.height; h++, input += stride >> 2, output += ctx->scaled.stride >> 3)
@@ -253,8 +253,8 @@ void scaler_argb8888_point_special(const struct scaler_ctx *ctx,
    if (y_pos < 0)
       y_pos = 0;
 
-   const uint32_t *input = (const uint32_t*)input_;
-   uint32_t *output = (uint32_t*)output_;
+   const uint32_t *input = input_;
+   uint32_t *output = output_;
 
    for (h = 0; h < out_height; h++, y_pos += y_step, output += out_stride >> 2)
    {
@@ -265,4 +265,3 @@ void scaler_argb8888_point_special(const struct scaler_ctx *ctx,
          output[w] = inp[x >> 16];
    }
 }
-

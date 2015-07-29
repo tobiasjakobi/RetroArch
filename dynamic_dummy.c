@@ -24,7 +24,7 @@ static uint16_t *frame_buf;
 
 void libretro_dummy_retro_init(void)
 {
-   frame_buf = (uint16_t*)calloc(320 * 240, sizeof(uint16_t));
+   frame_buf = calloc(320 * 240, sizeof(uint16_t));
 }
 
 void libretro_dummy_retro_deinit(void)
@@ -182,5 +182,3 @@ void libretro_dummy_retro_cheat_set(unsigned index, bool enabled, const char *co
    (void)enabled;
    (void)code;
 }
-
-

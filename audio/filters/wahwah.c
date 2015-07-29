@@ -49,7 +49,7 @@ static void wahwah_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
    unsigned i;
-   struct wahwah_data *wah = (struct wahwah_data*)data;
+   struct wahwah_data *wah = data;
 
    output->samples = input->samples;
    output->frames  = input->frames;
@@ -99,7 +99,7 @@ static void wahwah_process(void *data, struct dspfilter_output *output,
 static void *wahwah_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
-   struct wahwah_data *wah = (struct wahwah_data*)calloc(1, sizeof(*wah));
+   struct wahwah_data *wah = calloc(1, sizeof(*wah));
    if (!wah)
       return NULL;
 

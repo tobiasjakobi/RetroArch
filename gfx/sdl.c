@@ -61,7 +61,7 @@ typedef struct sdl_video
 
 static void sdl_gfx_free(void *data)
 {
-   sdl_video_t *vid = (sdl_video_t*)data;
+   sdl_video_t *vid = data;
    if (!vid)
       return;
 
@@ -210,7 +210,7 @@ static void *sdl_gfx_init(const video_info_t *video, const input_driver_t **inpu
    else if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
       return NULL;
 
-   sdl_video_t *vid = (sdl_video_t*)calloc(1, sizeof(*vid));
+   sdl_video_t *vid = calloc(1, sizeof(*vid));
    if (!vid)
       return NULL;
 
@@ -303,7 +303,7 @@ static bool sdl_gfx_frame(void *data, const void *frame, unsigned width, unsigne
    if (!frame)
       return true;
 
-   sdl_video_t *vid = (sdl_video_t*)data;
+   sdl_video_t *vid = data;
 
    vid->scaler.in_stride = pitch;
    if (width != vid->last_width || height != vid->last_height)
@@ -356,7 +356,7 @@ static void sdl_gfx_set_nonblock_state(void *data, bool state)
 
 static bool sdl_gfx_alive(void *data)
 {
-   sdl_video_t *vid = (sdl_video_t*)data;
+   sdl_video_t *vid = data;
    check_window(vid);
    return !vid->quitting;
 }
@@ -369,7 +369,7 @@ static bool sdl_gfx_focus(void *data)
 
 static void sdl_gfx_viewport_info(void *data, struct rarch_viewport *vp)
 {
-   sdl_video_t *vid = (sdl_video_t*)data;
+   sdl_video_t *vid = data;
    vp->x = vp->y = 0;
    vp->width  = vp->full_width  = vid->screen->w;
    vp->height = vp->full_height = vid->screen->h;
@@ -377,13 +377,13 @@ static void sdl_gfx_viewport_info(void *data, struct rarch_viewport *vp)
 
 static void sdl_set_filtering(void *data, unsigned index, bool smooth)
 {
-   sdl_video_t *vid = (sdl_video_t*)data;
+   sdl_video_t *vid = data;
    vid->scaler.scaler_type = smooth ? SCALER_TYPE_BILINEAR : SCALER_TYPE_POINT;
 }
 
 static void sdl_set_aspect_ratio(void *data, unsigned aspectratio_index)
 {
-   sdl_video_t *vid = (sdl_video_t*)data;
+   sdl_video_t *vid = data;
 
    switch (aspectratio_index)
    {
@@ -415,7 +415,7 @@ static void sdl_set_texture_frame(void *data, const void *frame, bool rgb32,
                                unsigned width, unsigned height, float alpha)
 {
    (void) alpha;
-   sdl_video_t *vid = (sdl_video_t*)data;
+   sdl_video_t *vid = data;
 
    enum scaler_pix_fmt format = rgb32 ? SCALER_FMT_ARGB8888 : SCALER_FMT_RGBA4444;
 
@@ -446,7 +446,7 @@ static void sdl_set_texture_enable(void *data, bool state, bool full_screen)
 {
    (void) full_screen;
 
-   sdl_video_t *vid = (sdl_video_t*)data;
+   sdl_video_t *vid = data;
    vid->menu.active = state;
 }
 

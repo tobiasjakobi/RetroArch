@@ -299,7 +299,7 @@ static bool add_device(udev_input_t *udev, const char *devnode, device_handle_cb
    if (fd < 0)
       return false;
 
-   struct input_device *device = (struct input_device*)calloc(1, sizeof(*device));
+   struct input_device *device = calloc(1, sizeof(*device));
    if (!device)
    {
       close(fd);
@@ -322,7 +322,7 @@ static bool add_device(udev_input_t *udev, const char *devnode, device_handle_cb
       return false;
    }
 
-   struct input_device **tmp = (struct input_device**)realloc(udev->devices,
+   struct input_device **tmp = realloc(udev->devices,
          (udev->num_devices + 1) * sizeof(*udev->devices));
 
    if (!tmp)
@@ -415,7 +415,7 @@ end:
 
 static void udev_input_poll(void *data)
 {
-   udev_input_t *udev = (udev_input_t*)data;
+   udev_input_t *udev = data;
    udev->mouse_x = udev->mouse_y = 0;
 
    while (hotplug_available(udev))
@@ -429,7 +429,7 @@ static void udev_input_poll(void *data)
    {
       if (events[i].events & EPOLLIN)
       {
-         struct input_device *device = (struct input_device*)events[i].data.ptr;
+         struct input_device *device = events[i].data.ptr;
          struct input_event events[32];
          int j, len;
 
@@ -520,7 +520,7 @@ static int16_t udev_analog_pressed(udev_input_t *udev,
 static int16_t udev_input_state(void *data, const struct retro_keybind **binds,
       unsigned port, unsigned device, unsigned index, unsigned id)
 {
-   udev_input_t *udev = (udev_input_t*)data;
+   udev_input_t *udev = data;
    int16_t ret;
 
    switch (device)
@@ -551,7 +551,7 @@ static int16_t udev_input_state(void *data, const struct retro_keybind **binds,
 
 static bool udev_bind_button_pressed(void *data, int key)
 {
-   udev_input_t *udev = (udev_input_t*)data;
+   udev_input_t *udev = data;
    return udev_is_pressed(udev, g_settings.input.binds[0], key) ||
       input_joypad_pressed(udev->joypad, 0, g_settings.input.binds[0], key);
 }
@@ -562,7 +562,7 @@ static void udev_input_free(void *data)
       return;
 
    unsigned i;
-   udev_input_t *udev = (udev_input_t*)data;
+   udev_input_t *udev = data;
    if (udev->joypad)
       udev->joypad->destroy();
 
@@ -691,7 +691,7 @@ static void disable_terminal_input(void)
 
 static void *udev_input_init(void)
 {
-   udev_input_t *udev = (udev_input_t*)calloc(1, sizeof(*udev));
+   udev_input_t *udev = calloc(1, sizeof(*udev));
    if (!udev)
       return NULL;
 
@@ -809,13 +809,13 @@ static void udev_input_grab_mouse(void *data, bool state)
 
 static bool udev_input_set_rumble(void *data, unsigned port, enum retro_rumble_effect effect, uint16_t strength)
 {
-   udev_input_t *udev = (udev_input_t*)data;
+   udev_input_t *udev = data;
    return input_joypad_set_rumble(udev->joypad, port, effect, strength);
 }
 
 static const rarch_joypad_driver_t *udev_input_get_joypad_driver(void *data)
 {
-   udev_input_t *udev = (udev_input_t*)data;
+   udev_input_t *udev = data;
    return udev->joypad;
 }
 

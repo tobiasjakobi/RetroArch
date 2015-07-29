@@ -38,19 +38,19 @@ typedef struct ft_renderer
 
 static const struct font_atlas *ft_renderer_get_atlas(void *data)
 {
-   ft_renderer_t *handle = (ft_renderer_t*)data;
+   ft_renderer_t *handle = data;
    return &handle->atlas;
 }
 
 static const struct font_glyph *ft_renderer_get_glyph(void *data, uint32_t code)
 {
-   ft_renderer_t *handle = (ft_renderer_t*)data;
+   ft_renderer_t *handle = data;
    return code < ATLAS_SIZE ? &handle->glyphs[code] : NULL;
 }
 
 static void ft_renderer_free(void *data)
 {
-   ft_renderer_t *handle = (ft_renderer_t*)data;
+   ft_renderer_t *handle = data;
    if (!handle)
       return;
 
@@ -88,7 +88,7 @@ static bool ft_renderer_create_atlas(ft_renderer_t *handle)
       FT_GlyphSlot slot = handle->face->glyph;
 
       // Some glyphs can be blank.
-      buffer[i] = (uint8_t*)calloc(slot->bitmap.rows * slot->bitmap.pitch, 1);
+      buffer[i] = calloc(slot->bitmap.rows * slot->bitmap.pitch, 1);
 
       glyph->width = slot->bitmap.width;
       glyph->height = slot->bitmap.rows;
@@ -116,7 +116,7 @@ static bool ft_renderer_create_atlas(ft_renderer_t *handle)
    handle->atlas.max_abs_doffset_x = max_offset_x;
    handle->atlas.max_abs_doffset_y = max_offset_y;
 
-   handle->atlas.buffer = (uint8_t*)calloc(handle->atlas.width * handle->atlas.height, 1);
+   handle->atlas.buffer = calloc(handle->atlas.width * handle->atlas.height, 1);
    if (!handle->atlas.buffer)
    {
       ret = false;
@@ -156,7 +156,7 @@ static void *ft_renderer_init(const char *font_path, float font_size)
 {
    FT_Error err;
 
-   ft_renderer_t *handle = (ft_renderer_t*)calloc(1, sizeof(*handle));
+   ft_renderer_t *handle = calloc(1, sizeof(*handle));
    if (!handle)
       goto error;
 
@@ -213,4 +213,3 @@ const font_renderer_driver_t ft_font_renderer = {
    ft_renderer_get_default_font,
    "freetype",
 };
-

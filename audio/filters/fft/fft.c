@@ -92,15 +92,15 @@ static void resolve_float(float *out, const fft_complex_t *in, unsigned samples,
 
 fft_t *fft_new(unsigned block_size_log2)
 {
-   fft_t *fft = (fft_t*)calloc(1, sizeof(*fft));
+   fft_t *fft = calloc(1, sizeof(*fft));
    if (!fft)
       return NULL;
 
    unsigned size = 1 << block_size_log2;
 
-   fft->interleave_buffer = (fft_complex_t*)calloc(size, sizeof(*fft->interleave_buffer));
-   fft->bitinverse_buffer = (unsigned*)calloc(size, sizeof(*fft->bitinverse_buffer));
-   fft->phase_lut         = (fft_complex_t*)calloc(2 * size + 1, sizeof(*fft->phase_lut));
+   fft->interleave_buffer = calloc(size, sizeof(*fft->interleave_buffer));
+   fft->bitinverse_buffer = calloc(size, sizeof(*fft->bitinverse_buffer));
+   fft->phase_lut         = calloc(2 * size + 1, sizeof(*fft->phase_lut));
 
    if (!fft->interleave_buffer || !fft->bitinverse_buffer || !fft->phase_lut)
       goto error;

@@ -184,7 +184,7 @@ static void thread_update_driver_state(thread_video_t *thr)
 
 static void thread_loop(void *data)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    unsigned i = 0;
    (void)i;
 
@@ -230,7 +230,7 @@ static void thread_loop(void *data)
                // This means frame() callback in threaded wrapper will be called from this thread, causing a timeout, and no frame to be rendered.
                // To avoid this, set a flag so wrapper can see if it's called in this "special" way.
                thr->frame.within_thread = true;
-               thr->cmd_data.b = thr->driver->read_viewport(thr->driver_data, (uint8_t*)thr->cmd_data.v);
+               thr->cmd_data.b = thr->driver->read_viewport(thr->driver_data, thr->cmd_data.v);
                thr->frame.within_thread = false;
                thread_reply(thr, CMD_READ_VIEWPORT);
             }
@@ -326,7 +326,7 @@ static void thread_wait_reply(thread_video_t *thr, enum thread_cmd cmd)
 
 static bool thread_alive(void *data)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    if (g_extern.is_paused)
    {
       thread_send_cmd(thr, CMD_ALIVE);
@@ -344,7 +344,7 @@ static bool thread_alive(void *data)
 
 static bool thread_focus(void *data)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    slock_lock(thr->lock);
    bool ret = thr->focus;
    slock_unlock(thr->lock);
@@ -354,7 +354,7 @@ static bool thread_focus(void *data)
 static bool thread_frame(void *data, const void *frame_,
       unsigned width, unsigned height, unsigned pitch, const char *msg)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
 
    // If called from within read_viewport, we're actually in the driver thread, so just render directly.
    if (thr->frame.within_thread)
@@ -368,7 +368,7 @@ static bool thread_frame(void *data, const void *frame_,
 
    unsigned copy_stride = width * (thr->info.rgb32 ? sizeof(uint32_t) : sizeof(uint16_t));
 
-   const uint8_t *src = (const uint8_t*)frame_;
+   const uint8_t *src = frame_;
    uint8_t *dst = thr->frame.buffer;
 
    slock_lock(thr->lock);
@@ -438,7 +438,7 @@ static bool thread_frame(void *data, const void *frame_,
 
 static void thread_set_nonblock_state(void *data, bool state)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    thr->nonblock = state;
 }
 
@@ -459,7 +459,7 @@ static bool thread_init(thread_video_t *thr, const video_info_t *info, const inp
    size_t max_size = info->input_scale * RARCH_SCALE_BASE;
    max_size *= max_size;
    max_size *= info->rgb32 ? sizeof(uint32_t) : sizeof(uint16_t);
-   thr->frame.buffer = (uint8_t*)malloc(max_size);
+   thr->frame.buffer = malloc(max_size);
    if (!thr->frame.buffer)
       return false;
 
@@ -478,7 +478,7 @@ static bool thread_init(thread_video_t *thr, const video_info_t *info, const inp
 
 static bool thread_set_shader(void *data, enum rarch_shader_type type, const char *path)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    thr->cmd_data.set_shader.type = type;
    thr->cmd_data.set_shader.path = path;
    thread_send_cmd(thr, CMD_SET_SHADER);
@@ -488,7 +488,7 @@ static bool thread_set_shader(void *data, enum rarch_shader_type type, const cha
 
 static void thread_set_rotation(void *data, unsigned rotation)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    thr->cmd_data.i = rotation;
    thread_send_cmd(thr, CMD_SET_ROTATION);
    thread_wait_reply(thr, CMD_SET_ROTATION);
@@ -498,7 +498,7 @@ static void thread_set_rotation(void *data, unsigned rotation)
 // This means this value might not be correct, so viewport reads are not supported for now.
 static void thread_viewport_info(void *data, struct rarch_viewport *vp)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    slock_lock(thr->lock);
    *vp = thr->vp;
 
@@ -509,7 +509,7 @@ static void thread_viewport_info(void *data, struct rarch_viewport *vp)
 
 static bool thread_read_viewport(void *data, uint8_t *buffer)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    thr->cmd_data.v = buffer;
    thread_send_cmd(thr, CMD_READ_VIEWPORT);
    thread_wait_reply(thr, CMD_READ_VIEWPORT);
@@ -518,7 +518,7 @@ static bool thread_read_viewport(void *data, uint8_t *buffer)
 
 static void thread_free(void *data)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    if (!thr)
       return;
 
@@ -546,7 +546,7 @@ static void thread_free(void *data)
 
 static void thread_set_filtering(void *data, unsigned index, bool smooth)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    thr->cmd_data.filtering.index = index;
    thr->cmd_data.filtering.smooth = smooth;
    thread_send_cmd(thr, CMD_POKE_SET_FILTERING);
@@ -555,7 +555,7 @@ static void thread_set_filtering(void *data, unsigned index, bool smooth)
 
 static void thread_set_aspect_ratio(void *data, unsigned aspectratio_index)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    thr->cmd_data.i = aspectratio_index;
    thread_send_cmd(thr, CMD_POKE_SET_ASPECT_RATIO);
    thread_wait_reply(thr, CMD_POKE_SET_ASPECT_RATIO);
@@ -565,7 +565,7 @@ static void thread_set_aspect_ratio(void *data, unsigned aspectratio_index)
 static void thread_set_texture_frame(void *data, const void *frame,
       bool rgb32, unsigned width, unsigned height, float alpha)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
 
    slock_lock(thr->frame.lock);
    size_t required = width * height * (rgb32 ? sizeof(uint32_t) : sizeof(uint16_t));
@@ -589,7 +589,7 @@ static void thread_set_texture_frame(void *data, const void *frame,
 
 static void thread_set_texture_enable(void *data, bool state, bool full_screen)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
 
    slock_lock(thr->frame.lock);
    thr->texture.enable = state;
@@ -600,7 +600,7 @@ static void thread_set_texture_enable(void *data, bool state, bool full_screen)
 
 static void thread_apply_state_changes(void *data)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    slock_lock(thr->frame.lock);
    thr->apply_state_changes = true;
    slock_unlock(thr->frame.lock);
@@ -609,7 +609,7 @@ static void thread_apply_state_changes(void *data)
 // This is read-only state which should not have any kind of race condition.
 static struct gfx_shader *thread_get_current_shader(void *data)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
    return thr->poke ? thr->poke->get_current_shader(thr->driver_data) : NULL;
 }
 
@@ -635,7 +635,7 @@ static const video_poke_interface_t thread_poke = {
 
 static void thread_get_poke_interface(void *data, const video_poke_interface_t **iface)
 {
-   thread_video_t *thr = (thread_video_t*)data;
+   thread_video_t *thr = data;
 
    if (thr->driver->poke_interface)
    {
@@ -681,7 +681,7 @@ bool rarch_threaded_video_init(const video_driver_t **out_driver, void **out_dat
       const input_driver_t **input, void **input_data,
       const video_driver_t *driver, const video_info_t *info)
 {
-   thread_video_t *thr = (thread_video_t*)calloc(1, sizeof(*thr));
+   thread_video_t *thr = calloc(1, sizeof(*thr));
    if (!thr)
       return false;
 
@@ -692,5 +692,3 @@ bool rarch_threaded_video_init(const video_driver_t **out_driver, void **out_dat
    *out_data   = thr;
    return thread_init(thr, info, input, input_data);
 }
-
-

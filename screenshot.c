@@ -107,9 +107,9 @@ static void dump_content(FILE *file, const void *frame,
       const uint16_t *u16;
       const uint32_t *u32;
    } u;
-   u.u8 = (const uint8_t*)frame;
+   u.u8 = frame;
 
-   uint8_t **lines = (uint8_t**)calloc(height, sizeof(uint8_t*));
+   uint8_t **lines = calloc(height, sizeof(uint8_t*));
    if (!lines)
       return;
 
@@ -117,7 +117,7 @@ static void dump_content(FILE *file, const void *frame,
 
    for (i = 0; i < height; i++)
    {
-      lines[i] = (uint8_t*)calloc(1, line_size);
+      lines[i] = calloc(1, line_size);
       if (!lines[i])
          goto end;
    }
@@ -164,7 +164,7 @@ bool screenshot_dump(const char *folder, const void *frame,
    fill_pathname_join(filename, folder, shotname, sizeof(filename));
 
 #ifdef HAVE_ZLIB_DEFLATE
-   uint8_t *out_buffer = (uint8_t*)malloc(width * height * 3);
+   uint8_t *out_buffer = malloc(width * height * 3);
    if (!out_buffer)
       return false;
 

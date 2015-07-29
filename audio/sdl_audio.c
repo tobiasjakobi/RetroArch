@@ -38,7 +38,7 @@ typedef struct sdl_audio
 
 static void sdl_audio_cb(void *data, Uint8 *stream, int len)
 {
-   sdl_audio_t *sdl = (sdl_audio_t*)data;
+   sdl_audio_t *sdl = data;
 
    size_t avail = fifo_read_avail(sdl->buffer);
    size_t write_size = len > (int)avail ? avail : len;
@@ -64,7 +64,7 @@ static void *sdl_audio_init(const char *device, unsigned rate, unsigned latency)
    else if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
       return NULL;
 
-   sdl_audio_t *sdl = (sdl_audio_t*)calloc(1, sizeof(*sdl));
+   sdl_audio_t *sdl = calloc(1, sizeof(*sdl));
    if (!sdl)
       return NULL;
 
@@ -110,7 +110,7 @@ static void *sdl_audio_init(const char *device, unsigned rate, unsigned latency)
 
 static ssize_t sdl_audio_write(void *data, const void *buf, size_t size)
 {
-   sdl_audio_t *sdl = (sdl_audio_t*)data;
+   sdl_audio_t *sdl = data;
 
    ssize_t ret = 0;
    if (sdl->nonblock)
@@ -167,7 +167,7 @@ static bool sdl_audio_start(void *data)
 
 static void sdl_audio_set_nonblock_state(void *data, bool state)
 {
-   sdl_audio_t *sdl = (sdl_audio_t*)data;
+   sdl_audio_t *sdl = data;
    sdl->nonblock = state;
 }
 
@@ -176,7 +176,7 @@ static void sdl_audio_free(void *data)
    SDL_CloseAudio();
    SDL_QuitSubSystem(SDL_INIT_AUDIO);
 
-   sdl_audio_t *sdl = (sdl_audio_t*)data;
+   sdl_audio_t *sdl = data;
    if (sdl)
    {
       fifo_free(sdl->buffer);
@@ -199,4 +199,3 @@ const audio_driver_t audio_sdl = {
    .ident = "sdl",
 #endif
 };
-   

@@ -30,11 +30,11 @@ typedef struct
 
 static void *gl_init_font(void *gl_data, const char *font_path, float font_size)
 {
-   gl_raster_t *font = (gl_raster_t*)calloc(1, sizeof(*font));
+   gl_raster_t *font = calloc(1, sizeof(*font));
    if (!font)
       return NULL;
 
-   font->gl = (gl_t*)gl_data;
+   font->gl = gl_data;
 
    if (!font_renderer_create_default(&font->font_driver, &font->font_data, font_path, font_size))
    {
@@ -58,7 +58,7 @@ static void *gl_init_font(void *gl_data, const char *font_path, float font_size)
    // is too great to bother going down that route.
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
-   uint8_t *tmp_buffer = (uint8_t*)malloc(atlas->width * atlas->height * 4);
+   uint8_t *tmp_buffer = malloc(atlas->width * atlas->height * 4);
    if (tmp_buffer)
    {
       unsigned i;
@@ -84,7 +84,7 @@ static void *gl_init_font(void *gl_data, const char *font_path, float font_size)
 
 void gl_free_font(void *data)
 {
-   gl_raster_t *font = (gl_raster_t*)data;
+   gl_raster_t *font = data;
    if (!font)
       return;
 
@@ -192,7 +192,7 @@ static void gl_render_msg(void *data, const char *msg, const struct font_params 
    int drop_x, drop_y;
    bool full_screen;
 
-   gl_raster_t *font = (gl_raster_t*)data;
+   gl_raster_t *font = data;
    if (!font)
       return;
 
@@ -261,4 +261,3 @@ const gl_font_renderer_t gl_raster_font = {
    gl_render_msg,
    "GL raster",
 };
-

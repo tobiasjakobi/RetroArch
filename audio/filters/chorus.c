@@ -48,7 +48,7 @@ static void chorus_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
    unsigned i;
-   struct chorus_data *ch = (struct chorus_data*)data;
+   struct chorus_data *ch = data;
 
    output->samples = input->samples;
    output->frames  = input->frames;
@@ -90,7 +90,7 @@ static void chorus_process(void *data, struct dspfilter_output *output,
 static void *chorus_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
-   struct chorus_data *ch = (struct chorus_data*)calloc(1, sizeof(*ch));
+   struct chorus_data *ch = calloc(1, sizeof(*ch));
    if (!ch)
       return NULL;
 

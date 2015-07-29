@@ -415,7 +415,7 @@ error:
 
 static void drm_fb_destroy_callback(struct gbm_bo *bo, void *data)
 {
-   struct drm_fb *fb = (struct drm_fb*)data;
+   struct drm_fb *fb = data;
 
    if (fb->fb_id)
       drmModeRmFB(g_drm_fd, fb->fb_id);
@@ -425,11 +425,11 @@ static void drm_fb_destroy_callback(struct gbm_bo *bo, void *data)
 
 static struct drm_fb *drm_fb_get_from_bo(struct gbm_bo *bo)
 {
-   struct drm_fb *fb = (struct drm_fb*)gbm_bo_get_user_data(bo);
+   struct drm_fb *fb = gbm_bo_get_user_data(bo);
    if (fb)
       return fb;
 
-   fb = (struct drm_fb*)calloc(1, sizeof(*fb));
+   fb = calloc(1, sizeof(*fb));
    fb->bo = bo;
 
    unsigned width  = gbm_bo_get_width(bo);

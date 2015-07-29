@@ -146,7 +146,7 @@ static int parse_long(const struct option *longopts, char * const *argv)
 static void shuffle_block(char **begin, char **last, char **end)
 {
    ptrdiff_t len = last - begin;
-   const char **tmp = (const char**)calloc(len, sizeof(const char*));
+   const char **tmp = calloc(len, sizeof(const char*));
    rarch_assert(tmp);
 
    memcpy(tmp, begin, len * sizeof(const char*));
@@ -267,4 +267,3 @@ size_t strlcat(char *dest, const char *source, size_t size)
 }
 
 #endif
-

@@ -53,7 +53,7 @@ static unsigned epx_generic_output_fmts(unsigned input_fmts)
 
 static unsigned epx_generic_threads(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    return filt->threads;
 }
 
@@ -63,10 +63,10 @@ static void *epx_generic_create(unsigned in_fmt, unsigned out_fmt,
 {
    (void)simd;
 
-   struct filter_data *filt = (struct filter_data*)calloc(1, sizeof(*filt));
+   struct filter_data *filt = calloc(1, sizeof(*filt));
    if (!filt)
       return NULL;
-   filt->workers = (struct softfilter_thread_data*)calloc(threads, sizeof(struct softfilter_thread_data));
+   filt->workers = calloc(threads, sizeof(struct softfilter_thread_data));
    filt->threads = threads;
    filt->in_fmt  = in_fmt;
    if (!filt->workers)
@@ -86,7 +86,7 @@ static void epx_generic_output(void *data, unsigned *out_width, unsigned *out_he
 
 static void epx_generic_destroy(void *data)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    free(filt->workers);
    free(filt);
 }
@@ -100,7 +100,7 @@ static void EPX_16 (int width, int height,
 	uint32_t	*dP1, *dP2;
 	int		w, prevline;
 
-   prevline = (first) ? 0 : src_stride;
+	prevline = (first) ? 0 : src_stride;
 
 	height -= 2;
 
@@ -110,8 +110,8 @@ static void EPX_16 (int width, int height,
 
 	// top edge
 
-	sP  = (uint16_t *)(src - prevline);
-	lP  = (uint16_t *) (src + src_stride);
+	sP  = src - prevline);
+	lP  = src + src_stride;
 	dP1 = (uint32_t *) dst;
 	dP2 = (uint32_t *) (dst + dst_stride);
 
@@ -189,9 +189,9 @@ static void EPX_16 (int width, int height,
 
 	for (; height; height--)
 	{
-		sP  = (uint16_t *) src;
-		uP  = (uint16_t *) (src - src_stride);
-		lP  = (uint16_t *) (src + src_stride);
+		sP  = src;
+		uP  = src - src_stride;
+		lP  = src + src_stride;
 		dP1 = (uint32_t *) dst;
 		dP2 = (uint32_t *) (dst + dst_stride);
 
@@ -271,8 +271,8 @@ static void EPX_16 (int width, int height,
 
 	// bottom edge
 
-	sP  = (uint16_t *) src;
-	uP  = (uint16_t *) (src - src_stride);
+	sP  = src;
+	uP  = src - src_stride;
 	dP1 = (uint32_t *) dst;
 	dP2 = (uint32_t *) (dst + dst_stride);
 
@@ -352,14 +352,13 @@ static void epx_generic_rgb565(unsigned width, unsigned height,
          first, last,
          src, src_stride,
          dst, dst_stride);
-
 }
 
 static void epx_work_cb_rgb565(void *data, void *thread_data)
 {
-   struct softfilter_thread_data *thr = (struct softfilter_thread_data*)thread_data;
-   uint16_t *input = (uint16_t*)thr->in_data;
-   uint16_t *output = (uint16_t*)thr->out_data;
+   struct softfilter_thread_data *thr = thread_data;
+   uint16_t *input = thr->in_data;
+   uint16_t *output = thr->out_data;
    unsigned width = thr->width;
    unsigned height = thr->height;
 
@@ -373,11 +372,11 @@ static void epx_generic_packets(void *data,
       void *output, size_t output_stride,
       const void *input, unsigned width, unsigned height, size_t input_stride)
 {
-   struct filter_data *filt = (struct filter_data*)data;
+   struct filter_data *filt = data;
    unsigned i;
    for (i = 0; i < filt->threads; i++)
    {
-      struct softfilter_thread_data *thr = (struct softfilter_thread_data*)&filt->workers[i];
+      struct softfilter_thread_data *thr = &filt->workers[i];
 
       unsigned y_start = (height * i) / filt->threads;
       unsigned y_end = (height * (i + 1)) / filt->threads;

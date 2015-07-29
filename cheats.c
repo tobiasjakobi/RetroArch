@@ -58,7 +58,7 @@ static char *strcat_alloc(char *dest, const char *input)
    size_t input_len = strlen(input);
    size_t required_len = dest_len + input_len + 1;
 
-   char *output = (char*)realloc(dest, required_len);
+   char *output = realloc(dest, required_len);
    if (!output)
       return NULL;
 
@@ -93,7 +93,7 @@ static bool xml_grab_cheat(struct cheat *cht, xmlNodePtr ptr)
                return false;
          }
 
-         code = (xmlChar*)xmlNodeGetContent(ptr);
+         code = xmlNodeGetContent(ptr);
          if (!code)
             return false;
 
@@ -115,7 +115,7 @@ static bool xml_grab_cheats(cheat_manager_t *handle, xmlNodePtr ptr)
    {
       if (strcmp((const char*)ptr->name, "name") == 0)
       {
-         xmlChar *name = (xmlChar*)xmlNodeGetContent(ptr);
+         xmlChar *name = xmlNodeGetContent(ptr);
          if (name)
          {
             RARCH_LOG("Found cheat for game: \"%s\"\n", name);
@@ -127,7 +127,7 @@ static bool xml_grab_cheats(cheat_manager_t *handle, xmlNodePtr ptr)
          if (handle->size == handle->buf_size)
          {
             handle->buf_size *= 2;
-            handle->cheats = (struct cheat*)realloc(handle->cheats, handle->buf_size * sizeof(struct cheat));
+            handle->cheats = realloc(handle->cheats, handle->buf_size * sizeof(struct cheat));
             if (!handle->cheats)
                return false;
          }
@@ -161,7 +161,7 @@ static void cheat_manager_load_config(cheat_manager_t *handle, const char *path,
    if (!(*path))
       return;
 
-   conf = (config_file_t*)config_file_new(path);
+   conf = config_file_new(path);
    if (!conf)
       return;
 
@@ -173,7 +173,7 @@ static void cheat_manager_load_config(cheat_manager_t *handle, const char *path,
    }
 
    save = NULL;
-   num = (const char*)strtok_r(str, ";", &save);
+   num = strtok_r(str, ";", &save);
 
    while (num)
    {
@@ -242,7 +242,7 @@ cheat_manager_t *cheat_manager_new(const char *path)
 
    ctx = NULL;
    doc = NULL;
-   handle = (cheat_manager_t*)calloc(1, sizeof(struct cheat_manager));
+   handle = calloc(1, sizeof(struct cheat_manager));
    if (!handle)
       return NULL;
 
@@ -250,7 +250,7 @@ cheat_manager_t *cheat_manager_new(const char *path)
    cur = NULL;
 
    handle->buf_size = 1;
-   handle->cheats = (struct cheat*)calloc(handle->buf_size, sizeof(struct cheat));
+   handle->cheats = calloc(handle->buf_size, sizeof(struct cheat));
    if (!handle->cheats)
    {
       handle->buf_size = 0;

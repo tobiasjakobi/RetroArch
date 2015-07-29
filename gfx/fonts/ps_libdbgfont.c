@@ -22,7 +22,7 @@ static void *gl_init_font(void *gl_data, const char *font_path, float font_size)
 {
    (void)font_path;
    (void)font_size;
-   gl_t *gl = (gl_t*)gl_data;
+   gl_t *gl = gl_data;
 
    DbgFontConfig cfg;
    DbgFontInit(&cfg);
@@ -70,4 +70,3 @@ const gl_font_renderer_t libdbg_font = {
    gl_render_msg,
    "GL raster",
 };
-

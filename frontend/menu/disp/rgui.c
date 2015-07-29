@@ -126,7 +126,7 @@ static void blit_line(int x, int y, const char *message, bool green)
 static void init_font(menu_handle_t *menu, const uint8_t *font_bmp_buf)
 {
    unsigned i;
-   uint8_t *font = (uint8_t *) calloc(1, FONT_OFFSET(256));
+   uint8_t *font = calloc(1, FONT_OFFSET(256));
    menu->alloc_font = true;
    for (i = 0; i < 256; i++)
    {
@@ -141,7 +141,7 @@ static void init_font(menu_handle_t *menu, const uint8_t *font_bmp_buf)
 
 static bool rguidisp_init_font(void *data)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    const uint8_t *font_bmp_buf = NULL;
    const uint8_t *font_bin_buf = bitmap_bin;
@@ -546,7 +546,7 @@ static void *rgui_init(void)
    uint16_t *framebuf = menu_framebuf;
    size_t framebuf_pitch;
 
-   menu_handle_t *menu = (menu_handle_t*)calloc(1, sizeof(*menu));
+   menu_handle_t *menu = calloc(1, sizeof(*menu));
 
    if (!menu)
       return NULL;
@@ -574,10 +574,10 @@ static void *rgui_init(void)
 
 static void rgui_free(void *data)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    if (menu->alloc_font)
-      free((uint8_t*)menu->font);
+      free(menu->font);
 }
 
 static int rgui_input_postprocess(uint64_t old_state)
@@ -599,7 +599,7 @@ static int rgui_input_postprocess(uint64_t old_state)
 
 void rgui_set_texture(void *data)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    if (driver.video_data && driver.video_poke && driver.video_poke->set_texture_frame)
       driver.video_poke->set_texture_frame(driver.video_data, menu_framebuf,
@@ -608,7 +608,7 @@ void rgui_set_texture(void *data)
 
 static void rgui_init_core_info(void *data)
 {
-   menu_handle_t *menu = (menu_handle_t*)data;
+   menu_handle_t *menu = data;
 
    core_info_list_free(menu->core_info);
    menu->core_info = NULL;

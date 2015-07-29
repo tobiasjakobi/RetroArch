@@ -40,7 +40,7 @@ struct filter_thread_data
 
 static void filter_thread_loop(void *data)
 {
-   struct filter_thread_data *thr = (struct filter_thread_data*)data;
+   struct filter_thread_data *thr = data;
 
    for (;;)
    {
@@ -86,7 +86,7 @@ struct rarch_softfilter
 
 const char *rarch_softfilter_get_name(void *data)
 {
-   rarch_softfilter_t *filt = (rarch_softfilter_t*)data;
+   rarch_softfilter_t *filt = data;
    if (!filt || !filt->impl)
       return NULL;
 
@@ -101,7 +101,7 @@ rarch_softfilter_t *rarch_softfilter_new(const char *filter_path,
    unsigned cpu_features, output_fmts, input_fmts, input_fmt;
    (void)filter_path;
 
-   rarch_softfilter_t *filt = (rarch_softfilter_t*)calloc(1, sizeof(*filt));
+   rarch_softfilter_t *filt = calloc(1, sizeof(*filt));
    if (!filt)
       return NULL;
 
@@ -187,7 +187,7 @@ rarch_softfilter_t *rarch_softfilter_new(const char *filter_path,
 
    RARCH_LOG("Using %u threads for softfilter.\n", threads);
 
-   filt->packets = (struct softfilter_work_packet*)calloc(threads, sizeof(*filt->packets));
+   filt->packets = calloc(threads, sizeof(*filt->packets));
    if (!filt->packets)
    {
       RARCH_ERR("Failed to allocate softfilter packets.\n");
@@ -195,7 +195,7 @@ rarch_softfilter_t *rarch_softfilter_new(const char *filter_path,
    }
 
 #ifdef HAVE_THREADS
-   filt->thread_data = (struct filter_thread_data*)calloc(threads, sizeof(*filt->thread_data));
+   filt->thread_data = calloc(threads, sizeof(*filt->thread_data));
    if (!filt->thread_data)
       goto error;
    filt->threads = threads;

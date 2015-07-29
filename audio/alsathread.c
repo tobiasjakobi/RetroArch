@@ -46,9 +46,9 @@ typedef struct alsa_thread
 
 static void alsa_worker_thread(void *data)
 {
-   alsa_thread_t *alsa = (alsa_thread_t*)data;
+   alsa_thread_t *alsa = data;
 
-   uint8_t *buf = (uint8_t *)calloc(1, alsa->period_size);
+   uint8_t *buf = calloc(1, alsa->period_size);
    if (!buf)
    {
       RARCH_ERR("failed to allocate audio buffer");
@@ -97,7 +97,7 @@ end:
 
 static bool alsa_thread_use_float(void *data)
 {
-   alsa_thread_t *alsa = (alsa_thread_t*)data;
+   alsa_thread_t *alsa = data;
    return alsa->has_float;
 }
 
@@ -114,7 +114,7 @@ static bool alsathread_find_float_format(snd_pcm_t *pcm, snd_pcm_hw_params_t *pa
 
 static void alsa_thread_free(void *data)
 {
-   alsa_thread_t *alsa = (alsa_thread_t*)data;
+   alsa_thread_t *alsa = data;
 
    if (alsa)
    {
@@ -142,7 +142,7 @@ static void alsa_thread_free(void *data)
 
 static void *alsa_thread_init(const char *device, unsigned rate, unsigned latency)
 {
-   alsa_thread_t *alsa = (alsa_thread_t*)calloc(1, sizeof(alsa_thread_t));
+   alsa_thread_t *alsa = calloc(1, sizeof(alsa_thread_t));
    if (!alsa)
       return NULL;
 
@@ -227,7 +227,7 @@ error:
 
 static ssize_t alsa_thread_write(void *data, const void *buf, size_t size)
 {
-   alsa_thread_t *alsa = (alsa_thread_t*)data;
+   alsa_thread_t *alsa = data;
 
    if (alsa->thread_dead)
       return -1;
@@ -277,7 +277,7 @@ static bool alsa_thread_stop(void *data)
 
 static void alsa_thread_set_nonblock_state(void *data, bool state)
 {
-   alsa_thread_t *alsa = (alsa_thread_t*)data;
+   alsa_thread_t *alsa = data;
    alsa->nonblock = state;
 }
 
@@ -289,7 +289,7 @@ static bool alsa_thread_start(void *data)
 
 static size_t alsa_thread_write_avail(void *data)
 {
-   alsa_thread_t *alsa = (alsa_thread_t*)data;
+   alsa_thread_t *alsa = data;
 
    if (alsa->thread_dead)
       return 0;
@@ -301,7 +301,7 @@ static size_t alsa_thread_write_avail(void *data)
 
 static size_t alsa_thread_buffer_size(void *data)
 {
-   alsa_thread_t *alsa = (alsa_thread_t*)data;
+   alsa_thread_t *alsa = data;
    return alsa->buffer_size;
 }
 
