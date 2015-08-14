@@ -216,26 +216,6 @@ static void init_sinc_table(rarch_sinc_resampler_t *resamp, double cutoff,
    }
 }
 
-// No memalign() for us on Win32 ...
-static void *aligned_alloc__(size_t boundary, size_t size)
-{
-   void *ptr = malloc(boundary + size + sizeof(uintptr_t));
-   if (!ptr)
-      return NULL;
-
-   uintptr_t addr = ((uintptr_t)ptr + sizeof(uintptr_t) + boundary) & ~(boundary - 1);
-   void **place   = (void**)addr;
-   place[-1]      = ptr;
-
-   return (void*)addr;
-}
-
-static void aligned_free__(void *ptr)
-{
-   void **p = (void**)ptr;
-   free(p[-1]);
-}
-
 #if !(defined(__AVX__) && ENABLE_AVX) && !defined(__SSE__)
 static inline void process_sinc_C(rarch_sinc_resampler_t *resamp, float *out_buffer)
 {
@@ -448,7 +428,7 @@ static void resampler_sinc_free(void *re)
 {
    rarch_sinc_resampler_t *resampler = re;
    if (resampler)
-      aligned_free__(resampler->main_buffer);
+      free(resampler->main_buffer);
    free(resampler);
 }
 
@@ -483,8 +463,7 @@ static void *resampler_sinc_new(double bandwidth_mod)
 #endif
    size_t elems = phase_elems + 4 * re->taps;
 
-   re->main_buffer = aligned_alloc__(128, sizeof(float) * elems);
-   if (!re->main_buffer)
+   if (posix_memalign((void**)&re->main_buffer, 128, sizeof(float) * elems))
       goto error;
 
    re->phase_table = re->main_buffer;
