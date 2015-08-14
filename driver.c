@@ -28,6 +28,9 @@
 #include "audio/thread_wrapper.h"
 #include "gfx/gfx_common.h"
 
+/* Used to get memory page size. */
+#include <unistd.h>
+
 #ifdef HAVE_X11
 #include "gfx/context/x11_common.h"
 #endif
@@ -110,6 +113,10 @@ static const input_driver_t *input_drivers[] = {
 #ifdef HAVE_MENU
 #include "menu_driver.c"
 #endif
+
+static inline unsigned align_common(unsigned i, unsigned j) {
+  return (i + j - 1) & ~(j - 1);
+}
 
 static int find_audio_driver_index(const char *driver)
 {
@@ -749,6 +756,8 @@ void uninit_audio(void)
 
 void rarch_init_filter(enum retro_pixel_format colfmt)
 {
+   const int pagesize = getpagesize();
+
    rarch_deinit_filter();
 
    if (!*g_settings.video.filter_path)
@@ -790,9 +799,9 @@ void rarch_init_filter(enum retro_pixel_format colfmt)
    g_extern.filter.out_rgb32 = rarch_softfilter_get_output_format(g_extern.filter.filter) == RETRO_PIXEL_FORMAT_XRGB8888;
    g_extern.filter.out_bpp = g_extern.filter.out_rgb32 ? sizeof(uint32_t) : sizeof(uint16_t);
 
-   // TODO: Aligned output.
-   g_extern.filter.buffer = malloc(width * height * g_extern.filter.out_bpp);
-   if (!g_extern.filter.buffer)
+   /* Always request pagesize aligned memory for the filter buffer. */
+   if (posix_memalign((void**)&g_extern.filter.buffer, pagesize,
+      align_common(width * height * g_extern.filter.out_bpp, pagesize)))
       goto error;
 
    return;
