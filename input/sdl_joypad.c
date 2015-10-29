@@ -330,22 +330,20 @@ static const char *sdl_joypad_name(unsigned pad)
 }
 
 const rarch_joypad_driver_t sdl_joypad = {
-   sdl_joypad_init,
-   sdl_joypad_query_pad,
-   sdl_joypad_destroy,
-   sdl_joypad_button,
-   sdl_joypad_axis,
-   sdl_joypad_poll,
+   .init = sdl_joypad_init,
+   .query_pad = sdl_joypad_query_pad,
+   .destroy = sdl_joypad_destroy,
+   .button = sdl_joypad_button,
+   .axis = sdl_joypad_axis,
+   .poll = sdl_joypad_poll,
 #ifdef HAVE_SDL2
-   sdl_joypad_set_rumble,
-#else
-   NULL,
+   .set_rumble = sdl_joypad_set_rumble,
 #endif
-   sdl_joypad_name,
+   .name = sdl_joypad_name,
 #ifdef HAVE_SDL2
-   "sdl2",
+   .ident = "sdl2"
 #else
-   "sdl"
+   .ident = "sdl"
 #endif
 };
 
