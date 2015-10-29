@@ -574,14 +574,13 @@ static const char *udev_joypad_name(unsigned pad)
 }
 
 const rarch_joypad_driver_t udev_joypad = {
-   udev_joypad_init,
-   udev_joypad_query_pad,
-   udev_joypad_destroy,
-   udev_joypad_button,
-   udev_joypad_axis,
-   udev_joypad_poll,
-   udev_set_rumble,
-   udev_joypad_name,
-   "udev",
+   .init = udev_joypad_init,
+   .query_pad = udev_joypad_query_pad,
+   .destroy = udev_joypad_destroy,
+   .button = udev_joypad_button,
+   .axis = udev_joypad_axis,
+   .poll = udev_joypad_poll,
+   .set_rumble = udev_set_rumble,
+   .name = udev_joypad_name,
+   .ident = "udev"
 };
-
