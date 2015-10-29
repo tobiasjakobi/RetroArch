@@ -47,18 +47,17 @@ static uint16_t menu_framebuf[400 * 240];
 
 static void rgui_copy_glyph(uint8_t *glyph, const uint8_t *buf)
 {
-   int y, x;
-   for (y = 0; y < FONT_HEIGHT; y++)
+   for (int y = 0; y < FONT_HEIGHT; y++)
    {
-      for (x = 0; x < FONT_WIDTH; x++)
+      for (int x = 0; x < FONT_WIDTH; x++)
       {
-         uint32_t col =
+         const uint32_t col =
             ((uint32_t)buf[3 * (-y * 256 + x) + 0] << 0) |
             ((uint32_t)buf[3 * (-y * 256 + x) + 1] << 8) |
             ((uint32_t)buf[3 * (-y * 256 + x) + 2] << 16);
 
-         uint8_t rem = 1 << ((x + y * FONT_WIDTH) & 7);
-         unsigned offset = (x + y * FONT_WIDTH) >> 3;
+         const uint8_t rem = 1 << ((x + y * FONT_WIDTH) & 7);
+         const unsigned offset = (x + y * FONT_WIDTH) >> 3;
 
          if (col != 0xff)
             glyph[offset] |= rem;
@@ -87,24 +86,21 @@ static void fill_rect(uint16_t *buf, unsigned pitch,
       unsigned width, unsigned height,
       uint16_t (*col)(unsigned x, unsigned y))
 {
-   unsigned j, i;
-   for (j = y; j < y + height; j++)
-      for (i = x; i < x + width; i++)
+   for (unsigned j = y; j < y + height; j++)
+      for (unsigned i = x; i < x + width; i++)
          buf[j * (pitch >> 1) + i] = col(i, j);
 }
 
 static void blit_line(int x, int y, const char *message, bool green)
 {
-   int j, i;
-
    if (!driver.menu)
       return;
 
    while (*message)
    {
-      for (j = 0; j < FONT_HEIGHT; j++)
+      for (int j = 0; j < FONT_HEIGHT; j++)
       {
-         for (i = 0; i < FONT_WIDTH; i++)
+         for (int i = 0; i < FONT_WIDTH; i++)
          {
             uint8_t rem = 1 << ((i + j * FONT_WIDTH) & 7);
             int offset = (i + j * FONT_WIDTH) >> 3;
@@ -125,10 +121,9 @@ static void blit_line(int x, int y, const char *message, bool green)
 
 static void init_font(menu_handle_t *menu, const uint8_t *font_bmp_buf)
 {
-   unsigned i;
    uint8_t *font = calloc(1, FONT_OFFSET(256));
    menu->alloc_font = true;
-   for (i = 0; i < 256; i++)
+   for (unsigned i = 0; i < 256; i++)
    {
       unsigned y = i / 16;
       unsigned x = i % 16;
@@ -180,8 +175,6 @@ static void rgui_render_background()
 
 static void rgui_render_messagebox(const char *message)
 {
-   size_t i;
-
    if (!driver.menu || !message || !*message)
       return;
 
@@ -196,7 +189,7 @@ static void rgui_render_messagebox(const char *message)
 
    unsigned width = 0;
    unsigned glyphs_width = 0;
-   for (i = 0; i < list->size; i++)
+   for (size_t i = 0; i < list->size; i++)
    {
       char *msg = list->elems[i].data;
       unsigned msglen = strlen(msg);
@@ -209,14 +202,14 @@ static void rgui_render_messagebox(const char *message)
          msglen = RGUI_TERM_WIDTH;
       }
 
-      unsigned line_width = msglen * FONT_WIDTH_STRIDE - 1 + 6 + 10;
+      const unsigned line_width = msglen * FONT_WIDTH_STRIDE - 1 + 6 + 10;
       width = max(width, line_width);
       glyphs_width = max(glyphs_width, msglen);
    }
 
-   unsigned height = FONT_HEIGHT_STRIDE * list->size + 6 + 10;
-   int x = (driver.menu->width - width) / 2;
-   int y = (driver.menu->height - height) / 2;
+   const unsigned height = FONT_HEIGHT_STRIDE * list->size + 6 + 10;
+   const int x = (driver.menu->width - width) / 2;
+   const int y = (driver.menu->height - height) / 2;
 
    fill_rect(driver.menu->frame_buf, driver.menu->frame_buf_pitch,
          x + 5, y + 5, width - 10, height - 10, gray_filler);
@@ -233,11 +226,11 @@ static void rgui_render_messagebox(const char *message)
    fill_rect(driver.menu->frame_buf, driver.menu->frame_buf_pitch,
          x, y + 5, 5, height - 5, green_filler);
 
-   for (i = 0; i < list->size; i++)
+   for (size_t i = 0; i < list->size; i++)
    {
       const char *msg = list->elems[i].data;
-      int offset_x = FONT_WIDTH_STRIDE * (glyphs_width - strlen(msg)) / 2;
-      int offset_y = FONT_HEIGHT_STRIDE * i;
+      const int offset_x = FONT_WIDTH_STRIDE * (glyphs_width - strlen(msg)) / 2;
+      const int offset_y = FONT_HEIGHT_STRIDE * i;
       blit_line(x + 8 + offset_x, y + 8 + offset_y, msg, false);
    }
 
@@ -409,12 +402,11 @@ static void rgui_render()
    blit_line(RGUI_TERM_START_X + 15, (RGUI_TERM_HEIGHT * FONT_HEIGHT_STRIDE) + RGUI_TERM_START_Y + 2, title_msg, true);
 
    unsigned x, y;
-   size_t i;
 
    x = RGUI_TERM_START_X;
    y = RGUI_TERM_START_Y;
 
-   for (i = begin; i < end; i++, y += FONT_HEIGHT_STRIDE)
+   for (size_t i = begin; i < end; i++, y += FONT_HEIGHT_STRIDE)
    {
       char message[256], type_str[256];
       const char *path = 0;

@@ -38,16 +38,14 @@ struct rxml_node *rxml_root_node(rxml_document_t *doc)
 
 static void rxml_free_node(struct rxml_node *node)
 {
-   struct rxml_node *head;
-   for (head = node->children; head; )
+   for (struct rxml_node *head = node->children; head; )
    {
       struct rxml_node *next_node = head->next;
       rxml_free_node(head);
       head = next_node;
    }
 
-   struct rxml_attrib_node *attrib_node_head;
-   for (attrib_node_head = node->attrib; attrib_node_head; )
+   for (struct rxml_attrib_node *attrib_node_head = node->attrib; attrib_node_head; )
    {
       struct rxml_attrib_node *next_attrib = attrib_node_head->next;
 
@@ -340,7 +338,7 @@ static char *purge_xml_comments(const char *str)
 
    char *copy_dest       = new_str;
    const char *copy_src  = str;
-   for (;;)
+   while (true)
    {
       const char *comment_start = strstr(copy_src, "<!--");
       const char *comment_end   = strstr(copy_src, "-->");
@@ -437,8 +435,7 @@ void rxml_free_document(rxml_document_t *doc)
 
 char *rxml_node_attrib(struct rxml_node *node, const char *attrib)
 {
-   struct rxml_attrib_node *attribs;
-   for (attribs = node->attrib; attribs; attribs = attribs->next)
+   for (struct rxml_attrib_node *attribs = node->attrib; attribs; attribs = attribs->next)
    {
       if (!strcmp(attrib, attribs->attrib))
          return attribs->value;

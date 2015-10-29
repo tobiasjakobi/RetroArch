@@ -174,8 +174,7 @@ void libretro_free_system_info(struct retro_system_info *info)
 const struct retro_subsystem_info *libretro_find_subsystem_info(const struct retro_subsystem_info *info, unsigned num_info,
       const char *ident)
 {
-   unsigned i;
-   for (i = 0; i < num_info; i++)
+   for (unsigned i = 0; i < num_info; i++)
    {
       if (!strcmp(info[i].ident, ident))
          return &info[i];
@@ -188,8 +187,7 @@ const struct retro_subsystem_info *libretro_find_subsystem_info(const struct ret
 
 const struct retro_controller_description *libretro_find_controller_description(const struct retro_controller_info *info, unsigned id)
 {
-   unsigned i;
-   for (i = 0; i < info->num_types; i++)
+   for (unsigned i = 0; i < info->num_types; i++)
    {
       if (info->types[i].id == id)
          return &info->types[i];
@@ -290,7 +288,6 @@ static void load_symbols(bool is_dummy)
 
 void libretro_get_current_core_pathname(char *name, size_t size)
 {
-   size_t i;
    if (size == 0)
       return;
 
@@ -306,7 +303,7 @@ void libretro_get_current_core_pathname(char *name, size_t size)
 
    name[strlen(id)] = '\0';
 
-   for (i = 0; id[i] != '\0'; i++)
+   for (size_t i = 0; id[i] != '\0'; i++)
    {
       char c = id[i];
       if (isspace(c) || isblank(c))
@@ -445,7 +442,6 @@ static void rarch_log_libretro(enum retro_log_level level, const char *fmt, ...)
 
 bool rarch_environment_cb(unsigned cmd, void *data)
 {
-   unsigned p, id;
    switch (cmd)
    {
       case RETRO_ENVIRONMENT_GET_OVERSCAN:
@@ -589,8 +585,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
       {
          memset(g_extern.system.input_desc_btn, 0, sizeof(g_extern.system.input_desc_btn));
 
-         const struct retro_input_descriptor *desc = data;
-         for (; desc->description; desc++)
+         for (const struct retro_input_descriptor *desc = data; desc->description; desc++)
          {
             if (desc->port >= MAX_PLAYERS)
                continue;
@@ -612,9 +607,9 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          };
 
          RARCH_LOG("Environ SET_INPUT_DESCRIPTORS:\n");
-         for (p = 0; p < MAX_PLAYERS; p++)
+         for (unsigned p = 0; p < MAX_PLAYERS; p++)
          {
-            for (id = 0; id < RARCH_FIRST_CUSTOM_BIND; id++)
+            for (unsigned id = 0; id < RARCH_FIRST_CUSTOM_BIND; id++)
             {
                const char *desc = g_extern.system.input_desc_btn[p][id];
                if (desc)
@@ -816,8 +811,8 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
       case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
       {
+         unsigned i;
          RARCH_LOG("Environ SET_SUBSYSTEM_INFO.\n");
-         unsigned i, j;
          const struct retro_subsystem_info *info = data;
          for (i = 0; info[i].ident; i++)
          {
@@ -825,7 +820,7 @@ bool rarch_environment_cb(unsigned cmd, void *data)
             RARCH_LOG("  Ident: %s\n", info[i].ident);
             RARCH_LOG("  ID: %u\n", info[i].id);
             RARCH_LOG("  Content:\n");
-            for (j = 0; j < info[i].num_roms; j++)
+            for (unsigned j = 0; j < info[i].num_roms; j++)
             {
                RARCH_LOG("    %s (%s)\n",
                      info[i].roms[j].desc, info[i].roms[j].required ? "required" : "optional");
@@ -844,13 +839,13 @@ bool rarch_environment_cb(unsigned cmd, void *data)
 
       case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
       {
+         unsigned i;
          RARCH_LOG("Environ SET_CONTROLLER_INFO.\n");
-         unsigned i, j;
          const struct retro_controller_info *info = data;
          for (i = 0; info[i].types; i++)
          {
             RARCH_LOG("Controller port: %u\n", i + 1);
-            for (j = 0; j < info[i].num_types; j++)
+            for (unsigned j = 0; j < info[i].num_types; j++)
                RARCH_LOG("   %s (ID: %u)\n", info[i].types[j].desc, info[i].types[j].id);
          }
 

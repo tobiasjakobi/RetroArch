@@ -229,9 +229,7 @@ static const struct cmd_action_map action_map[] = {
 
 static bool command_get_arg(const char *tok, const char **arg, unsigned *index)
 {
-   unsigned i;
-
-   for (i = 0; i < ARRAY_SIZE(map); i++)
+   for (unsigned i = 0; i < ARRAY_SIZE(map); i++)
    {
       if (strcmp(tok, map[i].str) == 0)
       {
@@ -245,7 +243,7 @@ static bool command_get_arg(const char *tok, const char **arg, unsigned *index)
       }
    }
 
-   for (i = 0; i < ARRAY_SIZE(action_map); i++)
+   for (unsigned i = 0; i < ARRAY_SIZE(action_map); i++)
    {
       const char *str = strstr(tok, action_map[i].str);
       if (str == tok)
@@ -327,7 +325,7 @@ static void network_cmd_poll(rarch_cmd_t *handle)
    if (!FD_ISSET(handle->net_fd, &fds))
       return;
 
-   for (;;)
+   while (true)
    {
       char buf[1024];
       ssize_t ret = recvfrom(handle->net_fd, buf, sizeof(buf) - 1, 0, NULL, NULL);
@@ -473,17 +471,15 @@ end:
 
 static bool verify_command(const char *cmd)
 {
-   unsigned i;
-
    if (command_get_arg(cmd, NULL, NULL))
       return true;
 
    RARCH_ERR("Command \"%s\" is not recognized by RetroArch.\n", cmd);
    RARCH_ERR("\tValid commands:\n");
-   for (i = 0; i < sizeof(map) / sizeof(map[0]); i++)
+   for (unsigned i = 0; i < sizeof(map) / sizeof(map[0]); i++)
       RARCH_ERR("\t\t%s\n", map[i].str);
 
-   for (i = 0; i < sizeof(action_map) / sizeof(action_map[0]); i++)
+   for (unsigned i = 0; i < sizeof(action_map) / sizeof(action_map[0]); i++)
       RARCH_ERR("\t\t%s %s\n", action_map[i].str, action_map[i].arg_desc);
 
    return false;

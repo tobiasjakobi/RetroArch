@@ -568,10 +568,9 @@ static void audio_sample_rewind(int16_t left, int16_t right)
 
 size_t audio_sample_batch_rewind(const int16_t *data, size_t frames)
 {
-   size_t i;
    size_t samples = frames << 1;
 
-   for (i = 0; i < samples; i++)
+   for (size_t i = 0; i < samples; i++)
       g_extern.audio_data.rewind_buf[--g_extern.audio_data.rewind_ptr] = data[i];
 
    return frames;
@@ -802,7 +801,6 @@ static void set_basename(const char *path)
 
 static void set_special_paths(char **argv, unsigned num_content)
 {
-   unsigned i;
    union string_list_elem_attr attr;
 
    // First content file is the significant one.
@@ -813,7 +811,7 @@ static void set_special_paths(char **argv, unsigned num_content)
 
    attr.i = 0;
 
-   for (i = 0; i < num_content; i++)
+   for (unsigned i = 0; i < num_content; i++)
       string_list_append(g_extern.subsystem_fullpaths, argv[i], attr);
 
    // We defer SRAM path updates until we can resolve it.
@@ -1224,8 +1222,7 @@ static void parse_input(int argc, char *argv[])
 
 static void init_controllers()
 {
-   unsigned i;
-   for (i = 0; i < MAX_PLAYERS; i++)
+   for (unsigned i = 0; i < MAX_PLAYERS; i++)
    {
       unsigned device = g_settings.input.libretro_device[i];
       const struct retro_controller_description *desc = NULL;
@@ -1264,12 +1261,10 @@ static void init_controllers()
 
 static inline bool load_save_files()
 {
-   unsigned i;
-
    if (!g_extern.savefiles || g_extern.sram_load_disable)
       return false;
 
-   for (i = 0; i < g_extern.savefiles->size; i++)
+   for (unsigned i = 0; i < g_extern.savefiles->size; i++)
       load_ram_file(g_extern.savefiles->elems[i].data, g_extern.savefiles->elems[i].attr.i);
     
     return true;
@@ -1277,12 +1272,10 @@ static inline bool load_save_files()
 
 static inline bool save_files()
 {
-   unsigned i;
-
    if (!g_extern.savefiles || !g_extern.use_sram)
       return false;
 
-   for (i = 0; i < g_extern.savefiles->size; i++)
+   for (unsigned i = 0; i < g_extern.savefiles->size; i++)
    {
       unsigned type    = g_extern.savefiles->elems[i].attr.i;
       const char *path = g_extern.savefiles->elems[i].data;
@@ -1534,8 +1527,6 @@ static void init_libretro_cbs()
 #if defined(HAVE_THREADS)
 static void init_autosave()
 {
-   unsigned i;
-
    if (g_settings.autosave_interval < 1 || !g_extern.savefiles)
       return;
 
@@ -1545,7 +1536,7 @@ static void init_autosave()
 
    g_extern.num_autosave = g_extern.savefiles->size;
 
-   for (i = 0; i < g_extern.savefiles->size; i++)
+   for (unsigned i = 0; i < g_extern.savefiles->size; i++)
    {
       const char *path = g_extern.savefiles->elems[i].data;
       unsigned    type = g_extern.savefiles->elems[i].attr.i;
@@ -1564,8 +1555,7 @@ static void init_autosave()
 
 static void deinit_autosave()
 {
-   unsigned i;
-   for (i = 0; i < g_extern.num_autosave; i++)
+   for (unsigned i = 0; i < g_extern.num_autosave; i++)
       autosave_free(g_extern.autosave[i]);
 
    if (g_extern.autosave)
@@ -1580,7 +1570,6 @@ static void set_savestate_auto_index()
 {
    struct string_list *dir_list;
    char state_dir[PATH_MAX], state_base[PATH_MAX];
-   size_t i;
    unsigned max_index = 0;
 
    if (!g_settings.savestate_auto_index)
@@ -1595,7 +1584,7 @@ static void set_savestate_auto_index()
    if (!(dir_list = dir_list_new(state_dir, NULL, false)))
       return;
 
-   for (i = 0; i < dir_list->size; i++)
+   for (size_t i = 0; i < dir_list->size; i++)
    {
       char elem_base[PATH_MAX];
       const char *dir_elem = dir_list->elems[i].data;

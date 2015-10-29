@@ -222,7 +222,6 @@ static const char *stock_fragment_core_blend =
 
 static GLint get_uniform(GLuint prog, const char *base)
 {
-   unsigned i;
    char buf[64];
 
    snprintf(buf, sizeof(buf), "%s%s", glsl_shader->prefix, base);
@@ -230,7 +229,7 @@ static GLint get_uniform(GLuint prog, const char *base)
    if (loc >= 0)
       return loc;
 
-   for (i = 0; i < ARRAY_SIZE(glsl_prefixes); i++)
+   for (unsigned i = 0; i < ARRAY_SIZE(glsl_prefixes); i++)
    {
       snprintf(buf, sizeof(buf), "%s%s", glsl_prefixes[i], base);
       GLint loc = glGetUniformLocation(prog, buf);
@@ -243,14 +242,13 @@ static GLint get_uniform(GLuint prog, const char *base)
 
 static GLint get_attrib(GLuint prog, const char *base)
 {
-   unsigned i;
    char buf[64];
    snprintf(buf, sizeof(buf), "%s%s", glsl_shader->prefix, base);
    GLint loc = glGetUniformLocation(prog, buf);
    if (loc >= 0)
       return loc;
 
-   for (i = 0; i < ARRAY_SIZE(glsl_prefixes); i++)
+   for (unsigned i = 0; i < ARRAY_SIZE(glsl_prefixes); i++)
    {
       snprintf(buf, sizeof(buf), "%s%s", glsl_prefixes[i], base);
       GLint loc = glGetAttribLocation(prog, buf);
@@ -423,8 +421,7 @@ static bool load_source_path(struct gfx_shader_pass *pass, const char *path)
 
 static bool compile_programs(GLuint *gl_prog)
 {
-   unsigned i;
-   for (i = 0; i < glsl_shader->passes; i++)
+   for (unsigned i = 0; i < glsl_shader->passes; i++)
    {
       struct gfx_shader_pass *pass = &glsl_shader->pass[i];
 
@@ -455,11 +452,10 @@ static bool compile_programs(GLuint *gl_prog)
 
 static void gl_glsl_reset_attrib()
 {
-   unsigned i;
    // Add sanity check that we did not overflow.
    rarch_assert(gl_attrib_index <= ARRAY_SIZE(gl_attribs));
 
-   for (i = 0; i < gl_attrib_index; i++)
+   for (unsigned i = 0; i < gl_attrib_index; i++)
       glDisableVertexAttribArray(gl_attribs[i]);
    gl_attrib_index = 0;
 }
@@ -484,12 +480,11 @@ static void gl_glsl_set_vbo(GLfloat **buffer, size_t *buffer_elems, const GLfloa
 static void gl_glsl_set_attribs(GLuint vbo, GLfloat **buffer, size_t *buffer_elems,
       const GLfloat *data, size_t elems, const struct glsl_attrib *attrs, size_t num_attrs)
 {
-   size_t i;
    glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
    gl_glsl_set_vbo(buffer, buffer_elems, data, elems);
 
-   for (i = 0; i < num_attrs; i++)
+   for (size_t i = 0; i < num_attrs; i++)
    {
       GLint loc = attrs[i].loc;
 
@@ -539,7 +534,6 @@ static void find_uniforms_frame(GLuint prog, struct shader_uniforms_frame *frame
 
 static void find_uniforms(unsigned pass, GLuint prog, struct shader_uniforms *uni)
 {
-   unsigned i;
    glUseProgram(prog);
 
    uni->mvp           = get_uniform(prog, "MVPMatrix");
@@ -555,7 +549,7 @@ static void find_uniforms(unsigned pass, GLuint prog, struct shader_uniforms *un
    uni->frame_count     = get_uniform(prog, "FrameCount");
    uni->frame_direction = get_uniform(prog, "FrameDirection");
 
-   for (i = 0; i < glsl_shader->luts; i++)
+   for (unsigned i = 0; i < glsl_shader->luts; i++)
       uni->lut_texture[i] = glGetUniformLocation(prog, glsl_shader->lut[i].id);
 
    char frame_base[64];
@@ -567,7 +561,7 @@ static void find_uniforms(unsigned pass, GLuint prog, struct shader_uniforms *un
       find_uniforms_frame(prog, &uni->orig, frame_base);
    }
 
-   for (i = 0; i + 1 < pass; i++)
+   for (unsigned i = 0; i + 1 < pass; i++)
    {
       snprintf(frame_base, sizeof(frame_base), "Pass%u", i + 1);
       clear_uniforms_frame(&uni->pass[i]);
@@ -581,7 +575,7 @@ static void find_uniforms(unsigned pass, GLuint prog, struct shader_uniforms *un
 
    clear_uniforms_frame(&uni->prev[0]);
    find_uniforms_frame(prog, &uni->prev[0], "Prev");
-   for (i = 1; i < PREV_TEXTURES; i++)
+   for (unsigned i = 1; i < PREV_TEXTURES; i++)
    {
       snprintf(frame_base, sizeof(frame_base), "Prev%u", i);
       clear_uniforms_frame(&uni->prev[i]);
@@ -593,11 +587,10 @@ static void find_uniforms(unsigned pass, GLuint prog, struct shader_uniforms *un
 
 static void gl_glsl_free_shader()
 {
-   unsigned i;
    if (!glsl_shader)
       return;
 
-   for (i = 0; i < glsl_shader->passes; i++)
+   for (unsigned i = 0; i < glsl_shader->passes; i++)
    {
       free(glsl_shader->pass[i].source.string.vertex);
       free(glsl_shader->pass[i].source.string.fragment);
@@ -610,9 +603,8 @@ static void gl_glsl_free_shader()
 
 static void gl_glsl_deinit()
 {
-   unsigned i;
    glUseProgram(0);
-   for (i = 0; i < GFX_MAX_SHADERS; i++)
+   for (unsigned i = 0; i < GFX_MAX_SHADERS; i++)
    {
       if (gl_program[i] == 0 || (i && gl_program[i] == gl_program[0]))
          continue;
@@ -636,7 +628,7 @@ static void gl_glsl_deinit()
 
    gl_glsl_reset_attrib();
 
-   for (i = 0; i < GFX_MAX_SHADERS; i++)
+   for (unsigned i = 0; i < GFX_MAX_SHADERS; i++)
    {
       if (glsl_vbo[i].vbo_primary)
          glDeleteBuffers(1, &glsl_vbo[i].vbo_primary);
@@ -651,7 +643,6 @@ static void gl_glsl_deinit()
 
 static bool gl_glsl_init(void *data, const char *path)
 {
-   unsigned i;
    (void)data;
 #ifndef HAVE_OPENGLES2
    RARCH_LOG("Checking GLSL shader support ...\n");
@@ -754,7 +745,7 @@ static bool gl_glsl_init(void *data, const char *path)
    // Find all aliases we use in our GLSLP and add #defines for them so
    // that a shader can choose a fallback if we are not using a preset.
    *glsl_alias_define = '\0';
-   for (i = 0; i < glsl_shader->passes; i++)
+   for (unsigned i = 0; i < glsl_shader->passes; i++)
    {
       if (*glsl_shader->pass[i].alias)
       {
@@ -779,7 +770,7 @@ static bool gl_glsl_init(void *data, const char *path)
       goto error;
    }
 
-   for (i = 0; i <= glsl_shader->passes; i++)
+   for (unsigned i = 0; i <= glsl_shader->passes; i++)
       find_uniforms(i, gl_program[i], &gl_uniforms[i]);
 
 #ifdef GLSL_DEBUG
@@ -823,7 +814,7 @@ static bool gl_glsl_init(void *data, const char *path)
 
    gl_glsl_reset_attrib();
 
-   for (i = 0; i < GFX_MAX_SHADERS; i++)
+   for (unsigned i = 0; i < GFX_MAX_SHADERS; i++)
    {
       glGenBuffers(1, &glsl_vbo[i].vbo_primary);
       glGenBuffers(1, &glsl_vbo[i].vbo_secondary);
@@ -850,7 +841,6 @@ static void gl_glsl_set_params(void *data, unsigned width, unsigned height,
       return;
 
    GLfloat buffer[512];
-   unsigned i;
    size_t size = 0;
    struct glsl_attrib attribs[32];
    size_t attribs_size = 0;
@@ -884,7 +874,7 @@ static void gl_glsl_set_params(void *data, unsigned width, unsigned height,
 
    unsigned texunit = 1;
 
-   for (i = 0; i < glsl_shader->luts; i++)
+   for (unsigned i = 0; i < glsl_shader->luts; i++)
    {
       if (uni->lut_texture[i] >= 0)
       {
@@ -928,7 +918,7 @@ static void gl_glsl_set_params(void *data, unsigned width, unsigned height,
       }
 
       // Bind FBO textures.
-      for (i = 0; i < fbo_info_cnt; i++)
+      for (unsigned i = 0; i < fbo_info_cnt; i++)
       {
          if (uni->pass[i].texture)
          {
@@ -959,7 +949,7 @@ static void gl_glsl_set_params(void *data, unsigned width, unsigned height,
    }
 
    // Set previous textures. Only bind if they're actually used.
-   for (i = 0; i < PREV_TEXTURES; i++)
+   for (unsigned i = 0; i < PREV_TEXTURES; i++)
    {
       if (uni->prev[i].texture >= 0)
       {
@@ -1000,7 +990,7 @@ static void gl_glsl_set_params(void *data, unsigned width, unsigned height,
    glActiveTexture(GL_TEXTURE0);
 
    // #pragma parameters
-   for (i = 0; i < glsl_shader->num_parameters; i++)
+   for (unsigned i = 0; i < glsl_shader->num_parameters; i++)
    {
       int location = glGetUniformLocation(gl_program[active_index], glsl_shader->parameters[i].id);
       glUniform1f(location, glsl_shader->parameters[i].current);
@@ -1015,7 +1005,7 @@ static void gl_glsl_set_params(void *data, unsigned width, unsigned height,
       if (active_index == 1)
          cnt = state_get_uniform(gl_state_tracker, info, GFX_MAX_VARIABLES, frame_count);
 
-      for (i = 0; i < cnt; i++)
+      for (unsigned i = 0; i < cnt; i++)
       {
          int location = glGetUniformLocation(gl_program[active_index], info[i].id);
          glUniform1f(location, info[i].value);
@@ -1167,13 +1157,12 @@ static void gl_glsl_shader_scale(unsigned index, struct gfx_fbo_scale *scale)
 
 static unsigned gl_glsl_get_prev_textures()
 {
-   unsigned i, j;
    if (!glsl_enable)
       return 0;
 
    unsigned max_prev = 0;
-   for (i = 1; i <= glsl_shader->passes; i++)
-      for (j = 0; j < PREV_TEXTURES; j++)
+   for (unsigned i = 1; i <= glsl_shader->passes; i++)
+      for (unsigned j = 0; j < PREV_TEXTURES; j++)
          if (gl_uniforms[i].prev[j].texture >= 0)
             max_prev = max(j + 1, max_prev);
 

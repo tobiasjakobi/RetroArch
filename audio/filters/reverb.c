@@ -125,14 +125,13 @@ struct revmodel
 
 static float revmodel_process(struct revmodel *rev, float in)
 {
-   int i;
    float mono_out = 0.0f;
    float mono_in = in;
    float input = mono_in * rev->gain;
-   for (i = 0; i < numcombs; i++)
+   for (unsigned i = 0; i < numcombs; i++)
       mono_out += comb_process(&rev->combL[i], input);
 
-   for (i = 0; i < numallpasses; i++)
+   for (unsigned i = 0; i < numallpasses; i++)
       mono_out = allpass_process(&rev->allpassL[i], mono_out);
 
    return mono_in * rev->dry + mono_out * rev->wet1;
@@ -140,7 +139,6 @@ static float revmodel_process(struct revmodel *rev, float in)
 
 static void revmodel_update(struct revmodel *rev)
 {
-   int i;
    rev->wet1 = rev->wet * (rev->width / 2.0f + 0.5f);
 
    if (rev->mode >= freezemode)
@@ -156,7 +154,7 @@ static void revmodel_update(struct revmodel *rev)
       rev->gain = fixedgain;
    }
 
-   for (i = 0; i < numcombs; i++)
+   for (unsigned i = 0; i < numcombs; i++)
    {
       rev->combL[i].feedback = rev->roomsize1;
       rev->combL[i].damp1 = rev->damp1;
@@ -242,14 +240,13 @@ static void reverb_free(void *data)
 static void reverb_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
-   unsigned i;
    struct reverb_data *rev = data;
 
    output->samples = input->samples;
    output->frames  = input->frames;
    float *out = output->samples;
 
-   for (i = 0; i < input->frames; i++, out += 2)
+   for (unsigned i = 0; i < input->frames; i++, out += 2)
    {
       float in[2] = { out[0], out[1] };
 

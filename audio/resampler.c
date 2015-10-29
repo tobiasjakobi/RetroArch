@@ -32,8 +32,7 @@ static const rarch_resampler_t *backends[] = {
 
 static int find_resampler_driver_index(const char *driver)
 {
-   unsigned i;
-   for (i = 0; backends[i]; i++)
+   for (unsigned i = 0; backends[i]; i++)
       if (strcasecmp(driver, backends[i]->ident) == 0)
          return i;
    return -1;
@@ -50,10 +49,9 @@ static const rarch_resampler_t *find_resampler_driver(const char *ident)
       return backends[i];
    else
    {
-      unsigned d;
       RARCH_ERR("Couldn't find any resampler driver named \"%s\"\n", ident);
       RARCH_LOG_OUTPUT("Available resampler drivers are:\n");
-      for (d = 0; backends[d]; d++)
+      for (unsigned d = 0; backends[d]; d++)
          RARCH_LOG_OUTPUT("\t%s\n", backends[d]->ident);
       RARCH_WARN("Going to default to first resampler driver ...\n");
       return backends[0];

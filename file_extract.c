@@ -179,10 +179,9 @@ const struct zlib_file_backend *zlib_get_default_file_backend()
 
 static uint32_t read_le(const uint8_t *data, unsigned size)
 {
-   unsigned i;
    uint32_t val = 0;
    size *= 8;
-   for (i = 0; i < size; i += 8)
+   for (unsigned i = 0; i < size; i += 8)
       val |= *data++ << i;
 
    return val;
@@ -265,7 +264,7 @@ bool zlib_parse_file(const char *file, zlib_file_cb file_cb, void *userdata)
 
    directory = data + read_le(footer + 16, 4);
 
-   for (;;)
+   while (true)
    {
       uint32_t signature = read_le(directory + 0, 4);
       if (signature != 0x02014b50)

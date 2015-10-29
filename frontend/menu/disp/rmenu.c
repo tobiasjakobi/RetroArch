@@ -51,7 +51,7 @@ static void rmenu_render_messagebox(const char *message)
 {
    struct font_params font_parms;
 
-   size_t i, j;
+   size_t j;
 
    if (!message || !*message)
       return;
@@ -66,7 +66,7 @@ static void rmenu_render_messagebox(const char *message)
    }
 
    j = 0;
-   for (i = 0; i < list->size; i++, j++)
+   for (size_t i = 0; i < list->size; i++, j++)
    {
       char *msg = list->elems[i].data;
       unsigned msglen = strlen(msg);
@@ -280,11 +280,11 @@ static void rmenu_render()
    if (driver.video_data && driver.video_poke && driver.video_poke->set_osd_msg)
       driver.video_poke->set_osd_msg(driver.video_data, title_msg, &font_parms);
 
-   size_t i, j;
+   size_t j;
 
    j = 0;
 
-   for (i = begin; i < end; i++, j++)
+   for (size_t i = begin; i < end; i++, j++)
    {
       const char *path = 0;
       unsigned type = 0;

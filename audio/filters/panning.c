@@ -32,7 +32,6 @@ static void panning_free(void *data)
 static void panning_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
-   unsigned i;
    struct panning_data *pan = data;
 
    output->samples = input->samples;
@@ -40,7 +39,7 @@ static void panning_process(void *data, struct dspfilter_output *output,
 
    float *out = output->samples;
 
-   for (i = 0; i < input->frames; i++, out += 2)
+   for (unsigned i = 0; i < input->frames; i++, out += 2)
    {
       float left = out[0];
       float right = out[1];

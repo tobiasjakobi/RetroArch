@@ -26,17 +26,15 @@
 void audio_convert_s16_to_float_C(float *out,
       const int16_t *in, size_t samples, float gain)
 {
-   size_t i;
    gain = gain / 0x8000;
-   for (i = 0; i < samples; i++)
+   for (size_t i = 0; i < samples; i++)
       out[i] = (float)in[i] * gain; 
 }
 
 void audio_convert_float_to_s16_C(int16_t *out,
       const float *in, size_t samples)
 {
-   size_t i;
-   for (i = 0; i < samples; i++)
+   for (size_t i = 0; i < samples; i++)
    {
       int32_t val = (int32_t)(in[i] * 0x8000);
       out[i] = (val > 0x7FFF) ? 0x7FFF : (val < -0x8000 ? -0x8000 : (int16_t)val);
@@ -49,8 +47,7 @@ void audio_convert_s16_to_float_SSE2(float *out,
 {
    float fgain = gain / UINT32_C(0x80000000);
    __m128 factor = _mm_set1_ps(fgain);
-   size_t i;
-   for (i = 0; i + 8 <= samples; i += 8, in += 8, out += 8)
+   for (size_t i = 0; i + 8 <= samples; i += 8, in += 8, out += 8)
    {
       __m128i input = _mm_loadu_si128((const __m128i *)in);
       __m128i regs[2] = {
@@ -74,8 +71,7 @@ void audio_convert_float_to_s16_SSE2(int16_t *out,
       const float *in, size_t samples)
 {
    __m128 factor = _mm_set1_ps((float)0x8000);
-   size_t i;
-   for (i = 0; i + 8 <= samples; i += 8, in += 8, out += 8)
+   for (size_t i = 0; i + 8 <= samples; i += 8, in += 8, out += 8)
    {
       __m128 input[2] = { _mm_loadu_ps(in + 0), _mm_loadu_ps(in + 4) };
       __m128 res[2] = { _mm_mul_ps(input[0], factor), _mm_mul_ps(input[1], factor) };

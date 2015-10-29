@@ -54,7 +54,7 @@ static inline struct gfx_shader *shader_manager_get_current_shader(menu_handle_t
 
 static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
 {
-   unsigned i, last;
+   unsigned last;
    char tmp[256];
 
    switch (menu_type)
@@ -67,7 +67,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
 
          struct gfx_shader *shader = shader_manager_get_current_shader(menu, menu_type);
          if (shader)
-            for (i = 0; i < shader->num_parameters; i++)
+            for (unsigned i = 0; i < shader->num_parameters; i++)
                file_list_push(menu->selection_buf, shader->parameters[i].desc, "", MENU_SETTINGS_SHADER_PARAMETER_0 + i, 0);
          menu->parameter_shader = shader;
          break;
@@ -94,7 +94,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          file_list_push(menu->selection_buf, "Shader Passes", "",
                MENU_SETTINGS_SHADER_PASSES, 0);
 
-         for (i = 0; i < shader->passes; i++)
+         for (unsigned i = 0; i < shader->passes; i++)
          {
             char buf[64];
 
@@ -176,10 +176,9 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
 
          if (g_extern.system.core_options)
          {
-            size_t i, opts;
+            const size_t opts = core_option_size(g_extern.system.core_options);
 
-            opts = core_option_size(g_extern.system.core_options);
-            for (i = 0; i < opts; i++)
+            for (size_t i = 0; i < opts; i++)
                file_list_push(menu->selection_buf,
                      core_option_get_desc(g_extern.system.core_options, i), "", MENU_SETTINGS_CORE_OPTION_START + i, 0);
          }
@@ -224,7 +223,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
                         g_settings.system_directory);
 
                   file_list_push(menu->selection_buf, "Firmware: ", "", MENU_SETTINGS_CORE_INFO_NONE, 0);
-                  for (i = 0; i < info->firmware_count; i++)
+                  for (unsigned i = 0; i < info->firmware_count; i++)
                   {
                      if (info->firmware[i].desc)
                      {
@@ -245,7 +244,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
                   snprintf(tmp, sizeof(tmp), "Core notes: ");
                   file_list_push(menu->selection_buf, tmp, "", MENU_SETTINGS_CORE_INFO_NONE, 0);
 
-                  for (i = 0; i < info->note_list->size; i++)
+                  for (unsigned i = 0; i < info->note_list->size; i++)
                   {
                      snprintf(tmp, sizeof(tmp), " %s", info->note_list->elems[i].data);
                      file_list_push(menu->selection_buf, tmp, "", MENU_SETTINGS_CORE_INFO_NONE, 0);
@@ -335,7 +334,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          file_list_push(menu->selection_buf, "Configure All (RetroPad)", "", MENU_SETTINGS_CUSTOM_BIND_ALL, 0);
          file_list_push(menu->selection_buf, "Default All (RetroPad)", "", MENU_SETTINGS_CUSTOM_BIND_DEFAULT_ALL, 0);
          last = (driver.input && driver.input->set_keybinds && !driver.input->get_joypad_driver) ? (MENU_SETTINGS_BIND_BEGIN + RETRO_DEVICE_ID_JOYPAD_R3) : MENU_SETTINGS_BIND_ALL_LAST;
-         for (i = MENU_SETTINGS_BIND_BEGIN; i <= last; i++)
+         for (unsigned i = MENU_SETTINGS_BIND_BEGIN; i <= last; i++)
             file_list_push(menu->selection_buf, input_config_bind_map[i - MENU_SETTINGS_BIND_BEGIN].desc, "", i, 0);
          break;
       case MENU_SETTINGS_AUDIO_OPTIONS:
@@ -373,7 +372,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
             if (!counters || num == 0)
                break;
 
-            for (i = 0; i < num; i++)
+            for (unsigned i = 0; i < num; i++)
                if (counters[i] && counters[i]->ident)
                   file_list_push(menu->selection_buf, counters[i]->ident, "", MENU_SETTINGS_LIBRETRO_PERF_COUNTERS_BEGIN + i, 0);
          }
@@ -387,7 +386,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
             if (!counters || num == 0)
                break;
 
-            for (i = 0; i < num; i++)
+            for (unsigned i = 0; i < num; i++)
                if (counters[i] && counters[i]->ident)
                   file_list_push(menu->selection_buf, counters[i]->ident, "", MENU_SETTINGS_PERF_COUNTERS_BEGIN + i, 0);
          }
@@ -1137,7 +1136,6 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
 
 static int menu_start_screen_iterate(unsigned action)
 {
-   unsigned i;
    char msg[1024];
 
    if (!driver.menu)
@@ -1157,7 +1155,7 @@ static int menu_start_screen_iterate(unsigned action)
    };
    char desc[ARRAY_SIZE(binds)][64];
 
-   for (i = 0; i < ARRAY_SIZE(binds); i++)
+   for (unsigned i = 0; i < ARRAY_SIZE(binds); i++)
    {
       if (driver.input && driver.input->set_keybinds)
       {
@@ -1640,7 +1638,7 @@ static int menu_viewport_iterate(unsigned action, rarch_setting_t *setting)
 
 static void menu_parse_and_resolve(unsigned menu_type)
 {
-   size_t i, list_size;
+   size_t list_size;
    file_list_t *list = NULL;
    rarch_setting_t *setting = NULL;
    const core_info_t *info = NULL;
@@ -1661,7 +1659,7 @@ static void menu_parse_and_resolve(unsigned menu_type)
          /* History parse */
          list_size = content_history_size(g_extern.history);
 
-         for (i = 0; i < list_size; i++)
+         for (size_t i = 0; i < list_size; i++)
          {
             char fill_buf[PATH_MAX];
             const char *path, *core_path, *core_name = NULL;
@@ -1734,7 +1732,7 @@ static void menu_parse_and_resolve(unsigned menu_type)
                file_list_push(driver.menu->selection_buf, "<Use this directory>", "", MENU_FILE_USE_DIRECTORY, 0);
 
             list_size = list->size;
-            for (i = 0; i < list_size; i++)
+            for (size_t i = 0; i < list_size; i++)
             {
                bool is_dir = list->elems[i].attr.b;
 
@@ -1767,7 +1765,7 @@ static void menu_parse_and_resolve(unsigned menu_type)
          list = driver.menu->selection_buf;
          file_list_get_last(driver.menu->menu_stack, &dir, &menu_type, setting);
          list_size = file_list_get_size(list);
-         for (i = 0; i < list_size; i++)
+         for (size_t i = 0; i < list_size; i++)
          {
             char core_path[PATH_MAX], display_name[256];
             const char *path = NULL;
@@ -1788,7 +1786,7 @@ static void menu_parse_and_resolve(unsigned menu_type)
          break;
       case MENU_SETTINGS_DEFERRED_CORE:
          core_info_list_get_supported_cores(driver.menu->core_info, driver.menu->deferred_path, &info, &list_size);
-         for (i = 0; i < list_size; i++)
+         for (size_t i = 0; i < list_size; i++)
          {
             file_list_push(driver.menu->selection_buf, info[i].path, "", MENU_FILE_PLAIN, 0);
             file_list_set_alt_at_offset(driver.menu->selection_buf, i, info[i].display_name);
@@ -2638,7 +2636,7 @@ static void menu_common_shader_manager_save_preset(const char *basename, bool ap
 {
 #ifdef HAVE_SHADER_MANAGER
    char buffer[PATH_MAX], config_directory[PATH_MAX], cgp_path[PATH_MAX];
-   unsigned d, type;
+   unsigned type;
    config_file_t *conf;
    const char *conf_path = NULL;
    bool ret = false;
@@ -2688,7 +2686,7 @@ static void menu_common_shader_manager_save_preset(const char *basename, bool ap
       return;
    gfx_shader_write_conf_cgp(conf, driver.menu->shader);
 
-   for (d = 0; d < ARRAY_SIZE(dirs); d++)
+   for (unsigned d = 0; d < ARRAY_SIZE(dirs); d++)
    {
       if (!*dirs[d])
          continue;
@@ -2719,7 +2717,6 @@ static unsigned menu_common_shader_manager_get_type(const struct gfx_shader *sha
 {
 #ifdef HAVE_SHADER_MANAGER
    // All shader types must be the same, or we cannot use it.
-   unsigned i;
    unsigned type = RARCH_SHADER_NONE;
 
    if (!shader)
@@ -2728,7 +2725,7 @@ static unsigned menu_common_shader_manager_get_type(const struct gfx_shader *sha
       return type;
    }
 
-   for (i = 0; i < shader->passes; i++)
+   for (unsigned i = 0; i < shader->passes; i++)
    {
       enum rarch_shader_type pass_type = gfx_shader_parse_type(shader->pass[i].source.path,
             RARCH_SHADER_NONE);
@@ -3238,7 +3235,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             break;
          case MENU_SETTINGS_BIND_DEVICE_TYPE:
             {
-               unsigned current_device, current_index, i, devices[128];
+               unsigned current_device, current_index, devices[128];
                const struct retro_controller_info *desc;
                unsigned types = 0;
 
@@ -3251,7 +3248,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
                desc = port < g_extern.system.num_ports ? &g_extern.system.ports[port] : NULL;
                if (desc)
                {
-                  for (i = 0; i < desc->num_types; i++)
+                  for (unsigned i = 0; i < desc->num_types; i++)
                   {
                      unsigned id = desc->types[i].id;
                      if (types < ARRAY_SIZE(devices) && id != RETRO_DEVICE_NONE && id != RETRO_DEVICE_JOYPAD)
@@ -3261,7 +3258,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
 
                current_device = g_settings.input.libretro_device[port];
                current_index = 0;
-               for (i = 0; i < types; i++)
+               for (unsigned i = 0; i < types; i++)
                {
                   if (current_device == devices[i])
                   {
@@ -3325,14 +3322,13 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
          case MENU_SETTINGS_CUSTOM_BIND_DEFAULT_ALL:
             if (action == MENU_ACTION_OK)
             {
-               unsigned i;
                struct retro_keybind *target = &g_settings.input.binds[port][0];
                const struct retro_keybind *def_binds = port ? retro_keybinds_rest : retro_keybinds_1;
 
                driver.menu->binds.begin = MENU_SETTINGS_BIND_BEGIN;
                driver.menu->binds.last = MENU_SETTINGS_BIND_LAST;
 
-               for (i = MENU_SETTINGS_BIND_BEGIN; i <= MENU_SETTINGS_BIND_LAST; i++, target++)
+               for (unsigned i = MENU_SETTINGS_BIND_BEGIN; i <= MENU_SETTINGS_BIND_LAST; i++, target++)
                {
                   if (driver.menu->bind_mode_keyboard)
                      target->key = def_binds[i - MENU_SETTINGS_BIND_BEGIN].key;

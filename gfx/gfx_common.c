@@ -153,20 +153,20 @@ char rotation_lut[4][32] =
 
 void gfx_set_square_pixel_viewport(unsigned width, unsigned height)
 {
-   unsigned len, highest, i;
+   unsigned len, highest;
    if (width == 0 || height == 0)
       return;
 
    len = min(width, height);
    highest = 1;
-   for (i = 1; i < len; i++)
+   for (unsigned i = 1; i < len; i++)
    {
       if ((width % i) == 0 && (height % i) == 0)
          highest = i;
    }
 
-   unsigned aspect_x = width / highest;
-   unsigned aspect_y = height / highest;
+   const unsigned aspect_x = width / highest;
+   const unsigned aspect_y = height / highest;
 
    snprintf(aspectratio_lut[ASPECT_RATIO_SQUARE].name,
          sizeof(aspectratio_lut[ASPECT_RATIO_SQUARE].name),

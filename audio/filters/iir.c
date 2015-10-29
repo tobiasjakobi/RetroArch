@@ -85,7 +85,7 @@ static void iir_process(void *data, struct dspfilter_output *output,
    float yn1_r = iir->r.yn1;
    float yn2_r = iir->r.yn2;
 
-   for (i = 0; i < input->frames; i++, out += 2)
+   for (unsigned i = 0; i < input->frames; i++, out += 2)
    {
       float in_l = out[0];
       float in_r = out[1];
@@ -139,12 +139,11 @@ static enum IIRFilter str_to_type(const char *str)
 static void make_poly_from_roots(
       const double *roots, unsigned num_roots, float *poly)
 {
-   unsigned i, j;
    poly[0] = 1;
    poly[1] = -roots[0];
    memset(poly + 2, 0, (num_roots + 1 - 2) * sizeof(*poly));
-   for (i = 1; i < num_roots; i++)
-      for (j = num_roots; j > 0; j--)
+   for (unsigned i = 1; i < num_roots; i++)
+      for (unsigned j = num_roots; j > 0; j--)
          poly[j] -= poly[j - 1] * roots[i];
 }
 

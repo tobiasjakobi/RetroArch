@@ -85,10 +85,10 @@ static inline bool gl_query_extension(gl_t *gl, const char *ext)
    if (gl->core_context)
    {
 #ifdef GL_NUM_EXTENSIONS
-      GLint i, exts;
+      GLint exts;
       exts = 0;
       glGetIntegerv(GL_NUM_EXTENSIONS, &exts);
-      for (i = 0; i < exts; i++)
+      for (GLint i = 0; i < exts; i++)
       {
          const char *str = (const char*)glGetStringi(GL_EXTENSIONS, i);
          if (str && strstr(str, ext))
@@ -336,7 +336,6 @@ static void gl_shader_scale(gl_t *gl, unsigned index, struct gfx_fbo_scale *scal
 static void gl_compute_fbo_geometry(gl_t *gl, unsigned width, unsigned height,
       unsigned vp_width, unsigned vp_height)
 {
-   int i;
    unsigned last_width, last_height, last_max_width, last_max_height;
    last_width = width;
    last_height = height;
@@ -348,7 +347,7 @@ static void gl_compute_fbo_geometry(gl_t *gl, unsigned width, unsigned height,
    bool size_modified = false;
 
    // Calculate viewports for FBOs.
-   for (i = 0; i < gl->fbo_pass; i++)
+   for (int i = 0; i < gl->fbo_pass; i++)
    {
       switch (gl->fbo_scale[i].type_x)
       {
@@ -437,7 +436,6 @@ static inline GLenum min_filter_to_mag(GLenum type)
 
 static void gl_create_fbo_textures(gl_t *gl)
 {
-   int i;
    if (!gl)
       return;
 
@@ -446,7 +444,7 @@ static void gl_create_fbo_textures(gl_t *gl)
    GLuint base_filt = g_settings.video.smooth ? GL_LINEAR : GL_NEAREST;
    GLuint base_mip_filt = g_settings.video.smooth ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST;
 
-   for (i = 0; i < gl->fbo_pass; i++)
+   for (int i = 0; i < gl->fbo_pass; i++)
    {
       glBindTexture(GL_TEXTURE_2D, gl->fbo_texture[i]);
 
@@ -535,13 +533,12 @@ static void gl_create_fbo_textures(gl_t *gl)
 
 static bool gl_create_fbo_targets(gl_t *gl)
 {
-   int i;
    if (!gl)
       return false;
 
    glBindTexture(GL_TEXTURE_2D, 0);
    glGenFramebuffers(gl->fbo_pass, gl->fbo);
-   for (i = 0; i < gl->fbo_pass; i++)
+   for (int i = 0; i < gl->fbo_pass; i++)
    {
       glBindFramebuffer(RARCH_GL_FRAMEBUFFER, gl->fbo[i]);
       glFramebufferTexture2D(RARCH_GL_FRAMEBUFFER, RARCH_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gl->fbo_texture[i], 0);
@@ -574,8 +571,6 @@ void gl_deinit_fbo(gl_t *gl)
 
 void gl_init_fbo(gl_t *gl, unsigned width, unsigned height)
 {
-   int i;
-
    if (!gl || gl_shader_num(gl) == 0)
       return;
 
@@ -607,7 +602,7 @@ void gl_init_fbo(gl_t *gl, unsigned width, unsigned height)
 
    gl->fbo_scale[0] = scale;
 
-   for (i = 1; i < gl->fbo_pass; i++)
+   for (int i = 1; i < gl->fbo_pass; i++)
    {
       gl_shader_scale(gl, i + 1, &gl->fbo_scale[i]);
 
@@ -621,7 +616,7 @@ void gl_init_fbo(gl_t *gl, unsigned width, unsigned height)
 
    gl_compute_fbo_geometry(gl, width, height, gl->win_width, gl->win_height);
 
-   for (i = 0; i < gl->fbo_pass; i++)
+   for (int i = 0; i < gl->fbo_pass; i++)
    {
       gl->fbo_rect[i].width  = next_pow2(gl->fbo_rect[i].img_width);
       gl->fbo_rect[i].height = next_pow2(gl->fbo_rect[i].img_height);
@@ -661,7 +656,6 @@ static bool gl_init_hw_render(gl_t *gl, unsigned width, unsigned height)
    // FBOs are "abstract" objects and are not shared.
    context_bind_hw_render(gl, true);
 
-   unsigned i;
    RARCH_LOG("[GL]: Initializing HW render (%u x %u).\n", width, height);
    GLint max_fbo_size = 0;
    GLint max_renderbuffer_size = 0;
@@ -689,7 +683,7 @@ static bool gl_init_hw_render(gl_t *gl, unsigned width, unsigned height)
       gl->hw_render_depth_init = true;
    }
 
-   for (i = 0; i < gl->textures; i++)
+   for (unsigned i = 0; i < gl->textures; i++)
    {
       glBindFramebuffer(RARCH_GL_FRAMEBUFFER, gl->hw_render_fbo[i]);
       glFramebufferTexture2D(RARCH_GL_FRAMEBUFFER, RARCH_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gl->texture[i], 0);
@@ -886,12 +880,11 @@ static inline void gl_start_frame_fbo(gl_t *gl)
 
 static void gl_check_fbo_dimensions(gl_t *gl)
 {
-   int i;
    if (!gl)
       return;
 
    // Check if we have to recreate our FBO textures.
-   for (i = 0; i < gl->fbo_pass; i++)
+   for (int i = 0; i < gl->fbo_pass; i++)
    {
       // Check proactively since we might suddently get sizes of tex_w width or tex_h height.
       if (gl->fbo_rect[i].max_img_width > gl->fbo_rect[i].width ||
@@ -924,7 +917,6 @@ static void gl_check_fbo_dimensions(gl_t *gl)
 
 static void gl_frame_fbo(gl_t *gl, const struct gl_tex_info *tex_info)
 {
-   int i;
    GLfloat fbo_tex_coords[8] = {0.0f};
 
    if (!gl)
@@ -942,7 +934,7 @@ static void gl_frame_fbo(gl_t *gl, const struct gl_tex_info *tex_info)
    unsigned fbo_tex_info_cnt = 0;
 
    // Calculate viewports, texture coordinates etc, and render all passes from FBOs, to another FBO.
-   for (i = 1; i < gl->fbo_pass; i++)
+   for (int i = 1; i < gl->fbo_pass; i++)
    {
       prev_rect = &gl->fbo_rect[i - 1];
       rect = &gl->fbo_rect[i];
@@ -1130,14 +1122,13 @@ static inline void gl_convert_frame_argb8888_abgr8888(gl_t *gl, void *output, co
 
 static void gl_init_textures_data(gl_t *gl)
 {
-   unsigned i;
-   for (i = 0; i < gl->textures; i++)
+   for (unsigned i = 0; i < gl->textures; i++)
    {
       gl->last_width[i]  = gl->tex_w;
       gl->last_height[i] = gl->tex_h;
    }
 
-   for (i = 0; i < gl->textures; i++)
+   for (unsigned i = 0; i < gl->textures; i++)
    {
       gl->prev_info[i].tex           = gl->texture[0];
       gl->prev_info[i].input_size[0] = gl->tex_w;
@@ -1150,7 +1141,6 @@ static void gl_init_textures_data(gl_t *gl)
 
 static void gl_init_textures(gl_t *gl, const video_info_t *video)
 {
-   unsigned i;
 #if defined(HAVE_EGL) && defined(HAVE_OPENGLES2)
    // Use regular textures if we use HW render.
    gl->egl_images = !gl->hw_render_use && check_eglimage_proc() &&
@@ -1187,7 +1177,7 @@ static void gl_init_textures(gl_t *gl, const video_info_t *video)
 
    glGenTextures(gl->textures, gl->texture);
 
-   for (i = 0; i < gl->textures; i++)
+   for (unsigned i = 0; i < gl->textures; i++)
    {
       glBindTexture(GL_TEXTURE_2D, gl->texture[i]);
 
@@ -1258,13 +1248,12 @@ static inline void gl_copy_frame(gl_t *gl, const void *frame, unsigned width, un
          }
          else // Slower path.
          {
-            unsigned h;
             const unsigned line_bytes = width * gl->base_size;
 
             uint8_t *dst = (uint8_t*)gl->conv_buffer; // This buffer is preallocated for this purpose.
             const uint8_t *src = (const uint8_t*)frame;
 
-            for (h = 0; h < height; h++, src += pitch, dst += line_bytes)
+            for (unsigned h = 0; h < height; h++, src += pitch, dst += line_bytes)
                memcpy(dst, src, line_bytes);
 
             glTexSubImage2D(GL_TEXTURE_2D,
@@ -1607,8 +1596,7 @@ static void gl_free(void *data)
 #ifdef HAVE_GL_SYNC
    if (gl->have_sync)
    {
-      unsigned i;
-      for (i = 0; i < gl->fence_count; i++)
+      for (unsigned i = 0; i < gl->fence_count; i++)
       {
          glClientWaitSync(gl->fences[i], GL_SYNC_FLUSH_COMMANDS_BIT, 1000000000);
          glDeleteSync(gl->fences[i]);
@@ -1805,7 +1793,6 @@ static inline void gl_set_texture_fmts(gl_t *gl, bool rgb32)
 #ifdef HAVE_GL_ASYNC_READBACK
 static void gl_init_pbo_readback(gl_t *gl)
 {
-   unsigned i;
    // Only bother with this if we're doing GPU recording.
    // Check g_extern.recording_enable and not g_extern.rec, because recording is not initialized yet.
    gl->pbo_readback_enable = g_settings.video.gpu_record && g_extern.recording_enable;
@@ -1815,7 +1802,7 @@ static void gl_init_pbo_readback(gl_t *gl)
    RARCH_LOG("[GL]: Async PBO readback enabled.\n");
 
    glGenBuffers(4, gl->pbo_readback);
-   for (i = 0; i < 4; i++)
+   for (unsigned i = 0; i < 4; i++)
    {
       glBindBuffer(GL_PIXEL_PACK_BUFFER, gl->pbo_readback[i]);
       glBufferData(GL_PIXEL_PACK_BUFFER, gl->vp.width * gl->vp.height * sizeof(uint32_t),
@@ -2240,7 +2227,6 @@ static bool gl_focus(void *data)
 
 static void gl_update_tex_filter_frame(gl_t *gl)
 {
-   unsigned i;
    bool smooth = false;
 
    if (!gl)
@@ -2262,7 +2248,7 @@ static void gl_update_tex_filter_frame(gl_t *gl)
    gl->tex_mag_filter = min_filter_to_mag(gl->tex_min_filter);
 
    gl->wrap_mode = wrap_mode;
-   for (i = 0; i < gl->textures; i++)
+   for (unsigned i = 0; i < gl->textures; i++)
    {
       if (gl->texture[i])
       {
@@ -2418,10 +2404,9 @@ static bool gl_read_viewport(void *data, uint8_t *buffer)
             0, num_pixels * sizeof(uint32_t), GL_MAP_READ_BIT);
       if (ptr)
       {
-         unsigned x, y;
-         for (y = 0; y < gl->vp.height; y++)
+         for (unsigned y = 0; y < gl->vp.height; y++)
          {
-            for (x = 0; x < gl->vp.width; x++, buffer += 3, ptr += 4)
+            for (unsigned x = 0; x < gl->vp.width; x++, buffer += 3, ptr += 4)
             {
                buffer[0] = ptr[2]; // RGBA -> BGR.
                buffer[1] = ptr[1];
@@ -2471,8 +2456,7 @@ static bool gl_read_viewport(void *data, uint8_t *buffer)
 
       uint8_t *dst = buffer;
       const uint8_t *src = (const uint8_t*)gl->readback_buffer_screenshot;
-      unsigned i;
-      for (i = 0; i < num_pixels; i++, dst += 3, src += 4)
+      for (unsigned i = 0; i < num_pixels; i++, dst += 3, src += 4)
       {
          dst[0] = src[2]; // RGBA -> BGR.
          dst[1] = src[1];

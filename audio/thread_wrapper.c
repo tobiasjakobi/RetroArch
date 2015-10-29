@@ -65,7 +65,7 @@ static void audio_thread_loop(void *data)
 
    RARCH_LOG("[Audio Thread]: Starting audio.\n");
 
-   for (;;)
+   while (true)
    {
       slock_lock(thr->lock);
 

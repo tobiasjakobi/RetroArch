@@ -52,8 +52,7 @@ struct rarch_dsp_filter
 
 const struct dspfilter_implementation *find_implementation(rarch_dsp_filter_t *dsp, const char *ident)
 {
-   unsigned i;
-   for (i = 0; i < dsp->num_plugs; i++)
+   for (unsigned i = 0; i < dsp->num_plugs; i++)
    {
       if (!strcmp(dsp->plugs[i].impl->short_ident, ident))
          return dsp->plugs[i].impl;
@@ -115,10 +114,9 @@ static int get_int(void *userdata, const char *key_str, int *value, int default_
 #define get_array_body(T) \
    if (got) \
    { \
-      unsigned i; \
       struct string_list *list = string_split(str, " "); \
       *values = calloc(list->size, sizeof(T)); \
-      for (i = 0; i < list->size; i++) \
+      for (unsigned i = 0; i < list->size; i++) \
          (*values)[i] = (T)strtod(list->elems[i].data, NULL); \
       *out_num_values = list->size; \
       string_list_free(list); \
@@ -181,8 +179,6 @@ static const struct dspfilter_config dspfilter_config = {
 
 static bool create_filter_graph(rarch_dsp_filter_t *dsp, float sample_rate)
 {
-   unsigned i;
-
    unsigned filters = 0;
    if (!config_get_uint(dsp->conf, "filters", &filters))
       return false;
@@ -193,7 +189,7 @@ static bool create_filter_graph(rarch_dsp_filter_t *dsp, float sample_rate)
 
    dsp->num_instances = filters;
 
-   for (i = 0; i < filters; i++)
+   for (unsigned i = 0; i < filters; i++)
    {
       char key[64];
       snprintf(key, sizeof(key), "filter%u", i);
@@ -223,10 +219,9 @@ static bool create_filter_graph(rarch_dsp_filter_t *dsp, float sample_rate)
 #if defined(HAVE_DYLIB)
 static bool append_plugs(rarch_dsp_filter_t *dsp, struct string_list *list)
 {
-   unsigned i;
    dspfilter_simd_mask_t mask = rarch_get_cpu_features();
 
-   for (i = 0; i < list->size; i++)
+   for (unsigned i = 0; i < list->size; i++)
    {
       dylib_t lib = dylib_load(list->elems[i].data);
       if (!lib)
@@ -316,11 +311,10 @@ error:
 
 void rarch_dsp_filter_free(rarch_dsp_filter_t *dsp)
 {
-   unsigned i;
    if (!dsp)
       return;
 
-   for (i = 0; i < dsp->num_instances; i++)
+   for (unsigned i = 0; i < dsp->num_instances; i++)
    {
       if (dsp->instances[i].impl_data && dsp->instances[i].impl)
          dsp->instances[i].impl->free(dsp->instances[i].impl_data);
@@ -328,7 +322,7 @@ void rarch_dsp_filter_free(rarch_dsp_filter_t *dsp)
    free(dsp->instances);
 
 #ifdef HAVE_DYLIB
-   for (i = 0; i < dsp->num_plugs; i++)
+   for (unsigned i = 0; i < dsp->num_plugs; i++)
    {
       if (dsp->plugs[i].lib)
          dylib_close(dsp->plugs[i].lib);
@@ -344,14 +338,13 @@ void rarch_dsp_filter_free(rarch_dsp_filter_t *dsp)
 
 void rarch_dsp_filter_process(rarch_dsp_filter_t *dsp, struct rarch_dsp_data *data)
 {
-   unsigned i;
    struct dspfilter_output output = {0};
    struct dspfilter_input input   = {0};
 
    output.samples = data->input;
    output.frames  = data->input_frames;
 
-   for (i = 0; i < dsp->num_instances; i++)
+   for (unsigned i = 0; i < dsp->num_instances; i++)
    {
       input.samples = output.samples;
       input.frames  = output.frames;

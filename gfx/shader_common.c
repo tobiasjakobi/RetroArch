@@ -42,8 +42,7 @@ void gl_load_texture_data(GLuint obj, const struct texture_image *img,
 
 bool gl_load_luts(const struct gfx_shader *generic_shader, GLuint *lut_textures)
 {
-   unsigned i;
-   unsigned num_luts = min(generic_shader->luts, GFX_MAX_TEXTURES);
+   const unsigned num_luts = min(generic_shader->luts, GFX_MAX_TEXTURES);
 
    if (!generic_shader->luts)
       return true;
@@ -51,7 +50,7 @@ bool gl_load_luts(const struct gfx_shader *generic_shader, GLuint *lut_textures)
    //  Original shader_glsl.c code only generated one texture handle.  I assume
    //  it was a bug, but if not, replace num_luts with 1 when GLSL is used.
    glGenTextures(num_luts, lut_textures);
-   for (i = 0; i < num_luts; i++)
+   for (unsigned i = 0; i < num_luts; i++)
    {
       struct texture_image img = {0};
       RARCH_LOG("Loading texture image from: \"%s\" ...\n",
@@ -74,5 +73,3 @@ bool gl_load_luts(const struct gfx_shader *generic_shader, GLuint *lut_textures)
    return true;
 }
 #endif // HAVE_OPENGL
-
-

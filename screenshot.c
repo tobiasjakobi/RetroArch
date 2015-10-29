@@ -60,8 +60,7 @@ static bool write_header_bmp(FILE *file, unsigned width, unsigned height)
 
 static void dump_lines_file(FILE *file, uint8_t **lines, size_t line_size, unsigned height)
 {
-   unsigned i;
-   for (i = 0; i < height; i++)
+   for (unsigned i = 0; i < height; i++)
       fwrite(lines[i], 1, line_size, file);
 }
 
@@ -72,8 +71,7 @@ static void dump_line_bgr(uint8_t *line, const uint8_t *src, unsigned width)
 
 static void dump_line_16(uint8_t *line, const uint16_t *src, unsigned width)
 {
-   unsigned i;
-   for (i = 0; i < width; i++)
+   for (unsigned i = 0; i < width; i++)
    {
       uint16_t pixel = *src++;
       uint8_t b = (pixel >>  0) & 0x1f;
@@ -87,8 +85,7 @@ static void dump_line_16(uint8_t *line, const uint16_t *src, unsigned width)
 
 static void dump_line_32(uint8_t *line, const uint32_t *src, unsigned width)
 {
-   unsigned i;
-   for (i = 0; i < width; i++)
+   for (unsigned i = 0; i < width; i++)
    {
       uint32_t pixel = *src++;
       *line++ = (pixel >>  0) & 0xff;

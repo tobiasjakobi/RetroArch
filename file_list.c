@@ -87,9 +87,7 @@ void file_list_pop(file_list_t *list, size_t *directory_ptr)
 
 void file_list_free(file_list_t *list)
 {
-   size_t i;
-
-   for (i = 0; i < list->size; i++)
+   for (size_t i = 0; i < list->size; i++)
    {
       free(list->list[i].path);
       free(list->list[i].label);
@@ -100,9 +98,7 @@ void file_list_free(file_list_t *list)
 
 void file_list_clear(file_list_t *list)
 {
-   size_t i;
-
-   for (i = 0; i < list->size; i++)
+   for (size_t i = 0; i < list->size; i++)
    {
       free(list->list[i].path);
       free(list->list[i].label);
@@ -171,11 +167,10 @@ void *file_list_get_last_setting(const file_list_t *list, int index)
 
 bool file_list_search(const file_list_t *list, const char *needle, size_t *index)
 {
-   size_t i;
    const char *alt;
    bool ret = false;
 
-   for (i = 0; i < list->size; i++)
+   for (size_t i = 0; i < list->size; i++)
    {
       const char *str;
       file_list_get_alt_at_offset(list, i, &alt);

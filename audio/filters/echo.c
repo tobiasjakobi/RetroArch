@@ -38,10 +38,9 @@ struct echo_data
 
 static void echo_free(void *data)
 {
-   unsigned i;
    struct echo_data *echo = data;
 
-   for (i = 0; i < echo->num_channels; i++)
+   for (unsigned i = 0; i < echo->num_channels; i++)
       free(echo->channels[i].buffer);
    free(echo->channels);
    free(echo);
@@ -50,7 +49,6 @@ static void echo_free(void *data)
 static void echo_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
-   unsigned i, c;
    struct echo_data *echo = data;
 
    output->samples = input->samples;
@@ -58,12 +56,12 @@ static void echo_process(void *data, struct dspfilter_output *output,
 
    float *out = output->samples;
 
-   for (i = 0; i < input->frames; i++, out += 2)
+   for (unsigned i = 0; i < input->frames; i++, out += 2)
    {
       float echo_left  = 0.0f;
       float echo_right = 0.0f;
 
-      for (c = 0; c < echo->num_channels; c++)
+      for (unsigned c = 0; c < echo->num_channels; c++)
       {
          echo_left  += echo->channels[c].buffer[(echo->channels[c].ptr << 1) + 0];
          echo_right += echo->channels[c].buffer[(echo->channels[c].ptr << 1) + 1];
@@ -75,7 +73,7 @@ static void echo_process(void *data, struct dspfilter_output *output,
       float left  = out[0] + echo_left;
       float right = out[1] + echo_right;
 
-      for (c = 0; c < echo->num_channels; c++)
+      for (unsigned c = 0; c < echo->num_channels; c++)
       {
          float feedback_left  = out[0] + echo->channels[c].feedback * echo_left;
          float feedback_right = out[1] + echo->channels[c].feedback * echo_right;
@@ -94,7 +92,6 @@ static void echo_process(void *data, struct dspfilter_output *output,
 static void *echo_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
-   unsigned i;
    struct echo_data *echo = calloc(1, sizeof(*echo));
    if (!echo)
       return NULL;
@@ -117,7 +114,7 @@ static void *echo_init(const struct dspfilter_info *info,
 
    echo->num_channels = channels;
 
-   for (i = 0; i < channels; i++)
+   for (unsigned i = 0; i < channels; i++)
    {
       unsigned frames = (unsigned)(delay[i] * info->input_rate / 1000.0f + 0.5f);
       if (!frames)

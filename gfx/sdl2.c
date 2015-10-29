@@ -116,9 +116,8 @@ static void sdl2_init_font(sdl2_video_t *vid, const char *font_path,
                                                atlas->height, 8, atlas->width,
                                                0, 0, 0, 0);
    SDL_Color colors[256];
-   int i;
 
-   for (i = 0; i < 256; ++i)
+   for (unsigned i = 0; i < 256; ++i)
    {
       colors[i].r = colors[i].g = colors[i].b = i;
       colors[i].a = 255;
@@ -366,8 +365,6 @@ static void *sdl2_gfx_init(const video_info_t *video, const input_driver_t **inp
    XInitThreads();
 #endif
 
-   int i;
-
    if (SDL_WasInit(0) == 0 && SDL_Init(SDL_INIT_VIDEO) < 0)
       return NULL;
    else if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
@@ -379,13 +376,13 @@ static void *sdl2_gfx_init(const video_info_t *video, const input_driver_t **inp
 
 //   RARCH_LOG("[SDL]: supported video drivers (change with $SDL_VIDEODRIVER):\n");
 
-//   for (i = 0; i < SDL_GetNumVideoDrivers(); ++i)
+//   for (int i = 0; i < SDL_GetNumVideoDrivers(); ++i)
 //   {
 //      RARCH_LOG("\t%s\n", SDL_GetVideoDriver(i));
 //   }
 
    RARCH_LOG("[SDL]: Available displays:\n");
-   for(i = 0; i < SDL_GetNumVideoDisplays(); ++i)
+   for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i)
    {
       SDL_DisplayMode mode;
 

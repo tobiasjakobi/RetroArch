@@ -373,8 +373,7 @@ static void epx_generic_packets(void *data,
       const void *input, unsigned width, unsigned height, size_t input_stride)
 {
    struct filter_data *filt = data;
-   unsigned i;
-   for (i = 0; i < filt->threads; i++)
+   for (unsigned i = 0; i < filt->threads; i++)
    {
       struct softfilter_thread_data *thr = &filt->workers[i];
 

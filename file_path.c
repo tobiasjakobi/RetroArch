@@ -126,11 +126,10 @@ error:
 
 void string_list_free(struct string_list *list)
 {
-   size_t i;
    if (!list)
       return;
 
-   for (i = 0; i < list->size; i++)
+   for (size_t i = 0; i < list->size; i++)
       free(list->elems[i].data);
    free(list->elems);
    free(list);
@@ -194,8 +193,7 @@ void string_list_join_concat(char *buffer, size_t size, const struct string_list
    buffer += len;
    size -= len;
 
-   size_t i;
-   for (i = 0; i < list->size; i++)
+   for (size_t i = 0; i < list->size; i++)
    {
       strlcat(buffer, list->elems[i].data, size);
       if ((i + 1) < list->size)
@@ -240,11 +238,10 @@ error:
 
 bool string_list_find_elem(const struct string_list *list, const char *elem)
 {
-   size_t i;
    if (!list)
       return false;
 
-   for (i = 0; i < list->size; i++)
+   for (size_t i = 0; i < list->size; i++)
    {
       if (strcasecmp(list->elems[i].data, elem) == 0)
          return true;
@@ -255,14 +252,13 @@ bool string_list_find_elem(const struct string_list *list, const char *elem)
 
 bool string_list_find_elem_prefix(const struct string_list *list, const char *prefix, const char *elem)
 {
-   size_t i;
    if (!list)
       return false;
 
    char prefixed[PATH_MAX];
    snprintf(prefixed, sizeof(prefixed), "%s%s", prefix, elem);
 
-   for (i = 0; i < list->size; i++)
+   for (size_t i = 0; i < list->size; i++)
    {
       if (strcasecmp(list->elems[i].data, elem) == 0 ||
             strcasecmp(list->elems[i].data, prefixed) == 0)
@@ -681,8 +677,6 @@ void fill_pathname_expand_special(char *out_path, const char *in_path, size_t si
 void fill_pathname_abbreviate_special(char *out_path, const char *in_path, size_t size)
 {
 #if !defined(RARCH_CONSOLE)
-   unsigned i;
-
    const char *home = getenv("HOME");
    char application_dir[PATH_MAX];
    fill_pathname_application_path(application_dir, sizeof(application_dir));
@@ -695,7 +689,7 @@ void fill_pathname_abbreviate_special(char *out_path, const char *in_path, size_
    const char *candidates[3] = { application_dir, home, NULL };
    const char *notations[3] = { ":", "~", NULL };
    
-   for (i = 0; candidates[i]; i++)
+   for (unsigned i = 0; candidates[i]; i++)
    {
       if (*candidates[i] && strstr(in_path, candidates[i]) == in_path)
       {
@@ -724,8 +718,6 @@ void fill_pathname_abbreviate_special(char *out_path, const char *in_path, size_
 #ifndef RARCH_CONSOLE
 void fill_pathname_application_path(char *buf, size_t size)
 {
-   size_t i;
-   (void)i;
    if (!size)
       return;
 
@@ -733,7 +725,7 @@ void fill_pathname_application_path(char *buf, size_t size)
    pid_t pid = getpid(); 
    char link_path[PATH_MAX];
    static const char *exts[] = { "exe", "file", "path/a.out" }; // Linux, BSD and Solaris paths. Not standardized.
-   for (i = 0; i < ARRAY_SIZE(exts); i++)
+   for (size_t i = 0; i < ARRAY_SIZE(exts); i++)
    {
       snprintf(link_path, sizeof(link_path), "/proc/%u/%s", (unsigned)pid, exts[i]);
       ssize_t ret = readlink(link_path, buf, size - 1);

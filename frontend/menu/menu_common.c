@@ -535,9 +535,8 @@ bool menu_save_new_config()
 
    if (*g_settings.libretro && path_file_exists(g_settings.libretro)) // Infer file name based on libretro core.
    {
-      unsigned i;
       // In case of collision, find an alternative name.
-      for (i = 0; i < 16; i++)
+      for (unsigned i = 0; i < 16; i++)
       {
          char tmp[64];
          fill_pathname_base(config_name, g_settings.libretro, sizeof(config_name));
@@ -614,7 +613,6 @@ static inline bool menu_list_elem_is_dir(file_list_t *buf, unsigned offset)
 
 void menu_build_scroll_indices(file_list_t *buf)
 {
-   size_t i;
    int current;
    bool current_is_dir;
 
@@ -630,7 +628,7 @@ void menu_build_scroll_indices(file_list_t *buf)
    current = menu_list_get_first_char(buf, 0);
    current_is_dir = menu_list_elem_is_dir(buf, 0);
 
-   for (i = 1; i < buf->size; i++)
+   for (size_t i = 1; i < buf->size; i++)
    {
       int first = menu_list_get_first_char(buf, i);
       bool is_dir = menu_list_elem_is_dir(buf, i);

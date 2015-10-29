@@ -100,19 +100,16 @@ void setting_data_reset_setting(const rarch_setting_t* setting)
 
 void setting_data_reset(const rarch_setting_t* settings)
 {
-   const rarch_setting_t *setting;
-
-   for (setting = settings; setting->type != ST_NONE; setting++)
+   for (const rarch_setting_t *setting = settings; setting->type != ST_NONE; setting++)
       setting_data_reset_setting(setting);
 }
 
 static bool setting_data_load_config(const rarch_setting_t* settings, config_file_t* config)
 {
-   const rarch_setting_t *setting;
    if (!config)
       return false;
 
-   for (setting = settings; setting->type != ST_NONE; setting++)
+   for (const rarch_setting_t *setting = settings; setting->type != ST_NONE; setting++)
    {
       switch (setting->type)
       {
@@ -192,12 +189,10 @@ bool setting_data_load_config_path(const rarch_setting_t* settings, const char* 
 
 bool setting_data_save_config(const rarch_setting_t* settings, config_file_t* config)
 {
-   const rarch_setting_t *setting;
-
    if (!config)
       return false;
 
-   for (setting = settings; setting->type != ST_NONE; setting++)
+   for (const rarch_setting_t *setting = settings; setting->type != ST_NONE; setting++)
    {
       switch (setting->type)
       {
@@ -258,7 +253,7 @@ bool setting_data_save_config(const rarch_setting_t* settings, config_file_t* co
 rarch_setting_t* setting_data_find_setting(rarch_setting_t* settings, const char* name)
 {
    bool found = false;
-   rarch_setting_t *setting = NULL;
+   rarch_setting_t *setting;
 
    if (!name)
       return NULL;
@@ -1313,13 +1308,13 @@ WITH_FLAGS(SD_FLAG_HAS_RANGE)
 
 rarch_setting_t* setting_data_get_list()
 {
-   int i, player, index;
+   int player, index;
    static rarch_setting_t list[SETTINGS_DATA_LIST_SIZE];
    static bool initialized = false;
 
    if (!initialized)
    {
-      for (i = 0; i < SETTINGS_DATA_LIST_SIZE; i++)
+      for (unsigned i = 0; i < SETTINGS_DATA_LIST_SIZE; i++)
       {
          list[i].type = ST_NONE;
          list[i].name = NULL;
@@ -1524,7 +1519,7 @@ rarch_setting_t* setting_data_get_list()
        
        // The second argument to config bind is 1 based for players and 0 only for meta keys
        START_SUB_GROUP("Meta Keys")
-       for (i = 0; i != RARCH_BIND_LIST_END; i ++)
+       for (unsigned i = 0; i != RARCH_BIND_LIST_END; i ++)
            if (input_config_bind_map[i].meta)
            {
                const struct input_bind_map* bind = &input_config_bind_map[i];
@@ -1539,7 +1534,7 @@ rarch_setting_t* setting_data_get_list()
            
            snprintf(buffer, 32, "Player %d", player + 1);
            START_SUB_GROUP(strdup(buffer))
-           for (i = 0; i != RARCH_BIND_LIST_END; i ++)
+           for (unsigned i = 0; i != RARCH_BIND_LIST_END; i ++)
            {
                if (!input_config_bind_map[i].meta)
                {

@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
       return 1;
    }
 
-   for (;;)
+   while (true)
    {
       if (fread(input_i, sizeof(int16_t), 1024, stdin) != 1024)
          break;

@@ -299,9 +299,7 @@ static void wait_flip(struct exynos_fliphandler *fh) {
 }
 
 static struct exynos_page *get_free_page(struct exynos_page *p, unsigned cnt) {
-  unsigned i;
-
-  for (i = 0; i < cnt; ++i) {
+  for (unsigned i = 0; i < cnt; ++i) {
     if (!p[i].used) return &p[i];
   }
 
@@ -310,10 +308,9 @@ static struct exynos_page *get_free_page(struct exynos_page *p, unsigned cnt) {
 
 /* Count the number of used pages. */
 static unsigned pages_used(struct exynos_page *p, unsigned cnt) {
-  unsigned i;
   unsigned count = 0;
 
-  for (i = 0; i < cnt; ++i) {
+  for (unsigned i = 0; i < cnt; ++i) {
     if (p[i].used) ++count;
   }
 
@@ -321,9 +318,7 @@ static unsigned pages_used(struct exynos_page *p, unsigned cnt) {
 }
 
 static void clean_up_pages(struct exynos_page *p, unsigned cnt) {
-  unsigned i;
-
-  for (i = 0; i < cnt; ++i) {
+  for (unsigned i = 0; i < cnt; ++i) {
     if (p[i].bo != NULL) {
       if (p[i].buf_id != 0)
         drmModeRmFB(p[i].buf_id, p[i].bo->handle);
@@ -372,7 +367,6 @@ static struct exynos_bo *create_mapped_buffer(struct exynos_device *dev, unsigne
 static int realloc_buffer(struct exynos_data *pdata,
                           enum exynos_buffer_type type, unsigned size) {
   struct exynos_bo *buf = pdata->buf[type];
-  unsigned i;
 
   if (size > buf->size) {
 #if (EXYNOS_GFX_DEBUG_LOG == 1)
@@ -391,7 +385,7 @@ static int realloc_buffer(struct exynos_data *pdata,
     pdata->buf[type] = buf;
 
     /* Map new GEM buffer to the G2D images backed by it. */
-    for (i = 0; i < exynos_image_count; ++i) {
+    for (unsigned i = 0; i < exynos_image_count; ++i) {
       if (defaults[i].buf_type == type)
         pdata->src[i]->bo[0] = buf->handle;
     }
@@ -488,12 +482,11 @@ static void put_glyph_rgba4444(struct exynos_data *pdata, const uint8_t *__restr
   const enum exynos_image_type buf_type = defaults[exynos_image_font].buf_type;
   const unsigned buf_width = pdata->src[exynos_image_font]->width;
 
-  unsigned x, y;
   uint16_t *__restrict__ dst = (uint16_t*)pdata->buf[buf_type]->vaddr +
                                dst_y * buf_width + dst_x;
 
-  for (y = 0; y < g_height; ++y, src += g_pitch, dst += buf_width) {
-    for (x = 0; x < g_width; ++x) {
+  for (unsigned y = 0; y < g_height; ++y, src += g_pitch, dst += buf_width) {
+    for (unsigned x = 0; x < g_width; ++x) {
       const uint16_t blend = src[x];
 
       dst[x] = color | ((blend << 8) & 0xf000);
@@ -625,11 +618,9 @@ fail:
 }
 
 static void exynos_g2d_free(struct exynos_data *pdata) {
-  unsigned i;
-
   free(pdata->dst);
 
-  for (i = 0; i < exynos_image_count; ++i) {
+  for (unsigned i = 0; i < exynos_image_count; ++i) {
     free(pdata->src[i]);
     pdata->src[i] = NULL;
   }
@@ -773,11 +764,9 @@ static int exynos_init(struct exynos_data *pdata, unsigned bpp) {
   struct exynos_drm *drm = pdata->drm;
   int fd = pdata->fd;
 
-  unsigned i;
-
   if (g_settings.video.fullscreen_x != 0 &&
       g_settings.video.fullscreen_y != 0) {
-    for (i = 0; i < drm->connector->count_modes; i++) {
+    for (unsigned i = 0; i < drm->connector->count_modes; i++) {
       if (drm->connector->modes[i].hdisplay == g_settings.video.fullscreen_x &&
           drm->connector->modes[i].vdisplay == g_settings.video.fullscreen_y) {
         drm->mode = &drm->connector->modes[i];
@@ -944,8 +933,6 @@ fail_alloc:
 
 /* Counterpart to exynos_alloc. */
 static void exynos_free(struct exynos_data *pdata) {
-  unsigned i;
-
   /* Disable the CRTC. */
   if (drmModeSetCrtc(pdata->fd, pdata->drm->crtc_id, 0,
                      0, 0, NULL, 0, NULL))
@@ -956,7 +943,7 @@ static void exynos_free(struct exynos_data *pdata) {
   free(pdata->pages);
   pdata->pages = NULL;
 
-  for (i = 0; i < exynos_buffer_count; ++i) {
+  for (unsigned i = 0; i < exynos_buffer_count; ++i) {
     exynos_bo_destroy(pdata->buf[i]);
     pdata->buf[i] = NULL;
   }
@@ -967,13 +954,12 @@ static void exynos_free(struct exynos_data *pdata) {
 
 #if (EXYNOS_GFX_DEBUG_LOG == 1)
 static void exynos_alloc_status(struct exynos_data *pdata) {
-  unsigned i;
   struct exynos_page *pages = pdata->pages;
 
   RARCH_LOG("video_exynos: allocated %u pages with %u bytes each (pitch = %u bytes)\n",
             pdata->num_pages, pdata->size, pdata->pitch);
 
-  for (i = 0; i < pdata->num_pages; ++i) {
+  for (unsigned i = 0; i < pdata->num_pages; ++i) {
     RARCH_LOG("video_exynos: page %u: BO at %p, buffer id = %u\n",
               i, pages[i].bo, pages[i].buf_id);
   }
@@ -1025,7 +1011,6 @@ out:
 static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
                                unsigned height, unsigned src_bpp) {
   struct g2d_image *src = pdata->src[exynos_image_frame];
-  unsigned i;
   unsigned w, h;
 
   const float aspect = (float)width / (float)height;
@@ -1057,21 +1042,19 @@ static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
   pdata->blit_w = width;
   pdata->blit_h = height;
 
-  for (i = 0; i < pdata->num_pages; ++i) {
+  for (unsigned i = 0; i < pdata->num_pages; ++i) {
     if (pdata->pages[i].clear == exynos_buffer_non)
       pdata->pages[i].clear = exynos_buffer_partial;
   }
 }
 
 static void exynos_set_fake_blit(struct exynos_data *pdata) {
-  unsigned i;
-
   pdata->blit_damage.x = 0;
   pdata->blit_damage.y = 0;
   pdata->blit_damage.w = pdata->width;
   pdata->blit_damage.h = pdata->height;
 
-  for (i = 0; i < pdata->num_pages; ++i)
+  for (unsigned i = 0; i < pdata->num_pages; ++i)
     pdata->pages[i].clear = exynos_buffer_all;
 }
 

@@ -51,8 +51,6 @@ static void phaser_free(void *data)
 static void phaser_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
-   unsigned i, c;
-   int s;
    float m[2], tmp[2];
    struct phaser_data *ph = data;
 
@@ -60,11 +58,11 @@ static void phaser_process(void *data, struct dspfilter_output *output,
    output->frames  = input->frames;
    float *out = output->samples;
 
-   for (i = 0; i < input->frames; i++, out += 2)
+   for (unsigned i = 0; i < input->frames; i++, out += 2)
    {
       float in[2] = { out[0], out[1] };
 
-      for (c = 0; c < 2; c++)
+      for (unsigned c = 0; c < 2; c++)
          m[c] = in[c] + ph->fbout[c] * ph->fb * 0.01f;
 
       if ((ph->skipcount++ % phaserlfoskipsamples) == 0)
@@ -74,9 +72,9 @@ static void phaser_process(void *data, struct dspfilter_output *output,
          ph->gain = 1.0 - ph->gain * ph->depth;
       }
 
-      for (s = 0; s < ph->stages; s++)
+      for (int s = 0; s < ph->stages; s++)
       {
-         for (c = 0; c < 2; c++)
+         for (unsigned c = 0; c < 2; c++)
          {
             tmp[c] = ph->old[c][s];
             ph->old[c][s] = ph->gain * tmp[c] + m[c];
@@ -84,7 +82,7 @@ static void phaser_process(void *data, struct dspfilter_output *output,
          }
       }
 
-      for (c = 0; c < 2; c++)
+      for (unsigned c = 0; c < 2; c++)
       {
          ph->fbout[c] = m[c];
          out[c] = m[c] * ph->drywet + in[c] * (1.0f - ph->drywet);

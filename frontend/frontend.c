@@ -98,15 +98,13 @@ static int main_entry_iterate_load_content(args_type() args)
 
 static int main_entry_iterate_menu_preinit(args_type() args)
 {
-   int i;
-
    if (!driver.menu)
       return 1;
 
    // Menu should always run with vsync on.
    video_set_nonblock_state_func(false);
    // Stop all rumbling when entering the menu.
-   for (i = 0; i < MAX_PLAYERS; i++)
+   for (int i = 0; i < MAX_PLAYERS; i++)
    {
       driver_set_rumble_state(i, RETRO_RUMBLE_STRONG, 0);
       driver_set_rumble_state(i, RETRO_RUMBLE_WEAK, 0);
@@ -234,7 +232,7 @@ bool main_load_content(int argc, char **argv, args_type() args, environment_get_
    char **rarch_argv_ptr;
    struct rarch_main_wrap *wrap_args;
    bool retval = true;
-   int i, ret = 0, rarch_argc = 0;
+   int ret = 0, rarch_argc = 0;
    char *rarch_argv[MAX_ARGS] = {NULL};
    char *argv_copy [MAX_ARGS] = {NULL};
 
@@ -273,7 +271,7 @@ bool main_load_content(int argc, char **argv, args_type() args, environment_get_
    g_extern.lifecycle_state |= (1ULL << MODE_GAME);
 
 error:
-   for (i = 0; i < ARRAY_SIZE(argv_copy); i++)
+   for (int i = 0; i < ARRAY_SIZE(argv_copy); i++)
       free(argv_copy[i]);
    free(wrap_args);
    return retval;

@@ -120,8 +120,7 @@ static inline unsigned align_common(unsigned i, unsigned j) {
 
 static int find_audio_driver_index(const char *driver)
 {
-   unsigned i;
-   for (i = 0; audio_drivers[i]; i++)
+   for (unsigned i = 0; audio_drivers[i]; i++)
       if (strcasecmp(driver, audio_drivers[i]->ident) == 0)
          return i;
    return -1;
@@ -129,8 +128,7 @@ static int find_audio_driver_index(const char *driver)
 
 static int find_video_driver_index(const char *driver)
 {
-   unsigned i;
-   for (i = 0; video_drivers[i]; i++)
+   for (unsigned i = 0; video_drivers[i]; i++)
       if (strcasecmp(driver, video_drivers[i]->ident) == 0)
          return i;
    return -1;
@@ -138,8 +136,7 @@ static int find_video_driver_index(const char *driver)
 
 static int find_input_driver_index(const char *driver)
 {
-   unsigned i;
-   for (i = 0; input_drivers[i]; i++)
+   for (unsigned i = 0; input_drivers[i]; i++)
       if (strcasecmp(driver, input_drivers[i]->ident) == 0)
          return i;
    return -1;
@@ -152,10 +149,9 @@ static void find_audio_driver()
       driver.audio = audio_drivers[i];
    else
    {
-      unsigned d;
       RARCH_ERR("Couldn't find any audio driver named \"%s\"\n", g_settings.audio.driver);
       RARCH_LOG_OUTPUT("Available audio drivers are:\n");
-      for (d = 0; audio_drivers[d]; d++)
+      for (unsigned d = 0; audio_drivers[d]; d++)
          RARCH_LOG_OUTPUT("\t%s\n", audio_drivers[d]->ident);
       RARCH_WARN("Going to default to first audio driver...\n");
 
@@ -200,10 +196,9 @@ static void find_video_driver()
       driver.video = video_drivers[i];
    else
    {
-      unsigned d;
       RARCH_ERR("Couldn't find any video driver named \"%s\"\n", g_settings.video.driver);
       RARCH_LOG_OUTPUT("Available video drivers are:\n");
-      for (d = 0; video_drivers[d]; d++)
+      for (unsigned d = 0; video_drivers[d]; d++)
          RARCH_LOG_OUTPUT("\t%s\n", video_drivers[d]->ident);
       RARCH_WARN("Going to default to first video driver...\n");
 
@@ -241,10 +236,9 @@ static void find_input_driver()
       driver.input = input_drivers[i];
    else
    {
-      unsigned d;
       RARCH_ERR("Couldn't find any input driver named \"%s\"\n", g_settings.input.driver);
       RARCH_LOG_OUTPUT("Available input drivers are:\n");
-      for (d = 0; input_drivers[d]; d++)
+      for (unsigned d = 0; input_drivers[d]; d++)
          RARCH_LOG_OUTPUT("\t%s\n", input_drivers[d]->ident);
       RARCH_WARN("Going to default to first input driver...\n");
 
@@ -642,19 +636,18 @@ void init_audio()
 
 static void compute_audio_buffer_statistics()
 {
-   unsigned i, samples;
-   samples = min(g_extern.measure_data.buffer_free_samples_count, AUDIO_BUFFER_FREE_SAMPLES_COUNT);
+   unsigned samples = min(g_extern.measure_data.buffer_free_samples_count, AUDIO_BUFFER_FREE_SAMPLES_COUNT);
    if (samples < 3)
       return;
 
    uint64_t accum = 0;
-   for (i = 1; i < samples; i++)
+   for (unsigned i = 1; i < samples; i++)
       accum += g_extern.measure_data.buffer_free_samples[i];
 
    int avg = accum / (samples - 1);
 
    uint64_t accum_var = 0;
-   for (i = 1; i < samples; i++)
+   for (unsigned i = 1; i < samples; i++)
    {
       int diff = avg - g_extern.measure_data.buffer_free_samples[i];
       accum_var += diff * diff;
@@ -670,7 +663,7 @@ static void compute_audio_buffer_statistics()
 
    unsigned low_water_count = 0;
    unsigned high_water_count = 0;
-   for (i = 1; i < samples; i++)
+   for (unsigned i = 1; i < samples; i++)
    {
       if (g_extern.measure_data.buffer_free_samples[i] >= low_water_size)
          low_water_count++;
@@ -687,7 +680,6 @@ static void compute_audio_buffer_statistics()
 
 bool driver_monitor_fps_statistics(double *refresh_rate, double *deviation, unsigned *sample_points)
 {
-   unsigned i;
    if (g_settings.video.threaded)
       return false;
 
@@ -697,11 +689,11 @@ bool driver_monitor_fps_statistics(double *refresh_rate, double *deviation, unsi
 
    // Measure statistics on frame time (microsecs), *not* FPS.
    retro_time_t accum = 0;
-   for (i = 0; i < samples; i++)
+   for (unsigned i = 0; i < samples; i++)
       accum += g_extern.measure_data.frame_time_samples[i];
 
 #if 0
-   for (i = 0; i < samples; i++)
+   for (unsigned i = 0; i < samples; i++)
       RARCH_LOG("Interval #%u: %d usec / frame.\n",
             i, (int)g_extern.measure_data.frame_time_samples[i]);
 #endif
@@ -710,7 +702,7 @@ bool driver_monitor_fps_statistics(double *refresh_rate, double *deviation, unsi
    retro_time_t accum_var = 0;
 
    // Drop first measurement. It is likely to be bad.
-   for (i = 0; i < samples; i++)
+   for (unsigned i = 0; i < samples; i++)
    {
       retro_time_t diff = g_extern.measure_data.frame_time_samples[i] - avg;
       accum_var += diff * diff;
@@ -813,7 +805,6 @@ error:
 
 static void init_shader_dir()
 {
-   unsigned i;
    if (!*g_settings.video.shader_dir)
       return;
 
@@ -827,7 +818,7 @@ static void init_shader_dir()
    g_extern.shader_dir.ptr  = 0;
    dir_list_sort(g_extern.shader_dir.list, false);
 
-   for (i = 0; i < g_extern.shader_dir.list->size; i++)
+   for (unsigned i = 0; i < g_extern.shader_dir.list->size; i++)
       RARCH_LOG("Found shader \"%s\"\n", g_extern.shader_dir.list->elems[i].data);
 }
 

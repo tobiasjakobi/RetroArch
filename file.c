@@ -193,7 +193,6 @@ struct sram_block
 
 bool load_state(const char *path)
 {
-   unsigned i;
    void *buf = NULL;
    ssize_t size = read_file(path, &buf);
 
@@ -218,20 +217,20 @@ bool load_state(const char *path)
       if (blocks)
       {
          num_blocks = g_extern.savefiles->size;
-         for (i = 0; i < num_blocks; i++)
+         for (unsigned i = 0; i < num_blocks; i++)
             blocks[i].type = g_extern.savefiles->elems[i].attr.i;
       }
    }
 
-   for (i = 0; i < num_blocks; i++)
+   for (unsigned i = 0; i < num_blocks; i++)
       blocks[i].size = pretro_get_memory_size(blocks[i].type);
 
-   for (i = 0; i < num_blocks; i++)
+   for (unsigned i = 0; i < num_blocks; i++)
       if (blocks[i].size)
          blocks[i].data = malloc(blocks[i].size);
 
    // Backup current SRAM which is overwritten by unserialize.
-   for (i = 0; i < num_blocks; i++)
+   for (unsigned i = 0; i < num_blocks; i++)
    {
       if (blocks[i].data)
       {
@@ -244,7 +243,7 @@ bool load_state(const char *path)
    ret = pretro_unserialize(buf, size);
 
    // Flush back :D
-   for (i = 0; i < num_blocks; i++)
+   for (unsigned i = 0; i < num_blocks; i++)
    {
       if (blocks[i].data)
       {
@@ -254,7 +253,7 @@ bool load_state(const char *path)
       }
    }
 
-   for (i = 0; i < num_blocks; i++)
+   for (unsigned i = 0; i < num_blocks; i++)
       free(blocks[i].data);
    free(blocks);
    return ret;
@@ -304,14 +303,13 @@ void save_ram_file(const char *path, int type)
 
 static bool load_content(const struct retro_subsystem_info *special, const struct string_list *content)
 {
-   unsigned i;
    bool ret = true;
 
    struct retro_game_info *info = calloc(content->size, sizeof(*info));
    if (!info)
       return false;
 
-   for (i = 0; i < content->size; i++)
+   for (unsigned i = 0; i < content->size; i++)
    {
       const char *path = content->elems[i].data;
       int attr = content->elems[i].attr.i;
@@ -355,7 +353,7 @@ static bool load_content(const struct retro_subsystem_info *special, const struc
       RARCH_ERR("Failed to load game.\n");
 
 end:
-   for (i = 0; i < content->size; i++)
+   for (unsigned i = 0; i < content->size; i++)
       free((void*)info[i].data);
    free(info);
    return ret;
@@ -363,8 +361,6 @@ end:
 
 bool init_rom_file()
 {
-   unsigned i;
-
    g_extern.temporary_content = string_list_new();
    if (!g_extern.temporary_content)
       return false;
@@ -411,7 +407,7 @@ bool init_rom_file()
 
    if (*g_extern.subsystem)
    {
-      for (i = 0; i < g_extern.subsystem_fullpaths->size; i++)
+      for (unsigned i = 0; i < g_extern.subsystem_fullpaths->size; i++)
       {
          attr.i  = special->roms[i].block_extract;
          attr.i |= special->roms[i].need_fullpath << 1;
@@ -429,7 +425,7 @@ bool init_rom_file()
 
 #ifdef HAVE_ZLIB
    // Try to extract all content we're going to load if appropriate.
-   for (i = 0; i < content->size; i++)
+   for (unsigned i = 0; i < content->size; i++)
    {
       // block extract check
       if (content->elems[i].attr.i & 1)

@@ -47,14 +47,13 @@ static void chorus_free(void *data)
 static void chorus_process(void *data, struct dspfilter_output *output,
       const struct dspfilter_input *input)
 {
-   unsigned i;
    struct chorus_data *ch = data;
 
    output->samples = input->samples;
    output->frames  = input->frames;
    float *out = output->samples;
 
-   for (i = 0; i < input->frames; i++, out += 2)
+   for (unsigned i = 0; i < input->frames; i++, out += 2)
    {
       float in[2] = { out[0], out[1] };
 

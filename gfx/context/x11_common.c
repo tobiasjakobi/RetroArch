@@ -136,7 +136,6 @@ void x11_suspend_screensaver(Window wnd)
 
 static bool get_video_mode(Display *dpy, unsigned width, unsigned height, XF86VidModeModeInfo *mode, XF86VidModeModeInfo *desktop_mode)
 {
-   int i;
    int num_modes = 0;
    XF86VidModeModeInfo **modes = NULL;
    XF86VidModeGetAllModeLines(dpy, DefaultScreen(dpy), &num_modes, &modes);
@@ -153,9 +152,9 @@ static bool get_video_mode(Display *dpy, unsigned width, unsigned height, XF86Vi
    float minimum_fps_diff = 0.0f;
 
    // If we use black frame insertion, we fake a 60 Hz monitor for 120 Hz one, etc, so try to match that.
-   float refresh_mod = g_settings.video.black_frame_insertion ? 0.5f : 1.0f;
+   const float refresh_mod = g_settings.video.black_frame_insertion ? 0.5f : 1.0f;
 
-   for (i = 0; i < num_modes; i++)
+   for (unsigned i = 0; i < num_modes; i++)
    {
       const XF86VidModeModeInfo *m = modes[i];
       if (m->hdisplay == width && m->vdisplay == height)
@@ -218,14 +217,13 @@ static XineramaScreenInfo *x11_query_screens(Display *dpy, int *num_screens)
 bool x11_get_xinerama_coord(Display *dpy, int screen,
       int *x, int *y, unsigned *w, unsigned *h)
 {
-   int i;
    bool ret = false;
 
    int num_screens = 0;
-   XineramaScreenInfo *info = x11_query_screens(dpy, &num_screens);
+   const XineramaScreenInfo *info = x11_query_screens(dpy, &num_screens);
    RARCH_LOG("[X11]: Xinerama screens: %d.\n", num_screens);
 
-   for (i = 0; i < num_screens; i++)
+   for (unsigned i = 0; i < num_screens; i++)
    {
       if (info[i].screen_number == screen)
       {
@@ -245,15 +243,14 @@ bool x11_get_xinerama_coord(Display *dpy, int screen,
 unsigned x11_get_xinerama_monitor(Display *dpy, int x, int y,
       int w, int h)
 {
-   int i;
    unsigned monitor = 0;
    int largest_area = 0;
 
    int num_screens = 0;
-   XineramaScreenInfo *info = x11_query_screens(dpy, &num_screens);
+   const XineramaScreenInfo *info = x11_query_screens(dpy, &num_screens);
    RARCH_LOG("[X11]: Xinerama screens: %d.\n", num_screens);
 
-   for (i = 0; i < num_screens; i++)
+   for (unsigned i = 0; i < num_screens; i++)
    {
       int max_lx = max(x, info[i].x_org);
       int min_rx = min(x + w, info[i].x_org + info[i].width);
@@ -329,7 +326,6 @@ static inline unsigned leading_ones(uint8_t c)
 // Simple implementation. Assumes the sequence is properly synchronized and terminated.
 static size_t conv_utf8_utf32(uint32_t *out, size_t out_chars, const char *in, size_t in_size)
 {
-   unsigned i;
    size_t ret = 0;
    while (in_size && out_chars)
    {
@@ -346,7 +342,7 @@ static size_t conv_utf8_utf32(uint32_t *out, size_t out_chars, const char *in, s
       unsigned shift = (extra - 1) * 6;
       uint32_t c = (first & ((1 << (7 - ones)) - 1)) << (6 * extra);
 
-      for (i = 0; i < extra; i++, in++, shift -= 6)
+      for (unsigned i = 0; i < extra; i++, in++, shift -= 6)
          c |= (*in & 0x3f) << shift;
 
       *out++ = c;
@@ -360,7 +356,6 @@ static size_t conv_utf8_utf32(uint32_t *out, size_t out_chars, const char *in, s
 
 void x11_handle_key_event(XEvent *event, XIC ic, bool filter)
 {
-   int i;
    char keybuf[32] = {0};
    uint32_t chars[32] = {0};
 
@@ -384,7 +379,7 @@ void x11_handle_key_event(XEvent *event, XIC ic, bool filter)
 #else
       (void)ic;
       num = XLookupString(&event->xkey, keybuf, sizeof(keybuf), &keysym, NULL); // ASCII only.
-      for (i = 0; i < num; i++)
+      for (unsigned i = 0; i < num; i++)
          chars[i] = keybuf[i] & 0x7f;
 #endif
    }
@@ -398,7 +393,7 @@ void x11_handle_key_event(XEvent *event, XIC ic, bool filter)
    mod |= (state & Mod4Mask) ? RETROKMOD_META : 0;
 
    input_keyboard_event(down, key, chars[0], mod);
-   for (i = 1; i < num; i++)
+   for (unsigned i = 1; i < num; i++)
       input_keyboard_event(down, RETROK_UNKNOWN, chars[i], mod);
 }
 

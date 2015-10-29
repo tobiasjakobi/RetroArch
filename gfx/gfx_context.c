@@ -43,8 +43,7 @@ static const gfx_ctx_driver_t *gfx_ctx_drivers[] = {
 
 const gfx_ctx_driver_t *gfx_ctx_find_driver(const char *ident)
 {
-   unsigned i;
-   for (i = 0; i < ARRAY_SIZE(gfx_ctx_drivers); i++)
+   for (unsigned i = 0; i < ARRAY_SIZE(gfx_ctx_drivers); i++)
    {
       if (strcmp(gfx_ctx_drivers[i]->ident, ident) == 0)
          return gfx_ctx_drivers[i];
@@ -55,8 +54,7 @@ const gfx_ctx_driver_t *gfx_ctx_find_driver(const char *ident)
 
 const gfx_ctx_driver_t *gfx_ctx_init_first(void *data, enum gfx_ctx_api api, unsigned major, unsigned minor, bool hw_render_ctx)
 {
-   unsigned i;
-   for (i = 0; gfx_ctx_drivers[i]; i++)
+   for (unsigned i = 0; gfx_ctx_drivers[i]; i++)
    {
       if (gfx_ctx_drivers[i]->bind_api(data, api, major, minor))
       {

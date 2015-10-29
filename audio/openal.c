@@ -130,7 +130,7 @@ static bool al_get_buffer(al_t *al, ALuint *buffer)
 {
    if (!al->res_ptr)
    {
-      for (;;)
+      while (true)
       {
          if (al_unqueue_buffers(al))
             break;

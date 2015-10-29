@@ -88,18 +88,16 @@ static void eq_process(void *data, struct dspfilter_output *output,
       // Convolve a new block.
       if (eq->block_ptr == eq->block_size)
       {
-         unsigned i, c;
-
-         for (c = 0; c < 2; c++)
+         for (unsigned c = 0; c < 2; c++)
          {
             fft_process_forward(eq->fft, eq->fftblock, eq->block + c, 2);
-            for (i = 0; i < 2 * eq->block_size; i++)
+            for (unsigned i = 0; i < 2 * eq->block_size; i++)
                eq->fftblock[i] = fft_complex_mul(eq->fftblock[i], eq->filter[i]);
             fft_process_inverse(eq->fft, out + c, eq->fftblock, 2);
          }
 
          // Overlap add method, so add in saved block now.
-         for (i = 0; i < 2 * eq->block_size; i++)
+         for (unsigned i = 0; i < 2 * eq->block_size; i++)
             out[i] += eq->save[i];
 
          // Save block for later.
@@ -127,8 +125,6 @@ static int gains_cmp(const void *a_, const void *b_)
 static void generate_response(fft_complex_t *response,
       const struct eq_gain *gains, unsigned num_gains, unsigned samples)
 {
-   unsigned i;
-
    float start_freq = 0.0f;
    float start_gain = 1.0f;
 
@@ -144,7 +140,7 @@ static void generate_response(fft_complex_t *response,
    }
 
    // Create a response by linear interpolation between known frequency sample points.
-   for (i = 0; i <= samples; i++)
+   for (unsigned i = 0; i <= samples; i++)
    {
       float freq = (float)i / samples;
 
@@ -187,7 +183,6 @@ static void generate_response(fft_complex_t *response,
 // Check Wiki for mathematical definition ...
 static inline double kaiser_besseli0(double x)
 {
-   unsigned i;
    double sum = 0.0;
 
    double factorial = 1.0;
@@ -198,7 +193,7 @@ static inline double kaiser_besseli0(double x)
 
    // Approximate. This is an infinite sum.
    // Luckily, it converges rather fast.
-   for (i = 0; i < 18; i++)
+   for (unsigned i = 0; i < 18; i++)
    {
       sum += x_pow * two_div_pow / (factorial * factorial);
 
@@ -219,7 +214,6 @@ static inline double kaiser_window(double index, double beta)
 static void create_filter(struct eq_data *eq, unsigned size_log2,
       struct eq_gain *gains, unsigned num_gains, double beta, const char *filter_path)
 {
-   int i;
    int half_block_size = eq->block_size >> 1;
    double window_mod = 1.0 / kaiser_window(0.0, beta);
 
@@ -240,7 +234,7 @@ static void create_filter(struct eq_data *eq, unsigned size_log2,
    // ifftshift() to create the correct linear phase filter.
    // The filter response was designed with zero phase, which won't work unless we compensate
    // for the repeating property of the FFT here by flipping left and right blocks.
-   for (i = 0; i < half_block_size; i++)
+   for (int i = 0; i < half_block_size; i++)
    {
       float tmp = time_filter[i + half_block_size];
       time_filter[i + half_block_size] = time_filter[i];
@@ -248,7 +242,7 @@ static void create_filter(struct eq_data *eq, unsigned size_log2,
    }
 
    // Apply a window to smooth out the frequency repsonse.
-   for (i = 0; i < (int)eq->block_size; i++)
+   for (int i = 0; i < (int)eq->block_size; i++)
    {
       // Kaiser window.
       double phase = (double)i / eq->block_size;
@@ -262,7 +256,7 @@ static void create_filter(struct eq_data *eq, unsigned size_log2,
       FILE *file = fopen(filter_path, "w");
       if (file)
       {
-         for (i = 0; i < (int)eq->block_size - 1; i++)
+         for (int i = 0; i < (int)eq->block_size - 1; i++)
             fprintf(file, "%.8f\n", time_filter[i + 1]);
          fclose(file);
       }
@@ -281,7 +275,6 @@ end:
 static void *eq_init(const struct dspfilter_info *info,
       const struct dspfilter_config *config, void *userdata)
 {
-   unsigned i;
    struct eq_data *eq = calloc(1, sizeof(*eq));
    if (!eq)
       return NULL;
@@ -315,7 +308,7 @@ static void *eq_init(const struct dspfilter_info *info,
    if (!gains)
       goto error;
 
-   for (i = 0; i < num_gain; i++)
+   for (unsigned i = 0; i < num_gain; i++)
    {
       gains[i].freq = frequencies[i] / (0.5f * info->input_rate);
       gains[i].gain = pow(10.0, gain[i] / 20.0);

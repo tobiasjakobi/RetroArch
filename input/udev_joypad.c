@@ -86,13 +86,13 @@ static void poll_pad(unsigned p)
    if (pad->fd < 0)
       return;
 
-   int i, len;
+   ssize_t len;
    struct input_event events[32];
 
    while ((len = read(pad->fd, events, sizeof(events))) > 0)
    {
       len /= sizeof(*events);
-      for (i = 0; i < len; i++)
+      for (ssize_t i = 0; i < len; i++)
       {
          int code = events[i].code;
          switch (events[i].type)
@@ -281,8 +281,7 @@ error:
 
 static int find_vacant_pad()
 {
-   unsigned i;
-   for (i = 0; i < MAX_PLAYERS; i++)
+   for (unsigned i = 0; i < MAX_PLAYERS; i++)
       if (g_pads[i].fd < 0)
          return i;
    return -1;
@@ -384,12 +383,11 @@ static bool add_pad(unsigned p, int fd, const char *path)
 
 static void check_device(const char *path, bool hotplugged)
 {
-   unsigned i;
    struct stat st;
    if (stat(path, &st) < 0)
       return;
 
-   for (i = 0; i < MAX_PLAYERS; i++)
+   for (unsigned i = 0; i < MAX_PLAYERS; i++)
    {
       if (st.st_rdev == g_pads[i].device)
       {
@@ -429,8 +427,7 @@ static void check_device(const char *path, bool hotplugged)
 
 static void remove_device(const char *path)
 {
-   unsigned i;
-   for (i = 0; i < MAX_PLAYERS; i++)
+   for (unsigned i = 0; i < MAX_PLAYERS; i++)
    {
       if (g_pads[i].path && !strcmp(g_pads[i].path, path))
       {
@@ -448,8 +445,7 @@ static void remove_device(const char *path)
 
 static void udev_joypad_destroy()
 {
-   unsigned i;
-   for (i = 0; i < MAX_PLAYERS; i++)
+   for (unsigned i = 0; i < MAX_PLAYERS; i++)
       free_pad(i, false);
 
    if (g_udev_mon)
@@ -462,15 +458,13 @@ static void udev_joypad_destroy()
 
 static bool udev_joypad_init()
 {
-   unsigned i;
-   for (i = 0; i < MAX_PLAYERS; i++)
+   struct udev_list_entry *devs;
+
+   for (unsigned i = 0; i < MAX_PLAYERS; i++)
    {
       g_pads[i].fd = -1;
       g_pads[i].ident = g_settings.input.device_names[i];
    }
-
-   struct udev_list_entry *devs = NULL;
-   struct udev_list_entry *item = NULL;
 
    g_udev = udev_new();
    if (!g_udev)
@@ -490,7 +484,7 @@ static bool udev_joypad_init()
    udev_enumerate_add_match_property(enumerate, "ID_INPUT_JOYSTICK", "1");
    udev_enumerate_scan_devices(enumerate);
    devs = udev_enumerate_get_list_entry(enumerate);
-   for (item = devs; item; item = udev_list_entry_get_next(item))
+   for (struct udev_list_entry *item = devs; item; item = udev_list_entry_get_next(item))
    {
       const char *name = udev_list_entry_get_name(item);
       struct udev_device *dev = udev_device_new_from_syspath(g_udev, name);
