@@ -304,13 +304,12 @@ bool menu_custom_bind_keyboard_cb(void *data, unsigned code)
 uint64_t menu_input()
 {
    uint64_t input_state;
-   static const struct retro_keybind *binds[] = { g_settings.input.binds[0] };
+   static const retro_keybind_ptr binds[] = { g_settings.input.binds[0] };
 
    if (!driver.menu)
       return 0;
 
    input_state = 0;
-
 
    input_push_analog_dpad(binds[0], (g_settings.input.analog_dpad_mode[0] == ANALOG_DPAD_NONE) ? ANALOG_DPAD_LSTICK : g_settings.input.analog_dpad_mode[0]);
    for (unsigned i = 0; i < MAX_PLAYERS; i++)

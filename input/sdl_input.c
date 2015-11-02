@@ -200,7 +200,7 @@ static int16_t sdl_lightgun_device_state(sdl_input_t *sdl, unsigned id)
    }
 }
 
-static int16_t sdl_input_state(void *data_, const struct retro_keybind **binds, unsigned port, unsigned device, unsigned index, unsigned id)
+static int16_t sdl_input_state(void *data_, const retro_keybind_ptr *binds, unsigned port, unsigned device, unsigned index, unsigned id)
 {
    sdl_input_t *data = data_;
    switch (device)

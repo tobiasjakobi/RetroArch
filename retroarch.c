@@ -639,7 +639,7 @@ static int16_t input_state(unsigned port, unsigned device, unsigned index, unsig
       g_extern.bsv.movie_end = true;
    }
 
-   static const struct retro_keybind *binds[MAX_PLAYERS] = {
+   static const retro_keybind_ptr binds[MAX_PLAYERS] = {
       g_settings.input.binds[0],
       g_settings.input.binds[1],
       g_settings.input.binds[2],
@@ -2174,7 +2174,7 @@ static void check_reset()
 static void check_turbo()
 {
    unsigned i;
-   static const struct retro_keybind *binds[MAX_PLAYERS] = {
+   static const retro_keybind_ptr binds[MAX_PLAYERS] = {
       g_settings.input.binds[0],
       g_settings.input.binds[1],
       g_settings.input.binds[2],
@@ -2186,7 +2186,6 @@ static void check_turbo()
    };
 
    g_extern.turbo_count++;
-
 
    if (driver.block_libretro_input)
       memset(g_extern.turbo_frame_enable, 0, sizeof(g_extern.turbo_frame_enable));

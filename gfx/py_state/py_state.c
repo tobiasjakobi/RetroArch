@@ -76,7 +76,7 @@ static PyObject* py_read_vram(PyObject *self, PyObject *args)
    return PyLong_FromLong(data[addr]);
 }
 
-static const struct retro_keybind *py_binds[MAX_PLAYERS] = {
+static const retro_keybind_ptr py_binds[MAX_PLAYERS] = {
    g_settings.input.binds[0],
    g_settings.input.binds[1],
    g_settings.input.binds[2],

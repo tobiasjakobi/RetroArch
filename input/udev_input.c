@@ -517,7 +517,7 @@ static int16_t udev_analog_pressed(udev_input_t *udev,
    return pressed_plus + pressed_minus;
 }
 
-static int16_t udev_input_state(void *data, const struct retro_keybind **binds,
+static int16_t udev_input_state(void *data, const retro_keybind_ptr *binds,
       unsigned port, unsigned device, unsigned index, unsigned id)
 {
    udev_input_t *udev = data;

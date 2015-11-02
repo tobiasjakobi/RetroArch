@@ -238,7 +238,7 @@ static void update_input(state_tracker_t *tracker)
    };
 
    // Only bind for up to two players for now.
-   static const struct retro_keybind *binds[2] = {
+   static const retro_keybind_ptr binds[] = {
       g_settings.input.binds[0],
       g_settings.input.binds[1],
    };

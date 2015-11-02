@@ -26,7 +26,7 @@ static void nullinput_input_poll(void *data)
    (void)data;
 }
 
-static int16_t nullinput_input_state(void *data, const struct retro_keybind **retro_keybinds, unsigned port, unsigned device, unsigned index, unsigned id)
+static int16_t nullinput_input_state(void *data, const retro_keybind_ptr *retro_keybinds, unsigned port, unsigned device, unsigned index, unsigned id)
 {
    (void)data;
    (void)retro_keybinds;

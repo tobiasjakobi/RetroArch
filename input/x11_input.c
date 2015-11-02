@@ -184,7 +184,7 @@ static int16_t x_lightgun_state(x11_input_t *x11, unsigned id)
    }
 }
 
-static int16_t x_input_state(void *data, const struct retro_keybind **binds, unsigned port, unsigned device, unsigned index, unsigned id)
+static int16_t x_input_state(void *data, const retro_keybind_ptr *binds, unsigned port, unsigned device, unsigned index, unsigned id)
 {
    x11_input_t *x11 = data;
    int16_t ret;

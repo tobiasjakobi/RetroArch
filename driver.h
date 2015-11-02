@@ -155,6 +155,8 @@ struct retro_keybind
    uint32_t orig_joyaxis; // Used by input_{push,pop}_analog_dpad().
 };
 
+typedef struct retro_keybind* retro_keybind_ptr;
+
 struct platform_bind
 {
    uint64_t joykey;
@@ -245,7 +247,7 @@ typedef struct input_driver
 {
    void *(*init)();
    void (*poll)(void *data);
-   int16_t (*input_state)(void *data, const struct retro_keybind **retro_keybinds,
+   int16_t (*input_state)(void *data, const retro_keybind_ptr *retro_keybinds,
          unsigned port, unsigned device, unsigned index, unsigned id);
    bool (*key_pressed)(void *data, int key);
    void (*free)(void *data);
