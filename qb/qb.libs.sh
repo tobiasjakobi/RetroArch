@@ -23,10 +23,10 @@ check_lib()	#$1 = HAVE_$1	$2 = lib	$3 = function in lib	$4 = extralibs
 
 	if [ "$3" ]; then
 		ECHOBUF="Checking function $3 in ${2% }"
-		echo "void $3(void); int main(void) { $3(); return 0; }" > $TEMP_C
+		echo "void $3(); int main() { $3(); return 0; }" > $TEMP_C
 	else
 		ECHOBUF="Checking existence of ${2% }"
-		echo "int main(void) { return 0; }" > $TEMP_C
+		echo "int main() { return 0; }" > $TEMP_C
 	fi
 	answer='no'
 #	echo -n "$ECHOBUF"
@@ -94,7 +94,7 @@ check_header()	#$1 = HAVE_$1	$2 = header file
 #	echo -n "Checking presence of header file $2"
 	cat << EOF > "$TEMP_C"
 #include<$2>
-int main(void) { return 0; }
+int main() { return 0; }
 EOF
 	answer='no'
 	"$CC" -o "$TEMP_EXE" "$TEMP_C" $INCLUDE_DIRS >>config.log 2>&1 && answer='yes'
@@ -115,7 +115,7 @@ check_macro()	#$1 = HAVE_$1	$2 = macro name
 #ifndef $2
 #error $2 is not defined
 #endif
-int main(void) { return 0; }
+int main() { return 0; }
 EOF
 	answer='no'
 	"$CC" -o "$TEMP_EXE" "$TEMP_C" $CFLAGS $INCLUDE_DIRS >>config.log 2>&1 && answer='yes'
@@ -130,7 +130,7 @@ EOF
 check_switch_c()	#$1 = HAVE_$1	$2 = switch	$3 = critical error message [checked only if non-empty]
 {	ECHOBUF="Checking for availability of switch $2 in $CC"
 #	echo -n "Checking for availability of switch $2 in $CC "
-	echo "int main(void) { return 0; }" > $TEMP_C
+	echo "int main() { return 0; }" > $TEMP_C
 	answer='no'
 	"$CC" -o "$TEMP_EXE" "$TEMP_C" $2 >>config.log 2>&1 && answer='yes'
 	eval HAVE_$1="$answer"; echo "$ECHOBUF ... $answer"

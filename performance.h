@@ -28,13 +28,13 @@ extern const struct retro_perf_counter *perf_counters_libretro[MAX_COUNTERS];
 extern unsigned perf_ptr_rarch;
 extern unsigned perf_ptr_libretro;
 
-retro_perf_tick_t rarch_get_perf_counter(void);
-retro_time_t rarch_get_time_usec(void);
+retro_perf_tick_t rarch_get_perf_counter();
+retro_time_t rarch_get_time_usec();
 void rarch_perf_register(struct retro_perf_counter *perf);
 void retro_perf_register(struct retro_perf_counter *perf); // Same as rarch_perf_register, just for libretro cores.
-void retro_perf_clear(void);
-void rarch_perf_log(void);
-void retro_perf_log(void);
+void retro_perf_clear();
+void rarch_perf_log();
+void retro_perf_log();
 
 static inline void rarch_perf_start(struct retro_perf_counter *perf)
 {
@@ -51,8 +51,8 @@ static inline void rarch_perf_stop(struct retro_perf_counter *perf)
       perf->total += rarch_get_perf_counter() - perf->start;
 }
 
-uint64_t rarch_get_cpu_features(void);
-unsigned rarch_get_cpu_cores(void);
+uint64_t rarch_get_cpu_features();
+unsigned rarch_get_cpu_cores();
 
 // Used internally by RetroArch.
 #define RARCH_PERFORMANCE_INIT(X) \

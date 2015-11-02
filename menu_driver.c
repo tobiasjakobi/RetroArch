@@ -46,7 +46,7 @@ static int find_menu_driver_index(const char *driver)
    return -1;
 }
 
-void find_prev_menu_driver(void)
+void find_prev_menu_driver()
 {
    int i = find_menu_driver_index(g_settings.menu.driver);
    if (i > 0)
@@ -58,7 +58,7 @@ void find_prev_menu_driver(void)
       RARCH_WARN("Couldn't find any previous menu driver (current one: \"%s\").\n", g_settings.menu.driver);
 }
 
-void find_next_menu_driver(void)
+void find_next_menu_driver()
 {
    int i = find_menu_driver_index(g_settings.menu.driver);
    if (i >= 0 && menu_ctx_drivers[i + 1])
@@ -70,7 +70,7 @@ void find_next_menu_driver(void)
       RARCH_WARN("Couldn't find any next menu driver (current one: \"%s\").\n", g_settings.menu.driver);
 }
 
-void find_menu_driver(void)
+void find_menu_driver()
 {
    int i = find_menu_driver_index(g_settings.menu.driver);
    if (i >= 0)

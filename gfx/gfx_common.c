@@ -175,7 +175,7 @@ void gfx_set_square_pixel_viewport(unsigned width, unsigned height)
    aspectratio_lut[ASPECT_RATIO_SQUARE].value = (float)aspect_x / aspect_y;
 }
 
-void gfx_set_core_viewport(void)
+void gfx_set_core_viewport()
 {
    const struct retro_game_geometry *geom = &g_extern.system.av_info.geometry;
 
@@ -189,7 +189,7 @@ void gfx_set_core_viewport(void)
       aspectratio_lut[ASPECT_RATIO_CORE].value = (float)geom->base_width / geom->base_height;
 }
 
-void gfx_set_config_viewport(void)
+void gfx_set_config_viewport()
 {
    if (g_settings.video.aspect_ratio < 0.0f)
    {

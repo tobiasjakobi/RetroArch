@@ -35,7 +35,7 @@ typedef struct linuxraw_input
 } linuxraw_input_t;
 
 
-static void linuxraw_resetKbmd(void)
+static void linuxraw_resetKbmd()
 {
    if (oldKbmd != 0xffff)
    {
@@ -53,7 +53,7 @@ static void linuxraw_exitGracefully(int sig)
    kill(getpid(), sig);
 }
 
-static void *linuxraw_input_init(void)
+static void *linuxraw_input_init()
 {
    // only work on terminals
    if (!isatty(0))

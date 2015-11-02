@@ -210,7 +210,7 @@ void audio_convert_float_to_s16_ALLEGREX(int16_t *out,
 }
 #endif
 
-void audio_convert_init_simd(void)
+void audio_convert_init_simd()
 {
 #if defined(__ARM_NEON__) 
    unsigned cpu = rarch_get_cpu_features();

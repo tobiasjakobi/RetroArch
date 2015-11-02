@@ -21,7 +21,7 @@
 #include <stddef.h>
 #include "libretro.h"
 
-void input_poll_net(void);
+void input_poll_net();
 int16_t input_state_net(unsigned port, unsigned device, unsigned index, unsigned id);
 void video_frame_net(const void *data, unsigned width, unsigned height, size_t pitch);
 void audio_sample_net(int16_t left, int16_t right);
@@ -40,7 +40,7 @@ struct retro_callbacks
    retro_input_state_t state_cb;
 };
 
-bool netplay_init_network(void);
+bool netplay_init_network();
 
 // Creates a new netplay handle. A NULL host means we're hosting (player 1). :)
 netplay_t *netplay_new(const char *server,

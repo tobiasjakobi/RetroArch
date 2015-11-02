@@ -40,7 +40,7 @@ static char *g_auto_path = NULL;
 static char *g_driver = NULL;
 static unsigned g_meta_level = 0;
 
-static void print_help(void)
+static void print_help()
 {
    puts("=====================");
    puts(" retroarch-joyconfig");

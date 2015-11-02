@@ -70,7 +70,7 @@ const rarch_joypad_driver_t *input_joypad_init_driver(const char *ident)
    return NULL;
 }
 
-const rarch_joypad_driver_t *input_joypad_init_first(void)
+const rarch_joypad_driver_t *input_joypad_init_first()
 {
    unsigned i;
    for (i = 0; joypad_drivers[i]; i++)

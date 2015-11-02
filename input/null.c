@@ -16,7 +16,7 @@
 #include "../general.h"
 #include "../driver.h"
 
-static void *nullinput_input_init(void)
+static void *nullinput_input_init()
 {
    return (void*)-1;
 }

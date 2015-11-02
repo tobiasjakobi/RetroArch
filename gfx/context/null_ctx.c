@@ -32,7 +32,7 @@ static void gfx_ctx_destroy(void *data)
 static void gfx_ctx_get_video_size(void *data, unsigned *width, unsigned *height)
 {}
 
-static bool gfx_ctx_init(void)
+static bool gfx_ctx_init()
 {
    return true;
 }

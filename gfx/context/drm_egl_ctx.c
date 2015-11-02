@@ -180,7 +180,7 @@ static void wait_flip(bool block)
    }
 }
 
-static void queue_flip(void)
+static void queue_flip()
 {
    g_next_bo = gbm_surface_lock_front_buffer(g_gbm_surface);
    struct drm_fb *fb = drm_fb_get_from_bo(g_next_bo);
@@ -245,7 +245,7 @@ static void gfx_ctx_get_video_size(void *data, unsigned *width, unsigned *height
    *height = g_fb_height;
 }
 
-static void free_drm_resources(void)
+static void free_drm_resources()
 {
    if (g_gbm_surface)
       gbm_surface_destroy(g_gbm_surface);

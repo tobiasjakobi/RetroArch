@@ -41,7 +41,7 @@ struct filter_data
    unsigned in_fmt;
 };
 
-static unsigned epx_generic_input_fmts(void)
+static unsigned epx_generic_input_fmts()
 {
    return SOFTFILTER_FMT_RGB565;
 }

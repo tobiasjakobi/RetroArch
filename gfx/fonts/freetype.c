@@ -193,7 +193,7 @@ static const char *font_paths[] = {
 };
 
 // Highly OS/platform dependent.
-static const char *ft_renderer_get_default_font(void)
+static const char *ft_renderer_get_default_font()
 {
    size_t i;
    for (i = 0; i < ARRAY_SIZE(font_paths); i++)

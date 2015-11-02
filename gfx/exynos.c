@@ -213,7 +213,7 @@ static inline unsigned align_common(unsigned i, unsigned j) {
 }
 
 /* Find the index of a compatible DRM device. */
-static int get_device_index(void) {
+static int get_device_index() {
   char buf[32];
   drmVersionPtr ver;
 

@@ -194,7 +194,7 @@ static void bleed_phosphors_rgb565(void *data, uint16_t *scanline, unsigned widt
    }
 }
 
-static unsigned phosphor2x_generic_input_fmts(void)
+static unsigned phosphor2x_generic_input_fmts()
 {
    return SOFTFILTER_FMT_RGB565 | SOFTFILTER_FMT_XRGB8888;
 }

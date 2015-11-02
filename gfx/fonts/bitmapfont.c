@@ -121,7 +121,7 @@ static void font_renderer_free(void *data)
    free(handle);
 }
 
-static const char *font_renderer_get_default_font(void)
+static const char *font_renderer_get_default_font()
 {
    return "";
 }

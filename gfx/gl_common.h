@@ -80,7 +80,7 @@
 
 #define RARCH_GL_MAX_RENDERBUFFER_SIZE GL_MAX_RENDERBUFFER_SIZE
 
-static inline bool gl_check_error(void)
+static inline bool gl_check_error()
 {
    int error = glGetError();
    switch (error)

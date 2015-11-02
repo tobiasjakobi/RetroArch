@@ -30,7 +30,7 @@ enum gfx_ctx_api
    GFX_CTX_OPENGL_ES_API,
 };
 
-typedef void (*gfx_ctx_proc_t)(void);
+typedef void (*gfx_ctx_proc_t)();
 
 // The opaque void* argument should be the overlying driver data (e.g. gl_t for OpenGL contexts).
 // This will allow us in the future to have separate contexts to separate gl_t structs (if needed).

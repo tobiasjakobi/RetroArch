@@ -204,7 +204,7 @@ void main_exit(args_type() args)
    rarch_main_clear_state();
 }
 
-static void check_defaults_dirs(void)
+static void check_defaults_dirs()
 {
    if (*g_defaults.autoconfig_dir)
       path_mkdir(g_defaults.autoconfig_dir);

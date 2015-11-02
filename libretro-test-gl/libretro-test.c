@@ -91,7 +91,7 @@ static const char *fragment_shader[] = {
 };
 #endif
 
-static void compile_program(void)
+static void compile_program()
 {
    prog = glCreateProgram();
    GLuint vert = glCreateShader(GL_VERTEX_SHADER);
@@ -166,7 +166,7 @@ static void init_multisample(unsigned samples)
 }
 #endif
 
-static void setup_vao(void)
+static void setup_vao()
 {
 #ifdef CORE
    glGenVertexArrays(1, &vao);
@@ -182,13 +182,13 @@ static void setup_vao(void)
    glUseProgram(0);
 }
 
-void retro_init(void)
+void retro_init()
 {}
 
-void retro_deinit(void)
+void retro_deinit()
 {}
 
-unsigned retro_api_version(void)
+unsigned retro_api_version()
 {
    return RETRO_API_VERSION;
 }
@@ -280,7 +280,7 @@ void retro_set_video_refresh(retro_video_refresh_t cb)
    video_cb = cb;
 }
 
-static void update_variables(void)
+static void update_variables()
 {
    struct retro_variable var = {
       .key = "testgl_resolution",
@@ -326,7 +326,7 @@ static void update_variables(void)
 #endif
 }
 
-void retro_run(void)
+void retro_run()
 {
    bool updated = false;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
@@ -408,7 +408,7 @@ void retro_run(void)
    video_cb(RETRO_HW_FRAME_BUFFER_VALID, width, height, 0);
 }
 
-static void context_reset(void)
+static void context_reset()
 {
    fprintf(stderr, "Context reset!\n");
    rglgen_resolve_symbols(hw_render.get_proc_address);
@@ -420,7 +420,7 @@ static void context_reset(void)
 #endif
 }
 
-static void context_destroy(void)
+static void context_destroy()
 {
    fprintf(stderr, "Context destroy!\n");
 
@@ -479,10 +479,10 @@ bool retro_load_game(const struct retro_game_info *info)
    return true;
 }
 
-void retro_unload_game(void)
+void retro_unload_game()
 {}
 
-unsigned retro_get_region(void)
+unsigned retro_get_region()
 {
    return RETRO_REGION_NTSC;
 }
@@ -495,7 +495,7 @@ bool retro_load_game_special(unsigned type, const struct retro_game_info *info, 
    return false;
 }
 
-size_t retro_serialize_size(void)
+size_t retro_serialize_size()
 {
    return 0;
 }
@@ -526,10 +526,10 @@ size_t retro_get_memory_size(unsigned id)
    return 0;
 }
 
-void retro_reset(void)
+void retro_reset()
 {}
 
-void retro_cheat_reset(void)
+void retro_cheat_reset()
 {}
 
 void retro_cheat_set(unsigned index, bool enabled, const char *code)

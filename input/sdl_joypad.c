@@ -111,7 +111,7 @@ static void sdl_joypad_disconnect(int id)
    memset(&g_pads[id], 0, sizeof(g_pads[id]));
 }
 
-static void sdl_joypad_destroy(void)
+static void sdl_joypad_destroy()
 {
    unsigned i;
    for (i = 0; i < MAX_PLAYERS; i++)
@@ -121,7 +121,7 @@ static void sdl_joypad_destroy(void)
    memset(g_pads, 0, sizeof(g_pads));
 }
 
-static bool sdl_joypad_init(void)
+static bool sdl_joypad_init()
 {
    unsigned i;
    if (SDL_WasInit(0) == 0 && SDL_Init(SDL_INIT_JOYSTICK) < 0)
@@ -240,7 +240,7 @@ static int16_t sdl_joypad_axis(unsigned port, uint32_t joyaxis)
    return val;
 }
 
-static void sdl_joypad_poll(void)
+static void sdl_joypad_poll()
 {
 #ifdef HAVE_SDL2
    SDL_Event event;

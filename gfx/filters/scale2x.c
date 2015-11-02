@@ -121,7 +121,7 @@ static void scale2x_generic_xrgb8888(unsigned width, unsigned height,
    SCALE2X_GENERIC(uint32_t, width, height, first, last, src, src_stride, dst, dst_stride, out0, out1);
 }
 
-static unsigned scale2x_generic_input_fmts(void)
+static unsigned scale2x_generic_input_fmts()
 {
    return SOFTFILTER_FMT_XRGB8888 | SOFTFILTER_FMT_RGB565;
 }

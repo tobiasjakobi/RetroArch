@@ -18,7 +18,7 @@ if [ "$USE_LANG_C" = 'yes' ]; then
 #	echo -n "Checking for suitable working C compiler"
 	cat << EOF > "$TEMP_C"
 #include <stdio.h>
-int main(void) { puts("Hai world!"); return 0; }
+int main() { puts("Hai world!"); return 0; }
 EOF
 	if [ -z "$CC" ]; then
 		for CC in ${CC:=$(which ${CROSS_COMPILE}gcc ${CROSS_COMPILE}cc ${CROSS_COMPILE}clang)} ''; do

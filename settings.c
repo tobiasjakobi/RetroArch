@@ -32,7 +32,7 @@ struct settings g_settings;
 struct global g_extern;
 struct defaults g_defaults;
 
-const char *config_get_default_audio(void)
+const char *config_get_default_audio()
 {
    switch (AUDIO_DEFAULT_DRIVER)
    {
@@ -53,7 +53,7 @@ const char *config_get_default_audio(void)
    }
 }
 
-const char *config_get_default_audio_resampler(void)
+const char *config_get_default_audio_resampler()
 {
    switch (AUDIO_DEFAULT_RESAMPLER_DRIVER)
    {
@@ -65,7 +65,7 @@ const char *config_get_default_audio_resampler(void)
    }
 }
 
-const char *config_get_default_video(void)
+const char *config_get_default_video()
 {
    switch (VIDEO_DEFAULT_DRIVER)
    {
@@ -84,7 +84,7 @@ const char *config_get_default_video(void)
    }
 }
 
-const char *config_get_default_input(void)
+const char *config_get_default_input()
 {
    switch (INPUT_DEFAULT_DRIVER)
    {
@@ -108,7 +108,7 @@ const char *config_get_default_input(void)
 }
 
 #ifdef HAVE_MENU
-const char *config_get_default_menu(void)
+const char *config_get_default_menu()
 {
    switch (MENU_DEFAULT_DRIVER)
    {
@@ -122,7 +122,7 @@ const char *config_get_default_menu(void)
 }
 #endif
 
-void config_set_defaults(void)
+void config_set_defaults()
 {
    unsigned i, j;
    const char *def_video = config_get_default_video();
@@ -363,9 +363,9 @@ void config_set_defaults(void)
    g_extern.block_config_read = default_block_config_read;
 }
 
-static void parse_config_file(void);
+static void parse_config_file();
 
-static void config_load_core_specific(void)
+static void config_load_core_specific()
 {
    *g_extern.core_specific_config_path = '\0';
 
@@ -409,7 +409,7 @@ static void config_load_core_specific(void)
    }
 }
 
-void config_load(void)
+void config_load()
 {
    // Flush out per-core configs before loading a new config.
    if (*g_extern.core_specific_config_path && g_settings.config_save_on_exit && g_settings.core_specific_config)
@@ -425,7 +425,7 @@ void config_load(void)
    config_load_core_specific();
 }
 
-static config_file_t *open_default_config_file(void)
+static config_file_t *open_default_config_file()
 {
    config_file_t *conf = NULL;
 
@@ -504,7 +504,7 @@ static config_file_t *open_default_config_file(void)
 
 static void config_read_keybinds_conf(config_file_t *conf);
 
-static void parse_config_file(void)
+static void parse_config_file()
 {
    bool ret;
    if (*g_extern.config_path)

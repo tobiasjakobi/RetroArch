@@ -630,7 +630,7 @@ static bool open_devices(udev_input_t *udev, const char *type, device_handle_cb 
 static long oldkbmd = 0xffff;
 static struct termios oldterm, newterm;
 
-static void restore_terminal_input(void)
+static void restore_terminal_input()
 {
    if (oldkbmd != 0xffff)
    {
@@ -646,7 +646,7 @@ static void restore_terminal_signal(int sig)
    kill(getpid(), sig);
 }
 
-static void disable_terminal_input(void)
+static void disable_terminal_input()
 {
    struct sigaction sa;
 
@@ -689,7 +689,7 @@ static void disable_terminal_input(void)
    atexit(restore_terminal_input);
 }
 
-static void *udev_input_init(void)
+static void *udev_input_init()
 {
    udev_input_t *udev = calloc(1, sizeof(*udev));
    if (!udev)

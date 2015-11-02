@@ -140,7 +140,7 @@ static unsigned cg_attrib_index;
 
 static char cg_alias_define[GFX_MAX_SHADERS][128];
 
-static void gl_cg_reset_attrib(void)
+static void gl_cg_reset_attrib()
 {
    unsigned i;
    // Add sanity check that we did not overflow.
@@ -340,7 +340,7 @@ static void gl_cg_set_params(void *data, unsigned width, unsigned height,
    }
 }
 
-static void gl_cg_deinit_progs(void)
+static void gl_cg_deinit_progs()
 {
    unsigned i;
    RARCH_LOG("CG: Destroying programs.\n");
@@ -364,7 +364,7 @@ static void gl_cg_deinit_progs(void)
    memset(prg, 0, sizeof(prg));
 }
 
-static void gl_cg_deinit_state(void)
+static void gl_cg_deinit_state()
 {
    gl_cg_reset_attrib();
    cg_active = false;
@@ -388,7 +388,7 @@ static void gl_cg_deinit_state(void)
 }
 
 // Final deinit.
-static void gl_cg_deinit_context_state(void)
+static void gl_cg_deinit_context_state()
 {
    if (cgCtx)
    {
@@ -399,7 +399,7 @@ static void gl_cg_deinit_context_state(void)
 }
 
 // Full deinit.
-static void gl_cg_deinit(void)
+static void gl_cg_deinit()
 {
    gl_cg_deinit_state();
    gl_cg_deinit_context_state();
@@ -468,7 +468,7 @@ end:
 
 static void set_program_base_attrib(unsigned i);
 
-static bool load_stock(void)
+static bool load_stock()
 {
    if (!load_program(0, stock_cg_program, false))
    {
@@ -511,7 +511,7 @@ static bool load_plain(const char *path)
 
 #define print_buf(buf, ...) snprintf(buf, sizeof(buf), __VA_ARGS__)
 
-static bool load_imports(void)
+static bool load_imports()
 {
    unsigned i;
    if (!cg_shader->variables)
@@ -865,7 +865,7 @@ static void gl_cg_use(void *data, unsigned index)
    }
 }
 
-static unsigned gl_cg_num(void)
+static unsigned gl_cg_num()
 {
    if (cg_active)
       return cg_shader->passes;
@@ -902,7 +902,7 @@ static void gl_cg_shader_scale(unsigned index, struct gfx_fbo_scale *scale)
       scale->valid = false;
 }
 
-static unsigned gl_cg_get_prev_textures(void)
+static unsigned gl_cg_get_prev_textures()
 {
    unsigned i, j;
    if (!cg_active)
@@ -925,7 +925,7 @@ static bool gl_cg_mipmap_input(unsigned index)
       return false;
 }
 
-static struct gfx_shader *gl_cg_get_current_shader(void)
+static struct gfx_shader *gl_cg_get_current_shader()
 {
    return cg_active ? cg_shader : NULL;
 }

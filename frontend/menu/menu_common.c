@@ -77,7 +77,7 @@ int menu_defer_core(core_info_list_t *core_info, const char *dir, const char *pa
    return 0;
 }
 
-void menu_content_history_push_current(void)
+void menu_content_history_push_current()
 {
    // g_extern.fullpath can be relative here.
    // Ensure we're pushing absolute path.
@@ -99,7 +99,7 @@ void menu_content_history_push_current(void)
                g_extern.system.info.library_name);
 }
 
-static void load_menu_content_prepare(void)
+static void load_menu_content_prepare()
 {
    if (!driver.menu)
       return;
@@ -191,7 +191,7 @@ static void menu_environment_get(int *argc, char *argv[], void *args, void *para
    wrap_args->touched       = true;
 }
 
-bool load_menu_content(void)
+bool load_menu_content()
 {
    load_menu_content_prepare();
 
@@ -362,7 +362,7 @@ void menu_flush_stack_type(unsigned final_type)
    }
 }
 
-bool menu_iterate(void)
+bool menu_iterate()
 {
    unsigned action = MENU_ACTION_NOOP;
    static bool initial_held = true;
@@ -512,7 +512,7 @@ bool menu_replace_config(const char *path)
 }
 
 // Save a new config to a file. Filename is based on heuristics to avoid typing.
-bool menu_save_new_config(void)
+bool menu_save_new_config()
 {
    char config_dir[PATH_MAX], config_name[PATH_MAX], config_path[PATH_MAX], msg[512];
    bool ret = false;

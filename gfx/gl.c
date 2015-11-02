@@ -119,7 +119,7 @@ static inline void set_texture_coords(GLfloat *coords, GLfloat xamt, GLfloat yam
 }
 
 #if defined(HAVE_EGL) && defined(HAVE_OPENGLES2)
-static bool check_eglimage_proc(void)
+static bool check_eglimage_proc()
 {
    return glEGLImageTargetTexture2DOES != NULL;
 }

@@ -44,7 +44,7 @@ struct filter_data
 };
 
 
-static unsigned blargg_ntsc_snes_composite_generic_input_fmts(void)
+static unsigned blargg_ntsc_snes_composite_generic_input_fmts()
 {
    return SOFTFILTER_FMT_RGB565;
 }

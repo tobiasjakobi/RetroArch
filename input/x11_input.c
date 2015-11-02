@@ -40,7 +40,7 @@ typedef struct x11_input
    bool grab_mouse;
 } x11_input_t;
 
-static void *x_input_init(void)
+static void *x_input_init()
 {
    if (driver.display_type != RARCH_DISPLAY_X11)
    {

@@ -41,7 +41,7 @@ struct filter_data
    unsigned in_fmt;
 };
 
-static unsigned twoxsai_generic_input_fmts(void)
+static unsigned twoxsai_generic_input_fmts()
 {
    return SOFTFILTER_FMT_RGB565 | SOFTFILTER_FMT_XRGB8888;
 }

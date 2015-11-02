@@ -32,7 +32,7 @@ void sthread_join(sthread_t *thread);
 // Mutexes
 typedef struct slock slock_t;
 
-slock_t *slock_new(void);
+slock_t *slock_new();
 void slock_free(slock_t *lock);
 
 void slock_lock(slock_t *lock);
@@ -41,7 +41,7 @@ void slock_unlock(slock_t *lock);
 // Condition variables.
 typedef struct scond scond_t;
 
-scond_t *scond_new(void);
+scond_t *scond_new();
 void scond_free(scond_t *cond);
 
 void scond_wait(scond_t *cond, slock_t *lock);

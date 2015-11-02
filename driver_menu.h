@@ -138,8 +138,8 @@ typedef struct menu_ctx_driver_backend
    int      (*setting_toggle)(unsigned, unsigned, unsigned, rarch_setting_t*);
    int      (*setting_set)(unsigned, unsigned, rarch_setting_t *);
    void     (*setting_set_label)(char *, size_t, unsigned *, unsigned);
-   void     (*defer_decision_automatic)(void);
-   void     (*defer_decision_manual)(void);
+   void     (*defer_decision_automatic)();
+   void     (*defer_decision_manual)();
    const char *ident;
 } menu_ctx_driver_backend_t;
 
@@ -147,9 +147,9 @@ typedef struct menu_ctx_driver
 {
    void  (*set_texture)(void*);
    void  (*render_messagebox)(const char*);
-   void  (*render)(void);
-   void  (*frame)(void);
-   void* (*init)(void);
+   void  (*render)();
+   void  (*frame)();
+   void* (*init)();
    void  (*free)(void*);
    void  (*context_reset)(void*);
    void  (*context_destroy)(void*);

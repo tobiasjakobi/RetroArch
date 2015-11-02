@@ -453,7 +453,7 @@ static bool compile_programs(GLuint *gl_prog)
    return true;
 }
 
-static void gl_glsl_reset_attrib(void)
+static void gl_glsl_reset_attrib()
 {
    unsigned i;
    // Add sanity check that we did not overflow.
@@ -591,7 +591,7 @@ static void find_uniforms(unsigned pass, GLuint prog, struct shader_uniforms *un
    glUseProgram(0);
 }
 
-static void gl_glsl_free_shader(void)
+static void gl_glsl_free_shader()
 {
    unsigned i;
    if (!glsl_shader)
@@ -608,7 +608,7 @@ static void gl_glsl_free_shader(void)
    glsl_shader = NULL;
 }
 
-static void gl_glsl_deinit(void)
+static void gl_glsl_deinit()
 {
    unsigned i;
    glUseProgram(0);
@@ -1131,7 +1131,7 @@ static void gl_glsl_use(void *data, unsigned index)
    }
 }
 
-static unsigned gl_glsl_num(void)
+static unsigned gl_glsl_num()
 {
    return glsl_shader->passes;
 }
@@ -1165,7 +1165,7 @@ static void gl_glsl_shader_scale(unsigned index, struct gfx_fbo_scale *scale)
       scale->valid = false;
 }
 
-static unsigned gl_glsl_get_prev_textures(void)
+static unsigned gl_glsl_get_prev_textures()
 {
    unsigned i, j;
    if (!glsl_enable)
@@ -1188,7 +1188,7 @@ static bool gl_glsl_mipmap_input(unsigned index)
       return false;
 }
 
-static struct gfx_shader *gl_glsl_get_current_shader(void)
+static struct gfx_shader *gl_glsl_get_current_shader()
 {
    return glsl_enable ? glsl_shader : NULL;
 }

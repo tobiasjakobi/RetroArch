@@ -361,7 +361,7 @@ end:
    return ret;
 }
 
-bool init_rom_file(void)
+bool init_rom_file()
 {
    unsigned i;
 

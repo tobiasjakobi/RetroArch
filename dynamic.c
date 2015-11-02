@@ -48,10 +48,10 @@ static dylib_t lib_handle;
 
 #define SYM_DUMMY(x) p##x = libretro_dummy_##x
 
-void (*pretro_init)(void);
-void (*pretro_deinit)(void);
+void (*pretro_init)();
+void (*pretro_deinit)();
 
-unsigned (*pretro_api_version)(void);
+unsigned (*pretro_api_version)();
 
 void (*pretro_get_system_info)(struct retro_system_info*);
 void (*pretro_get_system_av_info)(struct retro_system_av_info*);
@@ -65,22 +65,22 @@ void (*pretro_set_input_state)(retro_input_state_t);
 
 void (*pretro_set_controller_port_device)(unsigned, unsigned);
 
-void (*pretro_reset)(void);
-void (*pretro_run)(void);
+void (*pretro_reset)();
+void (*pretro_run)();
 
-size_t (*pretro_serialize_size)(void);
+size_t (*pretro_serialize_size)();
 bool (*pretro_serialize)(void*, size_t);
 bool (*pretro_unserialize)(const void*, size_t);
 
-void (*pretro_cheat_reset)(void);
+void (*pretro_cheat_reset)();
 void (*pretro_cheat_set)(unsigned, bool, const char*);
 
 bool (*pretro_load_game)(const struct retro_game_info*);
 bool (*pretro_load_game_special)(unsigned, const struct retro_game_info*, size_t);
 
-void (*pretro_unload_game)(void);
+void (*pretro_unload_game)();
 
-unsigned (*pretro_get_region)(void);
+unsigned (*pretro_get_region)();
 
 void *(*pretro_get_memory_data)(unsigned);
 size_t (*pretro_get_memory_size)(unsigned);
@@ -320,7 +320,7 @@ void init_libretro_sym(bool dummy)
 {
    // Guarantee that we can do "dirty" casting.
    // Every OS that this program supports should pass this ...
-   rarch_assert(sizeof(void*) == sizeof(void (*)(void)));
+   rarch_assert(sizeof(void*) == sizeof(void (*)()));
 
    if (!dummy)
    {
@@ -349,7 +349,7 @@ void init_libretro_sym(bool dummy)
    pretro_set_environment(rarch_environment_cb);
 }
 
-void uninit_libretro_sym(void)
+void uninit_libretro_sym()
 {
 #ifdef HAVE_DYNAMIC
    if (lib_handle)

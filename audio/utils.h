@@ -59,6 +59,6 @@ void audio_convert_s16_to_float_C(float *out,
 void audio_convert_float_to_s16_C(int16_t *out,
       const float *in, size_t samples);
 
-void audio_convert_init_simd(void);
+void audio_convert_init_simd();
 
 #endif

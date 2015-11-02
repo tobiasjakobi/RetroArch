@@ -143,14 +143,14 @@ static bool recv_all(int fd, void *data_, size_t size)
    return true;
 }
 
-static void warn_hangup(void)
+static void warn_hangup()
 {
    RARCH_WARN("Netplay has disconnected. Will continue without connection ...\n");
    if (g_extern.msg_queue)
       msg_queue_push(g_extern.msg_queue, "Netplay has disconnected. Will continue without connection.", 0, 480);
 }
 
-void input_poll_net(void)
+void input_poll_net()
 {
    if (!netplay_should_skip(g_extern.netplay) && netplay_can_poll(g_extern.netplay))
       netplay_poll(g_extern.netplay);
@@ -396,7 +396,7 @@ static bool init_udp_socket(netplay_t *handle, const char *server, uint16_t port
 }
 
 // Platform specific socket library init.
-bool netplay_init_network(void)
+bool netplay_init_network()
 {
    static bool inited = false;
    if (inited)
@@ -429,7 +429,7 @@ bool netplay_can_poll(netplay_t *handle)
 // Not really a hash, but should be enough to differentiate implementations from each other.
 // Subtle differences in the implementation will not be possible to spot.
 // The alternative would have been checking serialization sizes, but it was troublesome for cross platform compat.
-static uint32_t implementation_magic_value(void)
+static uint32_t implementation_magic_value()
 {
    size_t i;
    uint32_t res = 0;

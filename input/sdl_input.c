@@ -32,7 +32,7 @@ typedef struct sdl_input
    int mouse_l, mouse_r, mouse_m, mouse_wu, mouse_wd, mouse_wl, mouse_wr;
 } sdl_input_t;
 
-static void *sdl_input_init(void)
+static void *sdl_input_init()
 {
    input_init_keyboard_lut(rarch_key_map_sdl);
    sdl_input_t *sdl = calloc(1, sizeof(*sdl));

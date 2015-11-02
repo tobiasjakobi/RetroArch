@@ -56,17 +56,17 @@ static int if_down(int sid)
    return 0;
 }
 
-void logger_init (void)
+void logger_init()
 {
    g_sid = if_up_with(1);
 }
 
-void logger_shutdown (void)
+void logger_shutdown()
 {
    if_down(g_sid);
 }
 
-void logger_send(const char *__format,...)
+void logger_send(const char *__format, ...)
 {
    va_list args;
 

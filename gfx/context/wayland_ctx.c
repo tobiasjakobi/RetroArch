@@ -127,7 +127,7 @@ static const struct wl_registry_listener registry_listener = {
 static void gfx_ctx_get_video_size(void *data, unsigned *width, unsigned *height);
 static void gfx_ctx_destroy(void *data);
 
-static void egl_report_error(void)
+static void egl_report_error()
 {
    EGLint error = eglGetError();
    const char *str = NULL;
@@ -172,7 +172,7 @@ static void gfx_ctx_swap_interval(void *data, unsigned interval)
    }
 }
 
-static void flush_wayland_fd(void)
+static void flush_wayland_fd()
 {
    wl_display_dispatch_pending(g_dpy);
    wl_display_flush(g_dpy);

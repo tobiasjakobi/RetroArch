@@ -1896,7 +1896,7 @@ static int menu_custom_bind_iterate_keyboard(void *data, unsigned action)
    return 0;
 }
 
-static void menu_common_defer_decision_automatic(void)
+static void menu_common_defer_decision_automatic()
 {
    if (!driver.menu)
       return;
@@ -1905,7 +1905,7 @@ static void menu_common_defer_decision_automatic(void)
    driver.menu->msg_force = true;
 }
 
-static void menu_common_defer_decision_manual(void)
+static void menu_common_defer_decision_manual()
 {
    if (!driver.menu)
       return;

@@ -85,7 +85,7 @@ static int nul_handler(Display *dpy, XErrorEvent *event)
 static void gfx_ctx_get_video_size(void *data, unsigned *width, unsigned *height);
 static void gfx_ctx_destroy(void *data);
 
-static void egl_report_error(void)
+static void egl_report_error()
 {
    EGLint error = eglGetError();
    const char *str = NULL;

@@ -43,7 +43,7 @@ struct filter_data
    int burst_toggle;
 };
 
-static unsigned blargg_ntsc_snes_svideo_generic_input_fmts(void)
+static unsigned blargg_ntsc_snes_svideo_generic_input_fmts()
 {
    return SOFTFILTER_FMT_RGB565;
 }

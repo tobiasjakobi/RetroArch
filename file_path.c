@@ -149,7 +149,7 @@ static bool string_list_capacity(struct string_list *list, size_t cap)
    return true;
 }
 
-struct string_list *string_list_new(void)
+struct string_list *string_list_new()
 {
    struct string_list *list = calloc(1, sizeof(*list));
    if (!list)
@@ -404,7 +404,7 @@ static bool path_char_is_slash(char c)
    return c == '/';
 }
 
-static const char *path_default_slash(void)
+static const char *path_default_slash()
 {
    return "/";
 }

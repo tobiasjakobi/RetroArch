@@ -75,7 +75,7 @@ static inline uint32_t prev_pow2(uint32_t v)
    return v - (v >> 1);
 }
 
-static inline uint8_t is_little_endian(void)
+static inline uint8_t is_little_endian()
 {
    union
    {

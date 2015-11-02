@@ -110,7 +110,7 @@ static bool linuxraw_joypad_init_pad(const char *path, struct linuxraw_joypad *p
    }
 }
 
-static void handle_plugged_pad(void)
+static void handle_plugged_pad()
 {
    int i, rc;
    size_t event_size = sizeof(struct inotify_event) + NAME_MAX + 1;
@@ -172,7 +172,7 @@ static void handle_plugged_pad(void)
    free(event_buf);
 }
 
-static void linuxraw_joypad_poll(void)
+static void linuxraw_joypad_poll()
 {
    int i, ret;
    struct epoll_event events[MAX_PLAYERS + 1];
@@ -191,13 +191,13 @@ retry:
    }
 }
 
-static void linuxraw_joypad_setup_notify(void)
+static void linuxraw_joypad_setup_notify()
 {
    fcntl(g_notify, F_SETFL, fcntl(g_notify, F_GETFL) | O_NONBLOCK);
    inotify_add_watch(g_notify, "/dev/input", IN_DELETE | IN_CREATE | IN_ATTRIB);
 }
 
-static bool linuxraw_joypad_init(void)
+static bool linuxraw_joypad_init()
 {
    unsigned i;
    g_epoll = epoll_create(MAX_PLAYERS + 1);
@@ -238,7 +238,7 @@ static bool linuxraw_joypad_init(void)
    return true;
 }
 
-static void linuxraw_joypad_destroy(void)
+static void linuxraw_joypad_destroy()
 {
    unsigned i;
    for (i = 0; i < MAX_PLAYERS; i++)

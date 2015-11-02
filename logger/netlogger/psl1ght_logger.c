@@ -43,7 +43,7 @@ struct sockaddr_in server;
 #define INITSTRING	"Logging Started\n"
 #define BYESTRING	"Logging Stopped\n"
 
-void logger_init (void)
+void logger_init()
 {
    s = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
    memset(&server, 0, sizeof(server));
@@ -55,13 +55,13 @@ void logger_init (void)
    sendto(s, INITSTRING, strlen(INITSTRING), 0, (struct sockaddr*)&server, sizeof(server));
 }
 
-void logger_shutdown (void)
+void logger_shutdown()
 {
    sendto(s, BYESTRING, strlen(BYESTRING), 0, (struct sockaddr*)&server, sizeof(server));
    close(s);
 }
 
-void logger_send(const char *format,...)
+void logger_send(const char *format, ...)
 {
    char log_buf[1024];
    va_list va;

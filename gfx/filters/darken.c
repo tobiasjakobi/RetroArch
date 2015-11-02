@@ -41,7 +41,7 @@ struct filter_data
    unsigned in_fmt;
 };
 
-static unsigned darken_input_fmts(void)
+static unsigned darken_input_fmts()
 {
    return SOFTFILTER_FMT_XRGB8888 | SOFTFILTER_FMT_RGB565;
 }

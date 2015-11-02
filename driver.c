@@ -145,7 +145,7 @@ static int find_input_driver_index(const char *driver)
    return -1;
 }
 
-static void find_audio_driver(void)
+static void find_audio_driver()
 {
    int i = find_audio_driver_index(g_settings.audio.driver);
    if (i >= 0)
@@ -166,7 +166,7 @@ static void find_audio_driver(void)
    }
 }
 
-void find_prev_audio_driver(void)
+void find_prev_audio_driver()
 {
    int i = find_audio_driver_index(g_settings.audio.driver);
    if (i > 0)
@@ -175,7 +175,7 @@ void find_prev_audio_driver(void)
       RARCH_WARN("Couldn't find any previous audio driver (current one: \"%s\").\n", g_settings.audio.driver);
 }
 
-void find_next_audio_driver(void)
+void find_next_audio_driver()
 {
    int i = find_audio_driver_index(g_settings.audio.driver);
    if (i >= 0 && audio_drivers[i + 1])
@@ -184,7 +184,7 @@ void find_next_audio_driver(void)
       RARCH_WARN("Couldn't find any next audio driver (current one: \"%s\").\n", g_settings.audio.driver);
 }
 
-static void find_video_driver(void)
+static void find_video_driver()
 {
 #if defined(HAVE_OPENGL) && defined(HAVE_FBO)
    if (g_extern.system.hw_render_callback.context_type)
@@ -214,7 +214,7 @@ static void find_video_driver(void)
    }
 }
 
-void find_prev_video_driver(void)
+void find_prev_video_driver()
 {
    // No need to enforce GL if HW render. This is done at driver initialize anyways.
    int i = find_video_driver_index(g_settings.video.driver);
@@ -224,7 +224,7 @@ void find_prev_video_driver(void)
       RARCH_WARN("Couldn't find any previous video driver (current one: \"%s\").\n", g_settings.video.driver);
 }
 
-void find_next_video_driver(void)
+void find_next_video_driver()
 {
    // No need to enforce GL if HW render. This is done at driver initialize anyways.
    int i = find_video_driver_index(g_settings.video.driver);
@@ -234,7 +234,7 @@ void find_next_video_driver(void)
       RARCH_WARN("Couldn't find any next video driver (current one: \"%s\").\n", g_settings.video.driver);
 }
 
-static void find_input_driver(void)
+static void find_input_driver()
 {
    int i = find_input_driver_index(g_settings.input.driver);
    if (i >= 0)
@@ -255,7 +255,7 @@ static void find_input_driver(void)
    }
 }
 
-void find_prev_input_driver(void)
+void find_prev_input_driver()
 {
    int i = find_input_driver_index(g_settings.input.driver);
    if (i > 0)
@@ -264,7 +264,7 @@ void find_prev_input_driver(void)
       RARCH_ERR("Couldn't find any previous input driver (current one: \"%s\").\n", g_settings.input.driver);
 }
 
-void find_next_input_driver(void)
+void find_next_input_driver()
 {
    int i = find_input_driver_index(g_settings.input.driver);
    if (i >= 0 && input_drivers[i + 1])
@@ -273,7 +273,7 @@ void find_next_input_driver(void)
       RARCH_ERR("Couldn't find any next input driver (current one: \"%s\").\n", g_settings.input.driver);
 }
 
-void init_drivers_pre(void)
+void init_drivers_pre()
 {
    find_audio_driver();
    find_video_driver();
@@ -283,7 +283,7 @@ void init_drivers_pre(void)
 #endif
 }
 
-static void adjust_system_rates(void)
+static void adjust_system_rates()
 {
    g_extern.system.force_nonblock = false;
    const struct retro_system_timing *info = &g_extern.system.av_info.timing;
@@ -362,7 +362,7 @@ bool driver_set_rumble_state(unsigned port, enum retro_rumble_effect effect, uin
    return false;
 }
 
-uintptr_t driver_get_current_framebuffer(void)
+uintptr_t driver_get_current_framebuffer()
 {
 #ifdef HAVE_FBO
    if (driver.video_poke && driver.video_poke->get_current_framebuffer)
@@ -400,7 +400,7 @@ bool driver_update_system_av_info(const struct retro_system_av_info *info)
 }
 
 #ifdef HAVE_MENU
-static void init_menu(void)
+static void init_menu()
 {
    if (driver.menu)
       return;
@@ -414,7 +414,7 @@ static void init_menu(void)
 }
 #endif
 
-void init_drivers(void)
+void init_drivers()
 {
    driver.video_data_own = false;
    driver.audio_data_own = false;
@@ -450,14 +450,14 @@ void init_drivers(void)
    g_extern.system.frame_time_last = 0;
 }
 
-void rarch_deinit_filter(void)
+void rarch_deinit_filter()
 {
    rarch_softfilter_free(g_extern.filter.filter);
    free(g_extern.filter.buffer);
    memset(&g_extern.filter, 0, sizeof(g_extern.filter));
 }
 
-static void deinit_pixel_converter(void)
+static void deinit_pixel_converter()
 {
    scaler_ctx_gen_reset(&driver.scaler);
    memset(&driver.scaler, 0, sizeof(driver.scaler));
@@ -465,7 +465,7 @@ static void deinit_pixel_converter(void)
    driver.scaler_out = NULL;
 }
 
-static void deinit_shader_dir(void)
+static void deinit_shader_dir()
 {
    // It handles NULL, no worries :D
    dir_list_free(g_extern.shader_dir.list);
@@ -473,7 +473,7 @@ static void deinit_shader_dir(void)
    g_extern.shader_dir.ptr  = 0;
 }
 
-static void compute_monitor_fps_statistics(void)
+static void compute_monitor_fps_statistics()
 {
    if (g_settings.video.threaded)
    {
@@ -498,7 +498,7 @@ static void compute_monitor_fps_statistics(void)
    }
 }
 
-void uninit_drivers(void)
+void uninit_drivers()
 {
    uninit_audio();
 
@@ -528,7 +528,7 @@ void uninit_drivers(void)
       driver.audio_data = NULL;
 }
 
-void init_audio(void)
+void init_audio()
 {
    audio_convert_init_simd();
 
@@ -640,7 +640,7 @@ void init_audio(void)
 }
 
 
-static void compute_audio_buffer_statistics(void)
+static void compute_audio_buffer_statistics()
 {
    unsigned i, samples;
    samples = min(g_extern.measure_data.buffer_free_samples_count, AUDIO_BUFFER_FREE_SAMPLES_COUNT);
@@ -723,7 +723,7 @@ bool driver_monitor_fps_statistics(double *refresh_rate, double *deviation, unsi
    return true;
 }
 
-void uninit_audio(void)
+void uninit_audio()
 {
    if (driver.audio_data && driver.audio)
       driver.audio->free(driver.audio_data);
@@ -811,7 +811,7 @@ error:
    rarch_deinit_filter();
 }
 
-static void init_shader_dir(void)
+static void init_shader_dir()
 {
    unsigned i;
    if (!*g_settings.video.shader_dir)
@@ -856,7 +856,7 @@ static bool init_video_pixel_converter(unsigned size)
 }
 
 
-void init_video_input(void)
+void init_video_input()
 {
    rarch_init_filter(g_extern.system.pix_fmt);
 
@@ -1012,7 +1012,7 @@ void init_video_input(void)
    g_extern.measure_data.frame_time_samples_count = 0;
 }
 
-void uninit_video_input(void)
+void uninit_video_input()
 {
    if (!driver.input_data_own && driver.input_data != driver.video_data && driver.input && driver.input->free)
       input_free_func();

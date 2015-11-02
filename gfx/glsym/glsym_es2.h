@@ -24,7 +24,7 @@ typedef void (GL_APIENTRYP RGLSYMGLDEBUGMESSAGEINSERTKHRPROC) (GLenum source, GL
 typedef void (GL_APIENTRYP RGLSYMGLDEBUGMESSAGECALLBACKKHRPROC) (RGLGENGLDEBUGPROCKHR callback, const void *userParam);
 typedef GLuint (GL_APIENTRYP RGLSYMGLGETDEBUGMESSAGELOGKHRPROC) (GLuint count, GLsizei bufSize, GLenum *sources, GLenum *types, GLuint *ids, GLenum *severities, GLsizei *lengths, GLchar *messageLog);
 typedef void (GL_APIENTRYP RGLSYMGLPUSHDEBUGGROUPKHRPROC) (GLenum source, GLuint id, GLsizei length, const GLchar *message);
-typedef void (GL_APIENTRYP RGLSYMGLPOPDEBUGGROUPKHRPROC) (void);
+typedef void (GL_APIENTRYP RGLSYMGLPOPDEBUGGROUPKHRPROC) ();
 typedef void (GL_APIENTRYP RGLSYMGLOBJECTLABELKHRPROC) (GLenum identifier, GLuint name, GLsizei length, const GLchar *label);
 typedef void (GL_APIENTRYP RGLSYMGLGETOBJECTLABELKHRPROC) (GLenum identifier, GLuint name, GLsizei bufSize, GLsizei *length, GLchar *label);
 typedef void (GL_APIENTRYP RGLSYMGLOBJECTPTRLABELKHRPROC) (const void *ptr, GLsizei length, const GLchar *label);

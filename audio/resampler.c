@@ -61,7 +61,7 @@ static const rarch_resampler_t *find_resampler_driver(const char *ident)
 }
 
 #ifndef RESAMPLER_TEST
-void find_prev_resampler_driver(void)
+void find_prev_resampler_driver()
 {
    int i = find_resampler_driver_index(g_settings.audio.resampler);
    if (i > 0)
@@ -70,7 +70,7 @@ void find_prev_resampler_driver(void)
       RARCH_WARN("Couldn't find any previous resampler driver (current one: \"%s\").\n", g_extern.audio_data.resampler->ident);
 }
 
-void find_next_resampler_driver(void)
+void find_next_resampler_driver()
 {
    int i = find_resampler_driver_index(g_settings.audio.resampler);
    if (i >= 0 && backends[i + 1])

@@ -81,7 +81,7 @@ struct slock
    pthread_mutex_t lock;
 };
 
-slock_t *slock_new(void)
+slock_t *slock_new()
 {
    slock_t *lock = calloc(1, sizeof(*lock));
    if (!lock)
@@ -117,7 +117,7 @@ struct scond
    pthread_cond_t cond;
 };
 
-scond_t *scond_new(void)
+scond_t *scond_new()
 {
    scond_t *cond = calloc(1, sizeof(*cond));
    if (!cond)

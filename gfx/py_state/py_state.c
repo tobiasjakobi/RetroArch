@@ -163,7 +163,7 @@ static PyModuleDef RarchModule = {
    NULL, NULL, NULL, NULL
 };
 
-static PyObject* PyInit_Retro(void)
+static PyObject* PyInit_Retro()
 {
    PyObject *mod = PyModule_Create(&RarchModule);
    if (!mod)

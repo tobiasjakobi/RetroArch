@@ -43,7 +43,7 @@ struct texture_image *menu_texture;
 static bool render_normal = true;
 static bool menu_texture_inited =false;
 
-static void rmenu_render_background(void)
+static void rmenu_render_background()
 {
 }
 
@@ -91,7 +91,7 @@ static void rmenu_render_messagebox(const char *message)
    render_normal = false;
 }
 
-static void rmenu_render(void)
+static void rmenu_render()
 {
    size_t begin, end;
    struct font_params font_parms;
@@ -436,7 +436,7 @@ static void rmenu_context_reset(void *data)
    menu_texture_inited = false;
 }
 
-static void *rmenu_init(void)
+static void *rmenu_init()
 {
    menu_handle_t *menu = calloc(1, sizeof(*menu));
 

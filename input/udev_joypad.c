@@ -138,7 +138,7 @@ static void poll_pad(unsigned p)
    }
 }
 
-static bool hotplug_available(void)
+static bool hotplug_available()
 {
    if (!g_udev_mon)
       return false;
@@ -151,7 +151,7 @@ static bool hotplug_available(void)
 static void check_device(const char *path, bool hotplugged);
 static void remove_device(const char *path);
 
-static void handle_hotplug(void)
+static void handle_hotplug()
 {
    struct udev_device *dev = udev_monitor_receive_device(g_udev_mon);
    if (!dev)
@@ -239,7 +239,7 @@ static bool udev_set_rumble(unsigned i, enum retro_rumble_effect effect, uint16_
    return true;
 }
 
-static void udev_joypad_poll(void)
+static void udev_joypad_poll()
 {
    unsigned i;
    while (hotplug_available())
@@ -279,7 +279,7 @@ error:
    return -1;
 }
 
-static int find_vacant_pad(void)
+static int find_vacant_pad()
 {
    unsigned i;
    for (i = 0; i < MAX_PLAYERS; i++)
@@ -446,7 +446,7 @@ static void remove_device(const char *path)
    }
 }
 
-static void udev_joypad_destroy(void)
+static void udev_joypad_destroy()
 {
    unsigned i;
    for (i = 0; i < MAX_PLAYERS; i++)
@@ -460,7 +460,7 @@ static void udev_joypad_destroy(void)
    g_udev = NULL;
 }
 
-static bool udev_joypad_init(void)
+static bool udev_joypad_init()
 {
    unsigned i;
    for (i = 0; i < MAX_PLAYERS; i++)

@@ -184,7 +184,7 @@ static void sdl_render_msg(sdl_video_t *vid, SDL_Surface *buffer,
    }
 }
 
-static void sdl_gfx_set_handles(void)
+static void sdl_gfx_set_handles()
 {
 #if defined(HAVE_X11)
    SDL_SysWMinfo info;

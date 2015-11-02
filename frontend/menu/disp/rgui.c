@@ -157,7 +157,7 @@ static bool rguidisp_init_font(void *data)
    return ret;
 }
 
-static void rgui_render_background(void)
+static void rgui_render_background()
 {
    if (!driver.menu)
       return;
@@ -244,7 +244,7 @@ static void rgui_render_messagebox(const char *message)
    string_list_free(list);
 }
 
-static void rgui_render(void)
+static void rgui_render()
 {
    size_t begin, end;
    rarch_setting_t *setting = NULL;
@@ -541,7 +541,7 @@ static void rgui_render(void)
    }
 }
 
-static void *rgui_init(void)
+static void *rgui_init()
 {
    uint16_t *framebuf = menu_framebuf;
    size_t framebuf_pitch;

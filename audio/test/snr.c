@@ -144,7 +144,7 @@ static void calculate_ifft(complex double *butterfly_buf, size_t samples, bool n
       calculate_fft_adjust(butterfly_buf, 1.0 / samples, false, samples);
 }
 
-static void test_fft(void)
+static void test_fft()
 {
    fprintf(stderr, "Sanity checking FFT ...\n");
    float signal[32];

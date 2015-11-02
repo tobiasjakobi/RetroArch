@@ -645,20 +645,20 @@ extern struct defaults g_defaults;
 /////////
 
 // Public functions
-void config_load(void);
-void config_set_defaults(void);
-const char *config_get_default_video(void);
-const char *config_get_default_audio(void);
-const char *config_get_default_audio_resampler(void);
-const char *config_get_default_input(void);
+void config_load();
+void config_set_defaults();
+const char *config_get_default_video();
+const char *config_get_default_audio();
+const char *config_get_default_audio_resampler();
+const char *config_get_default_input();
 
 #include "conf/config_file.h"
 bool config_load_file(const char *path, bool set_defaults);
 bool config_save_file(const char *path);
 bool config_read_keybinds(const char *path);
 
-void rarch_main_clear_state(void);
-void rarch_init_system_info(void);
+void rarch_main_clear_state();
+void rarch_init_system_info();
 int rarch_main(int argc, char *argv[]);
 
 #ifndef MAX_ARGS
@@ -669,13 +669,13 @@ void rarch_main_init_wrap(const struct rarch_main_wrap *args, int *argc, char **
 
 int rarch_main_init(int argc, char *argv[]);
 void rarch_main_command(unsigned action);
-bool rarch_main_iterate(void);
-void rarch_main_deinit(void);
-void rarch_render_cached_frame(void);
-void rarch_deinit_msg_queue(void);
-void rarch_input_poll(void);
-void rarch_check_block_hotkey(void);
-bool rarch_check_fullscreen(void);
+bool rarch_main_iterate();
+void rarch_main_deinit();
+void rarch_render_cached_frame();
+void rarch_deinit_msg_queue();
+void rarch_input_poll();
+void rarch_check_block_hotkey();
+bool rarch_check_fullscreen();
 void rarch_disk_control_set_eject(bool state, bool log);
 void rarch_disk_control_set_index(unsigned index);
 void rarch_disk_control_append_image(const char *path);

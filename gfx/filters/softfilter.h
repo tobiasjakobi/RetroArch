@@ -60,7 +60,7 @@ const struct softfilter_implementation *softfilter_get_implementation(softfilter
 
 // Softfilter implementation.
 // Returns a bitmask of supported input formats.
-typedef unsigned (*softfilter_query_input_formats_t)(void);
+typedef unsigned (*softfilter_query_input_formats_t)();
 
 // Returns a bitmask of supported output formats for a given input format.
 typedef unsigned (*softfilter_query_output_formats_t)(unsigned input_format);

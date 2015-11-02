@@ -162,7 +162,7 @@ static const struct zlib_file_backend zlib_backend = {
    zlib_file_free,
 };
 
-const struct zlib_file_backend *zlib_get_default_file_backend(void)
+const struct zlib_file_backend *zlib_get_default_file_backend()
 {
    return &zlib_backend;
 }

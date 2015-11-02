@@ -243,7 +243,7 @@ typedef struct rarch_joypad_driver rarch_joypad_driver_t;
 
 typedef struct input_driver
 {
-   void *(*init)(void);
+   void *(*init)();
    void (*poll)(void *data);
    int16_t (*input_state)(void *data, const struct retro_keybind **retro_keybinds,
          unsigned port, unsigned device, unsigned index, unsigned id);
@@ -399,37 +399,37 @@ typedef struct driver
    const char *current_msg;
 } driver_t;
 
-void init_drivers(void);
-void init_drivers_pre(void);
-void uninit_drivers(void);
+void init_drivers();
+void init_drivers_pre();
+void uninit_drivers();
 
-void init_video_input(void);
-void uninit_video_input(void);
-void init_audio(void);
-void uninit_audio(void);
+void init_video_input();
+void uninit_video_input();
+void init_audio();
+void uninit_audio();
 
-void find_prev_resampler_driver(void);
-void find_prev_video_driver(void);
-void find_prev_audio_driver(void);
-void find_prev_input_driver(void);
-void find_next_video_driver(void);
-void find_next_audio_driver(void);
-void find_next_input_driver(void);
-void find_next_resampler_driver(void);
+void find_prev_resampler_driver();
+void find_prev_video_driver();
+void find_prev_audio_driver();
+void find_prev_input_driver();
+void find_next_video_driver();
+void find_next_audio_driver();
+void find_next_input_driver();
+void find_next_resampler_driver();
 
 void driver_set_monitor_refresh_rate(float hz);
 bool driver_monitor_fps_statistics(double *refresh_rate, double *deviation, unsigned *sample_points);
 void driver_set_nonblock_state(bool nonblock);
 
 // Used by RETRO_ENVIRONMENT_SET_HW_RENDER.
-uintptr_t driver_get_current_framebuffer(void);
+uintptr_t driver_get_current_framebuffer();
 retro_proc_address_t driver_get_proc_address(const char *sym);
 
 // Used by RETRO_ENVIRONMENT_GET_RUMBLE_INTERFACE
 bool driver_set_rumble_state(unsigned port, enum retro_rumble_effect effect, uint16_t strength);
 
 #ifdef HAVE_DYLIB
-void rarch_deinit_filter(void);
+void rarch_deinit_filter();
 void rarch_init_filter(enum retro_pixel_format);
 #endif
 
@@ -437,9 +437,9 @@ const char *rarch_dspfilter_get_name(void *data);
 
 #ifdef HAVE_MENU
 const void *menu_ctx_find_driver(const char *ident); // Finds driver with ident. Does not initialize.
-void find_prev_menu_driver(void);
-void find_next_menu_driver(void);
-void find_menu_driver(void);
+void find_prev_menu_driver();
+void find_next_menu_driver();
+void find_menu_driver();
 #endif
 
 // Used by RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO

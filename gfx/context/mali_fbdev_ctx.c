@@ -235,7 +235,7 @@ static void gfx_ctx_input_driver(void *data, const input_driver_t **input, void 
 
 static gfx_ctx_proc_t gfx_ctx_get_proc_address(const char *symbol)
 {
-   rarch_assert(sizeof(void*) == sizeof(void (*)(void)));
+   rarch_assert(sizeof(void*) == sizeof(void (*)()));
    gfx_ctx_proc_t ret;
 
    void *sym__ = eglGetProcAddress(symbol);

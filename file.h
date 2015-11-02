@@ -31,6 +31,6 @@ bool save_state(const char *path);
 void load_ram_file(const char *path, int type);
 void save_ram_file(const char *path, int type);
 
-bool init_rom_file(void);
+bool init_rom_file();
 
 #endif

@@ -306,7 +306,7 @@ bool menu_custom_bind_keyboard_cb(void *data, unsigned code)
    return menu->binds.begin <= menu->binds.last;
 }
 
-uint64_t menu_input(void)
+uint64_t menu_input()
 {
    unsigned i;
    uint64_t input_state;

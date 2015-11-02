@@ -44,7 +44,7 @@
 
 // To avoid continous switching if we hold the button down, we require that the button must go from pressed,
 // unpressed back to pressed to be able to toggle between then.
-static void check_fast_forward_button(void)
+static void check_fast_forward_button()
 {
    bool new_button_state = input_key_pressed_func(RARCH_FAST_FORWARD_KEY);
    bool new_hold_button_state = input_key_pressed_func(RARCH_FAST_FORWARD_HOLD_KEY);
@@ -66,7 +66,7 @@ static void check_fast_forward_button(void)
    old_hold_button_state = new_hold_button_state;
 }
 
-static bool take_screenshot_viewport(void)
+static bool take_screenshot_viewport()
 {
    char screenshot_path[PATH_MAX];
    const char *screenshot_dir;
@@ -106,7 +106,7 @@ done:
    return retval;
 }
 
-static bool take_screenshot_raw(void)
+static bool take_screenshot_raw()
 {
    char screenshot_path[PATH_MAX];
    const void *data           = g_extern.frame_cache.data;
@@ -128,7 +128,7 @@ static bool take_screenshot_raw(void)
          width, height, -pitch, false);
 }
 
-static void take_screenshot(void)
+static void take_screenshot()
 {
    bool viewport_read = false;
    bool ret = false;
@@ -180,7 +180,7 @@ static void take_screenshot(void)
       rarch_render_cached_frame();
 }
 
-static void readjust_audio_input_rate(void)
+static void readjust_audio_input_rate()
 {
    int half_size, delta_mid;
    unsigned write_index;
@@ -205,7 +205,7 @@ static void readjust_audio_input_rate(void)
    //      g_extern.audio_data.src_ratio, g_extern.audio_data.orig_src_ratio);
 }
 
-static void init_recording(void)
+static void init_recording()
 {
    struct ffemu_params params = {0};
 
@@ -314,7 +314,7 @@ static void init_recording(void)
    }
 }
 
-static void deinit_recording(void)
+static void deinit_recording()
 {
    if (!g_extern.rec || !g_extern.rec_driver)
       return;
@@ -456,7 +456,7 @@ static void video_frame(const void *data, unsigned width, unsigned height, size_
       g_extern.video_active = false;
 }
 
-void rarch_render_cached_frame(void)
+void rarch_render_cached_frame()
 {
    const void *frame = g_extern.frame_cache.data;
 
@@ -600,7 +600,7 @@ static size_t audio_sample_batch(const int16_t *data, size_t frames)
    return frames;
 }
 
-void rarch_input_poll(void)
+void rarch_input_poll()
 {
    input_poll_func();
 
@@ -672,7 +672,7 @@ static int16_t input_state(unsigned port, unsigned device, unsigned index, unsig
 #include "config.features.h"
 
 #define _PSUPP(var, name, desc) printf("\t%s:\n\t\t%s: %s\n", name, desc, _##var##_supp ? "yes" : "no")
-static void print_features(void)
+static void print_features()
 {
    puts("");
    puts("Features:");
@@ -723,7 +723,7 @@ static void print_compiler(FILE *file)
    fprintf(file, "Built: %s\n", __DATE__);
 }
 
-static void print_help(void)
+static void print_help()
 {
    puts("===================================================================");
 #ifdef HAVE_GIT_VERSION
@@ -1222,7 +1222,7 @@ static void parse_input(int argc, char *argv[])
       strlcpy(g_extern.savestate_dir, g_extern.savestate_name, sizeof(g_extern.savestate_dir));
 }
 
-static void init_controllers(void)
+static void init_controllers()
 {
    unsigned i;
    for (i = 0; i < MAX_PLAYERS; i++)
@@ -1262,7 +1262,7 @@ static void init_controllers(void)
    }
 }
 
-static inline bool load_save_files(void)
+static inline bool load_save_files()
 {
    unsigned i;
 
@@ -1275,7 +1275,7 @@ static inline bool load_save_files(void)
     return true;
 }
 
-static inline bool save_files(void)
+static inline bool save_files()
 {
    unsigned i;
 
@@ -1294,20 +1294,20 @@ static inline bool save_files(void)
 }
 
 
-static void rarch_init_msg_queue(void)
+static void rarch_init_msg_queue()
 {
    if (!g_extern.msg_queue)
       rarch_assert(g_extern.msg_queue = msg_queue_new(8));
 }
 
-void rarch_deinit_msg_queue(void)
+void rarch_deinit_msg_queue()
 {
    if (g_extern.msg_queue)
       msg_queue_free(g_extern.msg_queue);
    g_extern.msg_queue = NULL;
 }
 
-static void init_cheats(void)
+static void init_cheats()
 {
    bool allow_cheats = true;
 #ifdef HAVE_NETPLAY
@@ -1322,14 +1322,14 @@ static void init_cheats(void)
       g_extern.cheat = cheat_manager_new(g_settings.cheat_database);
 }
 
-static void deinit_cheats(void)
+static void deinit_cheats()
 {
    if (g_extern.cheat)
       cheat_manager_free(g_extern.cheat);
    g_extern.cheat = NULL;
 }
 
-static void init_rewind(void)
+static void init_rewind()
 {
    void *state;
 #ifdef HAVE_NETPLAY
@@ -1364,7 +1364,7 @@ static void init_rewind(void)
    state_manager_push_do(g_extern.state_manager);
 }
 
-static void deinit_rewind(void)
+static void deinit_rewind()
 {
 #ifdef HAVE_NETPLAY
     if (g_extern.netplay)
@@ -1376,7 +1376,7 @@ static void deinit_rewind(void)
    g_extern.state_manager = NULL;
 }
 
-static void init_movie(void)
+static void init_movie()
 {
    if (g_extern.bsv.movie_start_playback)
    {
@@ -1411,7 +1411,7 @@ static void init_movie(void)
    }
 }
 
-static void deinit_movie(void)
+static void deinit_movie()
 {
    if (g_extern.bsv.movie)
       bsv_movie_free(g_extern.bsv.movie);
@@ -1421,7 +1421,7 @@ static void deinit_movie(void)
 #define RARCH_DEFAULT_PORT 55435
 
 #ifdef HAVE_NETPLAY
-static void init_netplay(void)
+static void init_netplay()
 {
    struct retro_callbacks cbs = {0};
 
@@ -1464,7 +1464,7 @@ static void init_netplay(void)
    }
 }
 
-static void deinit_netplay(void)
+static void deinit_netplay()
 {
    if (g_extern.netplay)
       netplay_free(g_extern.netplay);
@@ -1473,7 +1473,7 @@ static void deinit_netplay(void)
 #endif
 
 #ifdef HAVE_COMMAND
-static void init_command(void)
+static void init_command()
 {
    if (!g_settings.stdin_cmd_enable && !g_settings.network_cmd_enable)
       return;
@@ -1489,7 +1489,7 @@ static void init_command(void)
       RARCH_ERR("Failed to initialize command interface.\n");
 }
 
-static void deinit_command(void)
+static void deinit_command()
 {
    if (driver.command)
       rarch_cmd_free(driver.command);
@@ -1499,7 +1499,7 @@ static void deinit_command(void)
 #endif
 
 #ifdef HAVE_NETPLAY
-static void init_libretro_cbs_netplay(void)
+static void init_libretro_cbs_netplay()
 {
    if (!g_extern.netplay)
       return;
@@ -1518,7 +1518,7 @@ static void init_libretro_cbs_netplay(void)
 }
 #endif
 
-static void init_libretro_cbs(void)
+static void init_libretro_cbs()
 {
    pretro_set_video_refresh(video_frame);
    pretro_set_audio_sample(audio_sample);
@@ -1532,7 +1532,7 @@ static void init_libretro_cbs(void)
 }
 
 #if defined(HAVE_THREADS)
-static void init_autosave(void)
+static void init_autosave()
 {
    unsigned i;
 
@@ -1562,7 +1562,7 @@ static void init_autosave(void)
    }
 }
 
-static void deinit_autosave(void)
+static void deinit_autosave()
 {
    unsigned i;
    for (i = 0; i < g_extern.num_autosave; i++)
@@ -1576,7 +1576,7 @@ static void deinit_autosave(void)
 }
 #endif
 
-static void set_savestate_auto_index(void)
+static void set_savestate_auto_index()
 {
    struct string_list *dir_list;
    char state_dir[PATH_MAX], state_base[PATH_MAX];
@@ -1619,14 +1619,14 @@ static void set_savestate_auto_index(void)
    RARCH_LOG("Found last state slot: #%u\n", g_settings.state_slot);
 }
 
-static void deinit_savefiles(void)
+static void deinit_savefiles()
 {
    if (g_extern.savefiles)
       string_list_free(g_extern.savefiles);
    g_extern.savefiles = NULL;
 }
 
-static void fill_pathnames(void)
+static void fill_pathnames()
 {
    deinit_savefiles();
    g_extern.savefiles = string_list_new();
@@ -1709,7 +1709,7 @@ static void fill_pathnames(void)
    }
 }
 
-static void load_auto_state(void)
+static void load_auto_state()
 {
    char savestate_name_auto[PATH_MAX];
 
@@ -1737,7 +1737,7 @@ static void load_auto_state(void)
    }
 }
 
-static bool save_auto_state(void)
+static bool save_auto_state()
 {
    char savestate_name_auto[PATH_MAX];
 
@@ -1754,7 +1754,7 @@ static bool save_auto_state(void)
    return true;
 }
 
-static void rarch_load_state(void)
+static void rarch_load_state()
 {
    char load_path[PATH_MAX], msg[512];
 
@@ -1794,7 +1794,7 @@ static void rarch_load_state(void)
    RARCH_LOG("%s\n", msg);
 }
 
-static void rarch_save_state(void)
+static void rarch_save_state()
 {
    char save_path[PATH_MAX], msg[512];
 
@@ -1863,7 +1863,7 @@ static void set_fullscreen(bool fullscreen)
       input_poll_func();
 }
 
-bool rarch_check_fullscreen(void)
+bool rarch_check_fullscreen()
 {
    // If we go fullscreen we drop all drivers and reinitialize to be safe.
    static bool was_pressed = false;
@@ -1880,7 +1880,7 @@ bool rarch_check_fullscreen(void)
    return toggle;
 }
 
-static void rarch_state_slot_increase(void)
+static void rarch_state_slot_increase()
 {
    char msg[256];
 
@@ -1897,7 +1897,7 @@ static void rarch_state_slot_increase(void)
    RARCH_LOG("%s\n", msg);
 }
 
-static void rarch_state_slot_decrease(void)
+static void rarch_state_slot_decrease()
 {
    char msg[256];
 
@@ -1916,7 +1916,7 @@ static void rarch_state_slot_decrease(void)
    RARCH_LOG("%s\n", msg);
 }
 
-static void check_stateslots(void)
+static void check_stateslots()
 {
    // Save state slots
    static bool old_should_slot_increase = false;
@@ -1933,7 +1933,7 @@ static void check_stateslots(void)
    old_should_slot_decrease = should_slot_decrease;
 }
 
-static inline void flush_rewind_audio(void)
+static inline void flush_rewind_audio()
 {
    if (!g_extern.frame_is_reverse)
       return;
@@ -1945,7 +1945,7 @@ static inline void flush_rewind_audio(void)
    g_extern.frame_is_reverse = false;
 }
 
-static inline void setup_rewind_audio(void)
+static inline void setup_rewind_audio()
 {
    unsigned i;
 
@@ -1964,7 +1964,7 @@ static inline void setup_rewind_audio(void)
    g_extern.audio_data.data_ptr = 0;
 }
 
-static void check_rewind(void)
+static void check_rewind()
 {
    static bool first = true;
 
@@ -2024,7 +2024,7 @@ static void check_rewind(void)
          audio_sample_batch_rewind : audio_sample_batch);
 }
 
-static void check_slowmotion(void)
+static void check_slowmotion()
 {
    g_extern.is_slowmotion = input_key_pressed_func(RARCH_SLOWMOTION);
 
@@ -2090,7 +2090,7 @@ static void check_movie_playback(bool pressed)
    }
 }
 
-static void check_movie(void)
+static void check_movie()
 {
    static bool old_button = false;
    bool new_button = input_key_pressed_func(RARCH_MOVIE_RECORD_TOGGLE);
@@ -2104,7 +2104,7 @@ static void check_movie(void)
    old_button = new_button;
 }
 
-static void check_pause(void)
+static void check_pause()
 {
    static bool old_state    = false;
    static bool old_focus    = true;
@@ -2156,7 +2156,7 @@ static void check_pause(void)
    old_state = new_state;
 }
 
-static void check_oneshot(void)
+static void check_oneshot()
 {
    static bool old_state = false;
    static bool old_rewind_state = false;
@@ -2171,7 +2171,7 @@ static void check_oneshot(void)
    old_rewind_state = new_rewind_state;
 }
 
-static void check_reset(void)
+static void check_reset()
 {
    static bool old_state = false;
    bool new_state = input_key_pressed_func(RARCH_RESET);
@@ -2182,7 +2182,7 @@ static void check_reset(void)
    old_state = new_state;
 }
 
-static void check_turbo(void)
+static void check_turbo()
 {
    unsigned i;
    static const struct retro_keybind *binds[MAX_PLAYERS] = {
@@ -2209,7 +2209,7 @@ static void check_turbo(void)
    }
 }
 
-static void check_shader_dir(void)
+static void check_shader_dir()
 {
    static bool old_pressed_next = false;
    static bool old_pressed_prev = false;
@@ -2266,7 +2266,7 @@ static void check_shader_dir(void)
    old_pressed_prev = pressed_prev;
 }
 
-static void check_cheats(void)
+static void check_cheats()
 {
    bool pressed_next, pressed_prev, pressed_toggle;
    static bool old_pressed_prev    = false;
@@ -2417,7 +2417,7 @@ void rarch_disk_control_set_index(unsigned next_index)
    }
 }
 
-static void check_disk(void)
+static void check_disk()
 {
    bool pressed_eject, pressed_next;
    static bool old_pressed_eject    = false;
@@ -2454,7 +2454,7 @@ static void check_disk(void)
    old_pressed_next  = pressed_next;
 }
 
-static void check_screenshot(void)
+static void check_screenshot()
 {
    static bool old_pressed = false;
    bool pressed            = input_key_pressed_func(RARCH_SCREENSHOT);
@@ -2465,7 +2465,7 @@ static void check_screenshot(void)
    old_pressed = pressed;
 }
 
-static void check_mute(void)
+static void check_mute()
 {
    static bool old_pressed = false;
    bool pressed            = input_key_pressed_func(RARCH_MUTE);
@@ -2498,7 +2498,7 @@ static void check_mute(void)
    old_pressed = pressed;
 }
 
-static void check_volume(void)
+static void check_volume()
 {
    char msg[256];
    float db_change   = 0.0f;
@@ -2527,7 +2527,7 @@ static void check_volume(void)
 
 #ifdef HAVE_NETPLAY
 
-static void check_netplay_flip(void)
+static void check_netplay_flip()
 {
    static bool old_pressed = false;
    bool pressed            = input_key_pressed_func(RARCH_NETPLAY_FLIP);
@@ -2541,7 +2541,7 @@ static void check_netplay_flip(void)
 }
 #endif
 
-void rarch_check_block_hotkey(void)
+void rarch_check_block_hotkey()
 {
    static const struct retro_keybind *bind = &g_settings.input.binds[0][RARCH_ENABLE_HOTKEY];
    bool use_hotkey_enable, enable_hotkey;
@@ -2559,7 +2559,7 @@ void rarch_check_block_hotkey(void)
    driver.block_libretro_input = use_hotkey_enable && enable_hotkey;
 }
 
-static void check_grab_mouse_toggle(void)
+static void check_grab_mouse_toggle()
 {
    static bool old_pressed       = false;
    static bool grab_mouse_state  = false;
@@ -2579,7 +2579,7 @@ static void check_grab_mouse_toggle(void)
    old_pressed = pressed;
 }
 
-static void check_flip(void)
+static void check_flip()
 {
 #ifdef HAVE_NETPLAY
    if (g_extern.netplay)
@@ -2615,7 +2615,7 @@ static void check_flip(void)
    check_reset();
 }
 
-static void do_state_checks(void)
+static void do_state_checks()
 {
    rarch_check_block_hotkey();
 
@@ -2630,20 +2630,20 @@ static void do_state_checks(void)
    check_flip();
 }
 
-static void init_state(void)
+static void init_state()
 {
    g_extern.video_active = true;
    g_extern.audio_active = true;
 }
 
-static void deinit_log_file(void)
+static void deinit_log_file()
 {
    if (g_extern.log_file)
       fclose(g_extern.log_file);
    g_extern.log_file = NULL;
 }
 
-void rarch_main_clear_state(void)
+void rarch_main_clear_state()
 {
    unsigned i;
 
@@ -2667,7 +2667,7 @@ void rarch_main_clear_state(void)
 #define DEFAULT_EXT ""
 #endif
 
-void rarch_init_system_info(void)
+void rarch_init_system_info()
 {
    struct retro_system_info *info = (struct retro_system_info*)&g_extern.system.info;
    pretro_get_system_info(info);
@@ -2689,13 +2689,13 @@ void rarch_init_system_info(void)
    g_extern.system.block_extract = info->block_extract;
 }
 
-static void init_system_av_info(void)
+static void init_system_av_info()
 {
    pretro_get_system_av_info(&g_extern.system.av_info);
    g_extern.frame_limit.last_frame_time = rarch_get_time_usec();
 }
 
-static void verify_api_version(void)
+static void verify_api_version()
 {
    RARCH_LOG("Version of libretro API: %u\n", pretro_api_version());
    RARCH_LOG("Compiled against API: %u\n", RETRO_API_VERSION);
@@ -2705,7 +2705,7 @@ static void verify_api_version(void)
 
 // Make sure we haven't compiled for something we cannot run.
 // Ideally, code would get swapped out depending on CPU support, but this will do for now.
-static void validate_cpu_features(void)
+static void validate_cpu_features()
 {
    uint64_t cpu = rarch_get_cpu_features();
    (void)cpu;
@@ -2729,7 +2729,7 @@ static void validate_cpu_features(void)
 #endif
 }
 
-static void init_sram(void)
+static void init_sram()
 {
 #ifdef HAVE_NETPLAY
    g_extern.use_sram = g_extern.use_sram && !g_extern.sram_save_disable && (!g_extern.netplay || !g_extern.netplay_is_client);
@@ -2747,7 +2747,7 @@ static void init_sram(void)
       RARCH_LOG("SRAM will not be saved.\n");
 }
 
-static void main_deinit_core(void)
+static void main_deinit_core()
 {
    pretro_unload_game();
    pretro_deinit();
@@ -2847,7 +2847,7 @@ error:
    return 1;
 }
 
-static inline bool check_enter_menu(void)
+static inline bool check_enter_menu()
 {
    static bool old_rmenu_toggle = true;
    bool rmenu_toggle            = input_key_pressed_func(RARCH_MENU_TOGGLE) || (g_extern.libretro_dummy && !old_rmenu_toggle);
@@ -2868,7 +2868,7 @@ static inline bool check_enter_menu(void)
    return true;
 }
 
-static inline void update_frame_time(void)
+static inline void update_frame_time()
 {
    retro_time_t time = 0, delta = 0;
    bool is_locked_fps;
@@ -2893,7 +2893,7 @@ static inline void update_frame_time(void)
    g_extern.system.frame_time.callback(delta);
 }
 
-static inline void limit_frame_time(void)
+static inline void limit_frame_time()
 {
    retro_time_t current = 0, target = 0, to_sleep_ms = 0;
 
@@ -3029,7 +3029,7 @@ void rarch_main_command(unsigned action)
    }
 }
 
-bool rarch_main_iterate(void)
+bool rarch_main_iterate()
 {
    unsigned i;
 
@@ -3106,7 +3106,7 @@ bool rarch_main_iterate(void)
 }
 
 
-static void deinit_temporary_content(void)
+static void deinit_temporary_content()
 {
    unsigned i;
 
@@ -3125,7 +3125,7 @@ static void deinit_temporary_content(void)
    g_extern.temporary_content = NULL;
 }
 
-static void deinit_subsystem_fullpaths(void)
+static void deinit_subsystem_fullpaths()
 {
    if (g_extern.subsystem_fullpaths)
       string_list_free(g_extern.subsystem_fullpaths);
@@ -3133,7 +3133,7 @@ static void deinit_subsystem_fullpaths(void)
 }
 
 
-void rarch_main_deinit(void)
+void rarch_main_deinit()
 {
 #ifdef HAVE_NETPLAY
    deinit_netplay();

@@ -145,7 +145,7 @@ void autosave_free(autosave_t *handle)
    free(handle);
 }
 
-void lock_autosave(void)
+void lock_autosave()
 {
    unsigned i;
    for (i = 0; i < g_extern.num_autosave; i++)
@@ -155,7 +155,7 @@ void lock_autosave(void)
    }
 }
 
-void unlock_autosave(void)
+void unlock_autosave()
 {
    unsigned i;
    for (i = 0; i < g_extern.num_autosave; i++)

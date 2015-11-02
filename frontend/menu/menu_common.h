@@ -93,22 +93,22 @@ bool menu_poll_find_trigger(struct menu_bind_state *state, struct menu_bind_stat
 bool menu_custom_bind_keyboard_cb(void *data, unsigned code);
 
 void *menu_init(const void *data);
-bool menu_iterate(void);
+bool menu_iterate();
 void menu_free(void *data);
 
 void menu_ticker_line(char *buf, size_t len, unsigned tick, const char *str, bool selected);
 
-bool load_menu_content(void);
+bool load_menu_content();
 void load_menu_content_history(unsigned game_index);
-void menu_content_history_push_current(void);
+void menu_content_history_push_current();
 
 bool menu_replace_config(const char *path);
 
-bool menu_save_new_config(void);
+bool menu_save_new_config();
 
 int menu_defer_core(core_info_list_t *data, const char *dir, const char *path, char *deferred_path, size_t sizeof_deferred_path);
 
-uint64_t menu_input(void);
+uint64_t menu_input();
 
 void menu_flush_stack_type(unsigned final_type);
 void menu_update_system_info(menu_handle_t *menu, bool *load_no_content);

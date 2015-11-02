@@ -97,7 +97,7 @@ struct aspect_ratio_elem
 extern struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END];
 
 void gfx_set_square_pixel_viewport(unsigned width, unsigned height);
-void gfx_set_core_viewport(void);
-void gfx_set_config_viewport(void);
+void gfx_set_core_viewport();
+void gfx_set_config_viewport();
 
 #endif

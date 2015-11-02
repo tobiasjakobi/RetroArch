@@ -56,7 +56,7 @@ void retro_perf_register(struct retro_perf_counter *perf)
    perf->registered = true;
 }
 
-void retro_perf_clear(void)
+void retro_perf_clear()
 {
    perf_ptr_libretro = 0;
    memset(perf_counters_libretro, 0, sizeof(perf_counters_libretro));
@@ -77,7 +77,7 @@ static void log_counters(const struct retro_perf_counter **counters, unsigned nu
    }
 }
 
-void rarch_perf_log(void)
+void rarch_perf_log()
 {
    if (!g_extern.perfcnt_enable)
       return;
@@ -86,13 +86,13 @@ void rarch_perf_log(void)
    log_counters(perf_counters_rarch, perf_ptr_rarch);
 }
 
-void retro_perf_log(void)
+void retro_perf_log()
 {
    RARCH_LOG("[PERF]: Performance counters (libretro):\n");
    log_counters(perf_counters_libretro, perf_ptr_libretro);
 }
 
-retro_perf_tick_t rarch_get_perf_counter(void)
+retro_perf_tick_t rarch_get_perf_counter()
 {
    retro_perf_tick_t time = 0;
 #if defined(__linux__)
@@ -121,7 +121,7 @@ retro_perf_tick_t rarch_get_perf_counter(void)
    return time;
 }
 
-retro_time_t rarch_get_time_usec(void)
+retro_time_t rarch_get_time_usec()
 {
 #if defined(_POSIX_MONOTONIC_CLOCK)
    struct timespec tv;
@@ -184,7 +184,7 @@ static uint64_t xgetbv_x86(uint32_t index)
 #endif
 
 #if defined(__ARM_NEON__)
-static void arm_enable_runfast_mode(void)
+static void arm_enable_runfast_mode()
 {
    // RunFast mode. Enables flush-to-zero and some floating point optimizations.
    static const unsigned x = 0x04086060;
@@ -201,7 +201,7 @@ static void arm_enable_runfast_mode(void)
 }
 #endif
 
-unsigned rarch_get_cpu_cores(void)
+unsigned rarch_get_cpu_cores()
 {
 #if defined(_SC_NPROCESSORS_ONLN) // Linux, most unix-likes.
    long ret = sysconf(_SC_NPROCESSORS_ONLN);
@@ -231,7 +231,7 @@ unsigned rarch_get_cpu_cores(void)
 #endif
 }
 
-uint64_t rarch_get_cpu_features(void)
+uint64_t rarch_get_cpu_features()
 {
    uint64_t cpu = 0;
 

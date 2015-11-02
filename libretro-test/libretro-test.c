@@ -21,18 +21,18 @@ static void fallback_log(enum retro_log_level level, const char *fmt, ...)
    va_end(va);
 }
 
-void retro_init(void)
+void retro_init()
 {
    frame_buf = calloc(320 * 240, sizeof(uint16_t));
 }
 
-void retro_deinit(void)
+void retro_deinit()
 {
    free(frame_buf);
    frame_buf = NULL;
 }
 
-unsigned retro_api_version(void)
+unsigned retro_api_version()
 {
    return RETRO_API_VERSION;
 }
@@ -175,13 +175,13 @@ static unsigned phase;
 static int mouse_rel_x;
 static int mouse_rel_y;
 
-void retro_reset(void)
+void retro_reset()
 {
    x_coord = 0;
    y_coord = 0;
 }
 
-static void update_input(void)
+static void update_input()
 {
    int dir_x = 0;
    int dir_y = 0;
@@ -270,7 +270,7 @@ static void update_input(void)
    }
 }
 
-static void render_checkered(void)
+static void render_checkered()
 {
    uint16_t color_r = 31 << 11;
    uint16_t color_g = 63 <<  5;
@@ -293,7 +293,7 @@ static void render_checkered(void)
    video_cb(frame_buf, 320, 240, 320 << 1);
 }
 
-static void check_variables(void)
+static void check_variables()
 {
    struct retro_variable var = {0};
    var.key = "test_opt0";
@@ -327,7 +327,7 @@ static void check_variables(void)
    }
 }
 
-static void audio_callback(void)
+static void audio_callback()
 {
    for (unsigned i = 0; i < 30000 / 60; i++, phase++)
    {
@@ -343,7 +343,7 @@ static void audio_set_state(bool enable)
    (void)enable;
 }
 
-void retro_run(void)
+void retro_run()
 {
    update_input();
    render_checkered();
@@ -398,13 +398,13 @@ bool retro_load_game(const struct retro_game_info *info)
    return true;
 }
 
-void retro_unload_game(void)
+void retro_unload_game()
 {
    last_aspect = 0.0f;
    last_sample_rate = 0.0f;
 }
 
-unsigned retro_get_region(void)
+unsigned retro_get_region()
 {
    return RETRO_REGION_NTSC;
 }
@@ -418,7 +418,7 @@ bool retro_load_game_special(unsigned type, const struct retro_game_info *info, 
    return retro_load_game(NULL);
 }
 
-size_t retro_serialize_size(void)
+size_t retro_serialize_size()
 {
    return 2;
 }
@@ -457,7 +457,7 @@ size_t retro_get_memory_size(unsigned id)
    return 0;
 }
 
-void retro_cheat_reset(void)
+void retro_cheat_reset()
 {}
 
 void retro_cheat_set(unsigned index, bool enabled, const char *code)

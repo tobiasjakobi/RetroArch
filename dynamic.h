@@ -29,11 +29,11 @@
 #endif
 
 void init_libretro_sym(bool dummy);
-void uninit_libretro_sym(void);
+void uninit_libretro_sym();
 
 typedef void *dylib_t;
 #ifdef NEED_DYNAMIC
-typedef void (*function_t)(void);
+typedef void (*function_t)();
 
 dylib_t dylib_load(const char *path);
 void dylib_close(dylib_t lib);
@@ -62,10 +62,10 @@ void libretro_get_current_core_pathname(char *name, size_t size);
 const struct retro_subsystem_info *libretro_find_subsystem_info(const struct retro_subsystem_info *info, unsigned num_info, const char *ident);
 const struct retro_controller_description *libretro_find_controller_description(const struct retro_controller_info *info, unsigned id);
 
-extern void (*pretro_init)(void);
-extern void (*pretro_deinit)(void);
+extern void (*pretro_init)();
+extern void (*pretro_deinit)();
 
-extern unsigned (*pretro_api_version)(void);
+extern unsigned (*pretro_api_version)();
 
 extern void (*pretro_get_system_info)(struct retro_system_info*);
 extern void (*pretro_get_system_av_info)(struct retro_system_av_info*);
@@ -79,22 +79,22 @@ extern void (*pretro_set_input_state)(retro_input_state_t);
 
 extern void (*pretro_set_controller_port_device)(unsigned, unsigned);
 
-extern void (*pretro_reset)(void);
-extern void (*pretro_run)(void);
+extern void (*pretro_reset)();
+extern void (*pretro_run)();
 
-extern size_t (*pretro_serialize_size)(void);
+extern size_t (*pretro_serialize_size)();
 extern bool (*pretro_serialize)(void*, size_t);
 extern bool (*pretro_unserialize)(const void*, size_t);
 
-extern void (*pretro_cheat_reset)(void);
+extern void (*pretro_cheat_reset)();
 extern void (*pretro_cheat_set)(unsigned, bool, const char*);
 
 extern bool (*pretro_load_game)(const struct retro_game_info*);
 extern bool (*pretro_load_game_special)(unsigned, const struct retro_game_info*, size_t);
 
-extern void (*pretro_unload_game)(void);
+extern void (*pretro_unload_game)();
 
-extern unsigned (*pretro_get_region)(void);
+extern unsigned (*pretro_get_region)();
 
 extern void *(*pretro_get_memory_data)(unsigned);
 extern size_t (*pretro_get_memory_size)(unsigned);

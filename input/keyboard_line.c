@@ -121,7 +121,7 @@ void input_keyboard_wait_keys(void *userdata, input_keyboard_press_t cb)
    driver.block_input = true;
 }
 
-void input_keyboard_wait_keys_cancel(void)
+void input_keyboard_wait_keys_cancel()
 {
    g_keyboard_press_cb = NULL;
    g_keyboard_press_data = NULL;

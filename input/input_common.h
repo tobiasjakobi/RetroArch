@@ -52,12 +52,12 @@ bool input_translate_coord_viewport(int mouse_x, int mouse_y,
 
 struct rarch_joypad_driver
 {
-   bool (*init)(void);
+   bool (*init)();
    bool (*query_pad)(unsigned);
-   void (*destroy)(void);
+   void (*destroy)();
    bool (*button)(unsigned, uint16_t);
    int16_t (*axis)(unsigned, uint32_t);
-   void (*poll)(void);
+   void (*poll)();
    bool (*set_rumble)(unsigned, enum retro_rumble_effect, uint16_t); // Optional
    const char *(*name)(unsigned);
 
@@ -66,7 +66,7 @@ struct rarch_joypad_driver
 
 // If ident points to NULL or a zero-length string, equivalent to calling input_joypad_init_first().
 const rarch_joypad_driver_t *input_joypad_init_driver(const char *ident);
-const rarch_joypad_driver_t *input_joypad_init_first(void);
+const rarch_joypad_driver_t *input_joypad_init_first();
 
 bool input_joypad_pressed(const rarch_joypad_driver_t *driver,
       unsigned port, const struct retro_keybind *binds, unsigned key);

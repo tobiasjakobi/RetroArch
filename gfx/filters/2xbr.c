@@ -63,7 +63,7 @@ struct filter_data
    uint16_t tbl_6_to_8[64];
 };
  
-static unsigned twoxbr_generic_input_fmts(void)
+static unsigned twoxbr_generic_input_fmts()
 {
    return SOFTFILTER_FMT_RGB565 | SOFTFILTER_FMT_XRGB8888;
 }

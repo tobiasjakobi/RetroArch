@@ -1311,7 +1311,7 @@ WITH_FLAGS(SD_FLAG_HAS_RANGE)
 
 #define WITH_VALUES(VALUES) (list[index -1]).values = VALUES;
 
-rarch_setting_t* setting_data_get_list(void)
+rarch_setting_t* setting_data_get_list()
 {
    int i, player, index;
    static rarch_setting_t list[SETTINGS_DATA_LIST_SIZE];
