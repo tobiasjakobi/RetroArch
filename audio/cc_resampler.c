@@ -277,9 +277,7 @@ static void resampler_CC_process(void *re_, struct resampler_data *data)
 
 static void resampler_CC_free(void *re_)
 {
-   rarch_CC_resampler_t *re = re_;
-   if (re)
-      free(re);
+   free(re_);
 }
 
 static void *resampler_CC_init(double bandwidth_mod)
