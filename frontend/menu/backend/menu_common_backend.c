@@ -1286,7 +1286,7 @@ static void menu_common_setting_push_current_menu(file_list_t *list, const char 
    {
       case MENU_ACTION_OK:
          file_list_push(list, path, "", type, directory_ptr);
-         menu_clear_navigation(driver.menu);
+         driver.menu->selection_ptr = 0;
          driver.menu->need_refresh = true;
          break;
    }
@@ -1323,16 +1323,16 @@ static int menu_settings_iterate(unsigned action, rarch_setting_t *setting)
    {
       case MENU_ACTION_UP:
          if (driver.menu->selection_ptr > 0)
-            menu_decrement_navigation(driver.menu);
+            driver.menu->selection_ptr--;
          else
-            menu_set_navigation(driver.menu, file_list_get_size(driver.menu->selection_buf) - 1);
+            driver.menu->selection_ptr = file_list_get_size(driver.menu->selection_buf) - 1;
          break;
 
       case MENU_ACTION_DOWN:
          if (driver.menu->selection_ptr + 1 < file_list_get_size(driver.menu->selection_buf))
-            menu_increment_navigation(driver.menu);
+            driver.menu->selection_ptr++;
          else
-            menu_clear_navigation(driver.menu);
+            driver.menu->selection_ptr = 0;
          break;
 
       case MENU_ACTION_CANCEL:
@@ -1395,7 +1395,7 @@ static int menu_settings_iterate(unsigned action, rarch_setting_t *setting)
          break;
 
       case MENU_ACTION_REFRESH:
-         menu_clear_navigation(driver.menu);
+         driver.menu->selection_ptr = 0;
          driver.menu->need_refresh = true;
          break;
 
@@ -1806,9 +1806,9 @@ static void menu_parse_and_resolve(unsigned menu_type)
    // Before a refresh, we could have deleted a file on disk, causing
    // selection_ptr to suddendly be out of range. Ensure it doesn't overflow.
    if (driver.menu->selection_ptr >= file_list_get_size(driver.menu->selection_buf) && file_list_get_size(driver.menu->selection_buf))
-      menu_set_navigation(driver.menu, file_list_get_size(driver.menu->selection_buf) - 1);
+      driver.menu->selection_ptr = file_list_get_size(driver.menu->selection_buf) - 1;
    else if (!file_list_get_size(driver.menu->selection_buf))
-      menu_clear_navigation(driver.menu);
+      driver.menu->selection_ptr = 0;
 }
 
 // This only makes sense for PC so far.
@@ -2096,28 +2096,28 @@ static int menu_common_iterate(unsigned action)
    {
       case MENU_ACTION_UP:
          if (driver.menu->selection_ptr >= scroll_speed)
-            menu_set_navigation(driver.menu, driver.menu->selection_ptr - scroll_speed);
+            driver.menu->selection_ptr = driver.menu->selection_ptr - scroll_speed;
          else
-            menu_set_navigation(driver.menu, file_list_get_size(driver.menu->selection_buf) - 1);
+            driver.menu->selection_ptr = file_list_get_size(driver.menu->selection_buf) - 1;
          break;
 
       case MENU_ACTION_DOWN:
          if (driver.menu->selection_ptr + scroll_speed < file_list_get_size(driver.menu->selection_buf))
-            menu_set_navigation(driver.menu, driver.menu->selection_ptr + scroll_speed);
+            driver.menu->selection_ptr = driver.menu->selection_ptr + scroll_speed;
          else
-            menu_clear_navigation(driver.menu);
+            driver.menu->selection_ptr = 0;
          break;
 
       case MENU_ACTION_LEFT:
          if (driver.menu->selection_ptr > fast_scroll_speed)
-            menu_set_navigation(driver.menu, driver.menu->selection_ptr - fast_scroll_speed);
+            driver.menu->selection_ptr = driver.menu->selection_ptr - fast_scroll_speed;
          else
-            menu_clear_navigation(driver.menu);
+            driver.menu->selection_ptr = 0;
          break;
 
       case MENU_ACTION_RIGHT:
          if (driver.menu->selection_ptr + fast_scroll_speed < file_list_get_size(driver.menu->selection_buf))
-            menu_set_navigation(driver.menu, driver.menu->selection_ptr + fast_scroll_speed);
+            driver.menu->selection_ptr = driver.menu->selection_ptr + fast_scroll_speed;
          else
             menu_set_navigation_last(driver.menu);
          break;
@@ -2235,7 +2235,7 @@ static int menu_common_iterate(unsigned action)
                driver.menu->msg_force = true;
                if (menu_replace_config(config))
                {
-                  menu_clear_navigation(driver.menu);
+                  driver.menu->selection_ptr = 0;
                   ret = -1;
                }
             }
@@ -2408,7 +2408,7 @@ static int menu_common_iterate(unsigned action)
       }
 
       case MENU_ACTION_REFRESH:
-         menu_clear_navigation(driver.menu);
+         driver.menu->selection_ptr = 0;
          driver.menu->need_refresh = true;
          break;
 
@@ -3139,7 +3139,7 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
                case MENU_ACTION_OK:
 #if defined(HAVE_DYLIB)
                   file_list_push(driver.menu->menu_stack, g_settings.video.filter_dir, "", id, driver.menu->selection_ptr);
-                  menu_clear_navigation(driver.menu);
+                  driver.menu->selection_ptr = 0;
 #endif
                   driver.menu->need_refresh = true;
                   break;

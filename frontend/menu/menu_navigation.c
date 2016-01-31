@@ -23,44 +23,9 @@
 #include "menu_common.h"
 #include "menu_navigation.h"
 
-void menu_clear_navigation(menu_handle_t *menu)
-{
-   menu->selection_ptr = 0;
-
-   if (driver.menu_ctx && driver.menu_ctx->navigation_clear)
-      driver.menu_ctx->navigation_clear(menu);
-}
-
-void menu_decrement_navigation(menu_handle_t *menu)
-{
-   menu->selection_ptr--;
-
-   if (driver.menu_ctx && driver.menu_ctx->navigation_decrement)
-      driver.menu_ctx->navigation_decrement(menu);
-}
-
-void menu_increment_navigation(menu_handle_t *menu)
-{
-   menu->selection_ptr++;
-
-   if (driver.menu_ctx && driver.menu_ctx->navigation_increment)
-      driver.menu_ctx->navigation_increment(menu);
-}
-
-void menu_set_navigation(menu_handle_t *menu, size_t i)
-{
-   menu->selection_ptr = i; 
-
-   if (driver.menu_ctx && driver.menu_ctx->navigation_set)
-      driver.menu_ctx->navigation_set(menu);
-}
-
 void menu_set_navigation_last(menu_handle_t *menu)
 {
    menu->selection_ptr = file_list_get_size(menu->selection_buf) - 1;
-
-   if (driver.menu_ctx && driver.menu_ctx->navigation_set_last)
-      driver.menu_ctx->navigation_set_last(menu);
 }
 
 void menu_descend_alphabet(menu_handle_t *menu, size_t *ptr_out)
@@ -79,9 +44,6 @@ void menu_descend_alphabet(menu_handle_t *menu, size_t *ptr_out)
    while (i && menu->scroll_indices[i - 1] >= ptr)
       i--;
    *ptr_out = menu->scroll_indices[i - 1];
-
-   if (driver.menu_ctx && driver.menu_ctx->navigation_descend_alphabet)
-      driver.menu_ctx->navigation_descend_alphabet(menu, ptr_out);
 }
 
 void menu_ascend_alphabet(menu_handle_t *menu, size_t *ptr_out)
@@ -98,7 +60,4 @@ void menu_ascend_alphabet(menu_handle_t *menu, size_t *ptr_out)
    while (i < menu->scroll_indices_size - 1 && menu->scroll_indices[i + 1] <= ptr)
       i++;
    *ptr_out = menu->scroll_indices[i + 1];
-
-   if (driver.menu_ctx && driver.menu_ctx->navigation_descend_alphabet)
-      driver.menu_ctx->navigation_descend_alphabet(menu, ptr_out);
 }
