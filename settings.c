@@ -226,7 +226,7 @@ void config_set_defaults()
    g_settings.savestate_auto_load  = savestate_auto_load;
    g_settings.network_cmd_enable   = network_cmd_enable;
    g_settings.network_cmd_port     = network_cmd_port;
-   g_settings.stdin_cmd_enable     = stdin_cmd_enable;
+   g_settings.pipe_cmd_enable     = pipe_cmd_enable;
    g_settings.content_history_size    = default_content_history_size;
    g_settings.libretro_log_level   = libretro_log_level;
 
@@ -821,7 +821,8 @@ bool config_load_file(const char *path, bool set_defaults)
 
    CONFIG_GET_BOOL(network_cmd_enable, "network_cmd_enable");
    CONFIG_GET_INT(network_cmd_port, "network_cmd_port");
-   CONFIG_GET_BOOL(stdin_cmd_enable, "stdin_cmd_enable");
+   CONFIG_GET_BOOL(pipe_cmd_enable, "pipe_cmd_enable");
+   CONFIG_GET_PATH(pipe_cmd_name, "pipe_cmd_name");
 
    fill_pathname_resolve_relative(g_settings.content_history_path, g_extern.config_path, ".retroarch-game-history.txt", sizeof(g_settings.content_history_path));
    CONFIG_GET_PATH(content_history_path, "game_history_path");

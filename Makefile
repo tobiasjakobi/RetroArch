@@ -41,7 +41,8 @@ OBJ = frontend/frontend.o \
 		audio/dsp_filter.o \
 		audio/sinc.o \
 		audio/cc_resampler.o \
-		performance.o
+		performance.o \
+		command.o
 
 
 JOYCONFIG_OBJ = tools/retroarch-joyconfig.o \
@@ -98,10 +99,6 @@ OBJ += movie.o
 
 ifeq ($(HAVE_NETPLAY), 1)
    OBJ += netplay.o
-endif
-
-ifeq ($(HAVE_COMMAND), 1)
-   OBJ += command.o
 endif
 
 ifeq ($(HAVE_ALSA), 1)

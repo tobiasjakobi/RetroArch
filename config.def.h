@@ -335,10 +335,10 @@ static const float slowmotion_ratio = 3.0;
 // Maximum fast forward ratio (Negative => no limit).
 static const float fastforward_ratio = -1.0;
 
-// Enable stdin/network command interface
+// Enable network/named pipe command interface
 static const bool network_cmd_enable = false;
 static const uint16_t network_cmd_port = 55355;
-static const bool stdin_cmd_enable = false;
+static const bool pipe_cmd_enable = false;
 
 // Number of entries that will be kept in content history file.
 static const unsigned default_content_history_size = 100;

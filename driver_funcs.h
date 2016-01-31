@@ -54,10 +54,8 @@ static inline bool input_key_pressed_func(int key)
    if (!driver.block_hotkey)
       ret = ret || driver.input->key_pressed(driver.input_data, key);
 
-#ifdef HAVE_COMMAND
    if (driver.command)
       ret = ret || rarch_cmd_get(driver.command, key);
-#endif
 
    return ret;
 }

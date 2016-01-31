@@ -603,10 +603,8 @@ void rarch_input_poll()
 {
    input_poll_func();
 
-#ifdef HAVE_COMMAND
    if (driver.command)
       rarch_cmd_poll(driver.command);
-#endif
 }
 
 // Turbo scheme: If turbo button is held, all buttons pressed except for D-pad will go into
@@ -1465,20 +1463,13 @@ static void deinit_netplay()
 }
 #endif
 
-#ifdef HAVE_COMMAND
 static void init_command()
 {
-   if (!g_settings.stdin_cmd_enable && !g_settings.network_cmd_enable)
+   if (!g_settings.pipe_cmd_enable && !g_settings.network_cmd_enable)
       return;
 
-   if (g_settings.stdin_cmd_enable && driver.stdin_claimed)
-   {
-      RARCH_WARN("stdin command interface is desired, but input driver has already claimed stdin.\n"
-            "Cannot use this command interface.\n");
-   }
-
-   if (!(driver.command = rarch_cmd_new(g_settings.stdin_cmd_enable && !driver.stdin_claimed,
-         g_settings.network_cmd_enable, g_settings.network_cmd_port)))
+   if (!(driver.command = rarch_cmd_new(g_settings.pipe_cmd_enable, g_settings.network_cmd_enable,
+         g_settings.network_cmd_port, g_settings.pipe_cmd_name)))
       RARCH_ERR("Failed to initialize command interface.\n");
 }
 
@@ -1488,8 +1479,6 @@ static void deinit_command()
       rarch_cmd_free(driver.command);
    driver.command = NULL;
 }
-
-#endif
 
 #ifdef HAVE_NETPLAY
 static void init_libretro_cbs_netplay()
@@ -2810,9 +2799,7 @@ int rarch_main_init(int argc, char *argv[])
    init_system_av_info();
    init_drivers();
 
-#ifdef HAVE_COMMAND
    init_command();
-#endif
 
    init_rewind();
    init_controllers();
@@ -3126,9 +3113,8 @@ void rarch_main_deinit()
 #ifdef HAVE_NETPLAY
    deinit_netplay();
 #endif
-#ifdef HAVE_COMMAND
+
    deinit_command();
-#endif
 
 #if defined(HAVE_THREADS)
    if (g_extern.use_sram)

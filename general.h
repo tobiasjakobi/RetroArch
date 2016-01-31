@@ -48,10 +48,7 @@
 #include "netplay.h"
 #endif
 
-#ifdef HAVE_COMMAND
 #include "command.h"
-#endif
-
 #include "audio/resampler.h"
 
 #define MAX_PLAYERS 8
@@ -276,7 +273,8 @@ struct settings
 
    bool network_cmd_enable;
    uint16_t network_cmd_port;
-   bool stdin_cmd_enable;
+   bool pipe_cmd_enable;
+   char pipe_cmd_name[PATH_MAX];
 
    char content_directory[PATH_MAX];
    char assets_directory[PATH_MAX];

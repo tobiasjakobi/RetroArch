@@ -28,15 +28,14 @@
 #include <string.h>
 
 #define DEFAULT_NETWORK_CMD_PORT 55355
-#define STDIN_BUF_SIZE 4096
+#define PIPE_BUF_SIZE 4096
 
 struct rarch_cmd
 {
-#ifdef HAVE_STDIN_CMD
-   bool stdin_enable;
-   char stdin_buf[STDIN_BUF_SIZE];
-   size_t stdin_buf_ptr;
-#endif
+   int pipe_fd;
+   bool pipe_enable;
+   char pipe_buf[PIPE_BUF_SIZE];
+   size_t pipe_buf_ptr;
 
 #if defined(HAVE_NETWORK_CMD) && defined(HAVE_NETPLAY)
    int net_fd;
@@ -100,18 +99,24 @@ error:
 }
 #endif
 
-#ifdef HAVE_STDIN_CMD
-static bool cmd_init_stdin(rarch_cmd_t *handle)
+static bool cmd_init_pipe(rarch_cmd_t *handle, const char *name)
 {
-   if (!socket_nonblock(STDIN_FILENO))
+   int fd;
+
+   fd = open(name, O_RDONLY | O_NONBLOCK);
+   if (fd < 0)
       return false;
 
-   handle->stdin_enable = true;
+   if (!socket_nonblock(fd))
+      return false;
+
+   handle->pipe_enable = true;
+   handle->pipe_fd = fd;
    return true;
 }
-#endif
 
-rarch_cmd_t *rarch_cmd_new(bool stdin_enable, bool network_enable, uint16_t port)
+rarch_cmd_t *rarch_cmd_new(bool pipe_enable, bool network_enable,
+   uint16_t port, const char* pipe_name)
 {
    rarch_cmd_t *handle = calloc(1, sizeof(*handle));
    if (!handle)
@@ -126,13 +131,9 @@ rarch_cmd_t *rarch_cmd_new(bool stdin_enable, bool network_enable, uint16_t port
    (void)port;
 #endif
 
-#ifdef HAVE_STDIN_CMD
-   handle->stdin_enable = stdin_enable;
-   if (stdin_enable && !cmd_init_stdin(handle))
+   handle->pipe_enable = pipe_enable;
+   if (pipe_enable && !cmd_init_pipe(handle, pipe_name))
       goto error;
-#else
-   (void)stdin_enable;
-#endif
 
    return handle;
 
@@ -147,6 +148,9 @@ void rarch_cmd_free(rarch_cmd_t *handle)
    if (handle->net_fd >= 0)
       close(handle->net_fd);
 #endif
+
+   if (handle->pipe_fd >= 0)
+      close(handle->pipe_fd);
 
    free(handle);
 }
@@ -339,14 +343,12 @@ static void network_cmd_poll(rarch_cmd_t *handle)
 }
 #endif
 
-#ifdef HAVE_STDIN_CMD
-
-static size_t read_stdin(char *buf, size_t size)
+static size_t read_pipe(int fd, char *buf, size_t size)
 {
    size_t has_read = 0;
    while (size)
    {
-      ssize_t ret = read(STDIN_FILENO, buf, size);
+      ssize_t ret = read(fd, buf, size);
 
       if (ret <= 0)
          break;
@@ -359,46 +361,46 @@ static size_t read_stdin(char *buf, size_t size)
    return has_read;
 }
 
-static void stdin_cmd_poll(rarch_cmd_t *handle)
+static void pipe_cmd_poll(rarch_cmd_t *handle)
 {
    char *last_newline;
    ssize_t ret;
    ptrdiff_t msg_len;
 
-   if (!handle->stdin_enable)
+   if (!handle->pipe_enable)
       return;
 
-   ret = read_stdin(handle->stdin_buf + handle->stdin_buf_ptr, STDIN_BUF_SIZE - handle->stdin_buf_ptr - 1);
+   ret = read_pipe(handle->pipe_fd, handle->pipe_buf + handle->pipe_buf_ptr,
+                   PIPE_BUF_SIZE - handle->pipe_buf_ptr - 1);
    if (ret == 0)
       return;
 
-   handle->stdin_buf_ptr += ret;
-   handle->stdin_buf[handle->stdin_buf_ptr] = '\0';
+   handle->pipe_buf_ptr += ret;
+   handle->pipe_buf[handle->pipe_buf_ptr] = '\0';
 
-   last_newline = strrchr(handle->stdin_buf, '\n');
+   last_newline = strrchr(handle->pipe_buf, '\n');
 
    if (!last_newline)
    {
       // We're receiving bogus data in pipe (no terminating newline),
       // flush out the buffer.
-      if (handle->stdin_buf_ptr + 1 >= STDIN_BUF_SIZE)
+      if (handle->pipe_buf_ptr + 1 >= PIPE_BUF_SIZE)
       {
-         handle->stdin_buf_ptr = 0;
-         handle->stdin_buf[0] = '\0';
+         handle->pipe_buf_ptr = 0;
+         handle->pipe_buf[0] = '\0';
       }
 
       return;
    }
 
    *last_newline++ = '\0';
-   msg_len = last_newline - handle->stdin_buf;
+   msg_len = last_newline - handle->pipe_buf;
 
-   parse_msg(handle, handle->stdin_buf);
+   parse_msg(handle, handle->pipe_buf);
 
-   memmove(handle->stdin_buf, last_newline, handle->stdin_buf_ptr - msg_len);
-   handle->stdin_buf_ptr -= msg_len;
+   memmove(handle->pipe_buf, last_newline, handle->pipe_buf_ptr - msg_len);
+   handle->pipe_buf_ptr -= msg_len;
 }
-#endif
 
 void rarch_cmd_poll(rarch_cmd_t *handle)
 {
@@ -408,9 +410,7 @@ void rarch_cmd_poll(rarch_cmd_t *handle)
    network_cmd_poll(handle);
 #endif
 
-#ifdef HAVE_STDIN_CMD
-   stdin_cmd_poll(handle);
-#endif
+   pipe_cmd_poll(handle);
 }
 
 #if defined(HAVE_NETWORK_CMD) && defined(HAVE_NETPLAY)

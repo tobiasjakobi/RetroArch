@@ -43,8 +43,6 @@ static void linuxraw_resetKbmd()
       tcsetattr(0, TCSAFLUSH, &oldTerm);
       oldKbmd = 0xffff;
    }
-
-   driver.stdin_claimed = false;
 }
 
 static void linuxraw_exitGracefully(int sig)
@@ -58,12 +56,6 @@ static void *linuxraw_input_init()
    // only work on terminals
    if (!isatty(0))
       return NULL;
-
-   if (driver.stdin_claimed)
-   {
-      RARCH_WARN("stdin is already used for ROM loading. Cannot use stdin for input.\n");
-      return NULL;
-   }
 
    linuxraw_input_t *linuxraw = calloc(1, sizeof(*linuxraw));
    if (!linuxraw)
@@ -111,7 +103,6 @@ static void *linuxraw_input_init()
    linuxraw->joypad = input_joypad_init_driver(g_settings.input.joypad_driver);
    input_init_keyboard_lut(rarch_key_map_linux);
 
-   driver.stdin_claimed = true; // We need to disable use of stdin command interface if stdin is supposed to be used for input.
    return linuxraw;
 }
 

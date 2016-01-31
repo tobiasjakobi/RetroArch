@@ -37,9 +37,7 @@
 #include "config.h"
 #endif
 
-#ifdef HAVE_COMMAND
 #include "command.h"
-#endif
 
 #define AUDIO_CHUNK_SIZE_BLOCKING 512
 #define AUDIO_CHUNK_SIZE_NONBLOCKING 2048 // So we don't get complete line-noise when fast-forwarding audio.
@@ -367,10 +365,8 @@ typedef struct driver
    bool menu_data_own;
 #endif
 
-#ifdef HAVE_COMMAND
    rarch_cmd_t *command;
-#endif
-   bool stdin_claimed;
+
    bool block_hotkey;
    bool block_input;
    bool block_libretro_input;

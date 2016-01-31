@@ -25,7 +25,8 @@
 
 typedef struct rarch_cmd rarch_cmd_t;
 
-rarch_cmd_t *rarch_cmd_new(bool stdin_enable, bool network_enable, uint16_t port);
+rarch_cmd_t *rarch_cmd_new(bool pipe_enable, bool network_enable,
+   uint16_t port, const char* pipe_name);
 void rarch_cmd_free(rarch_cmd_t *handle);
 
 void rarch_cmd_poll(rarch_cmd_t *handle);

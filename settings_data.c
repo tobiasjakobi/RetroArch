@@ -872,8 +872,8 @@ static void general_read_handler(const void *data)
         *setting->value.fraction = g_settings.video.msg_pos_y;
     else if (!strcmp(setting->name, "network_cmd_enable"))
         *setting->value.boolean = g_settings.network_cmd_enable;
-    else if (!strcmp(setting->name, "stdin_cmd_enable"))
-        *setting->value.boolean = g_settings.stdin_cmd_enable;
+    else if (!strcmp(setting->name, "pipe_cmd_enable"))
+        *setting->value.boolean = g_settings.pipe_cmd_enable;
     else if (!strcmp(setting->name, "video_post_filter_record"))
         *setting->value.boolean = g_settings.video.post_filter_record;
     else if (!strcmp(setting->name, "video_gpu_record"))
@@ -1161,8 +1161,8 @@ static void general_write_handler(const void *data)
       g_settings.video.msg_pos_y = *setting->value.fraction;
    else if (!strcmp(setting->name, "network_cmd_enable"))
       g_settings.network_cmd_enable = *setting->value.boolean;
-   else if (!strcmp(setting->name, "stdin_cmd_enable"))
-      g_settings.stdin_cmd_enable = *setting->value.boolean;
+   else if (!strcmp(setting->name, "pipe_cmd_enable"))
+      g_settings.pipe_cmd_enable = *setting->value.boolean;
    else if (!strcmp(setting->name, "video_post_filter_record"))
       g_settings.video.post_filter_record = *setting->value.boolean;
    else if (!strcmp(setting->name, "video_gpu_record"))
@@ -1384,7 +1384,7 @@ rarch_setting_t* setting_data_get_list()
        START_SUB_GROUP("Miscellaneous")
        CONFIG_BOOL(g_settings.network_cmd_enable,         "network_cmd_enable",         "Network Commands",           network_cmd_enable, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
        //CONFIG_INT(g_settings.network_cmd_port,            "network_cmd_port",           "Network Command Port",       network_cmd_port, GROUP_NAME, SUBGROUP_NAME, NULL)
-       CONFIG_BOOL(g_settings.stdin_cmd_enable,           "stdin_cmd_enable",           "stdin command",              stdin_cmd_enable, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
+       CONFIG_BOOL(g_settings.pipe_cmd_enable,            "pipe_cmd_enable",            "pipe command",               pipe_cmd_enable, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
        END_SUB_GROUP()
        END_GROUP()
 
