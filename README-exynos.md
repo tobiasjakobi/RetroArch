@@ -46,7 +46,11 @@ The video driver name is 'exynos'. It honors the following video settings:
    - video\_monitor\_index
    - video\_fullscreen\_x and video\_fullscreen\_y
 
-The monitor index maps to the DRM connector index. If it is zero, then it just selects the first 'sane' connector, which means that it is connected to a display device and it provides at least one useable mode. If the value is non-zero, it forces the selection of this connector. For example, on the author's ODROID-X2, with an odroid-3.15.y kernel, the HDMI connector has index 1.
+The monitor index is used as a connector type. Connector types are HDMI, VGA (usually what is connected to the FIMD) and other (e.g. virtual connectors like VIDI).
+
+   - HDMI = 0
+   - VGA = 1
+   - Other = 2
 
 The two fullscreen parameters select the mode the DRM should select. If zero, the native connector mode is selected. If non-zero, the DRM tries to select the wanted mode. This might fail if the mode is not available from the connector.
 
