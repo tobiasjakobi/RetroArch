@@ -306,7 +306,7 @@ ifneq ($(V),1)
 endif
 
 # Use memcmp() from glibc (faster than gcc's builtin version)
-OPTIMIZE_FLAG = -O2 -ffast-math -fno-builtin-memcmp
+OPTIMIZE_FLAG = -O2 -ffast-math -fno-builtin-memcmp -DNDEBUG
 ifeq ($(DEBUG), 1)
    OPTIMIZE_FLAG = -O0
 endif
