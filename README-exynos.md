@@ -10,11 +10,11 @@ If you want to use such a device with an upstream kernel, the GPU block will mos
 
 Since the G2D block is present on all modern Exynos SoCs, the natural way of proceeding would be to use it instead of the GPU block. The G2D is still a dedicated piece of hardware, so all operations are offloaded from the CPU. It should be noted though, that using the G2D instead of the GPU removes the possibility to use GPU shaders to enhance the image quality of your emulator core of choice. If the user relies on these enhancements, then he's advised to continue using the GPU, most likely by using the EGL/GLES video driver.
 
-The author uses a Hardkernel ODROID-X2, which is an developer board powered by an Exynos4412 SoC. The vendor supplied kernel, a Linux tree based on the 3.8.y branch, currently offers no way to use the G2D because of issues related to clock setup. However upstreaming work is in progress and a tree based on 3.15.y, with some slight modifications, is available from here:
+The author uses a Hardkernel ODROID-X2, which is an developer board powered by an Exynos4412 SoC. The vendor supplied kernel, a Linux tree based on the 3.8.y branch, currently offers no way to use the G2D because of issues related to clock setup. However upstreaming work is in progress and a tree based on 4.3.y, with some slight modifications, is available from here:
 
-[odroid-3.15.y repository](https://github.com/tobiasjakobi/linux-odroid)
+[odroid-4.3.y repository](https://github.com/tobiasjakobi/linux-odroid-public)
 
-Please refer to the minimalistic documentation in README-ODROID for setup.
+Please refer to the minimalistic documentation in README-ODROID for setup. A migration guide for upstream u-boot and kernel can be found [here](http://linux-exynos.org/wiki/Hardkernel_ODROID-X2).
 
 ## Performance analysis
 
