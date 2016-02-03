@@ -164,21 +164,21 @@ ifeq ($(HAVE_OPENGL), 1)
 			 gfx/glsym/rglgen.o
 
    ifeq ($(HAVE_KMS), 1)
-      OBJ += gfx/context/drm_egl_ctx.o
+      OBJ += gfx/context/drm_egl.o
       DEFINES += $(GBM_CFLAGS) $(DRM_CFLAGS) $(EGL_CFLAGS)
       LIBS += $(GBM_LIBS) $(DRM_LIBS) $(EGL_LIBS)
    endif
 
    ifeq ($(HAVE_MALI_FBDEV), 1)
-      OBJ += gfx/context/mali_fbdev_ctx.o
+      OBJ += gfx/context/mali_fbdev.o
    endif
 
    ifeq ($(HAVE_X11), 1)
       ifeq ($(HAVE_GLES), 0)
-         OBJ += gfx/context/glx_ctx.o
+         OBJ += gfx/context/glx.o
       endif
       ifeq ($(HAVE_EGL), 1)
-         OBJ += gfx/context/xegl_ctx.o
+         OBJ += gfx/context/xegl.o
          DEFINES += $(EGL_CFLAGS)
          LIBS += $(EGL_LIBS)
       endif
@@ -186,7 +186,7 @@ ifeq ($(HAVE_OPENGL), 1)
 
    ifeq ($(HAVE_WAYLAND), 1)
 	   ifeq ($(HAVE_EGL), 1)
-	     OBJ += gfx/context/wayland_ctx.o
+	     OBJ += gfx/context/wayland.o
       endif
    endif
 	
