@@ -257,25 +257,19 @@ static bool gfx_ctx_has_focus(void *data)
 }
 
 const gfx_ctx_driver_t gfx_ctx_mali_fbdev = {
-   gfx_ctx_init,
-   gfx_ctx_destroy,
-   gfx_ctx_bind_api,
-   gfx_ctx_set_swap_interval,
-   gfx_ctx_set_video_mode,
-   gfx_ctx_get_video_size,
-   NULL,
-   gfx_ctx_update_window_title,
-   gfx_ctx_check_window,
-   gfx_ctx_set_resize,
-   gfx_ctx_has_focus,
-   gfx_ctx_swap_buffers,
-   gfx_ctx_input_driver,
-   gfx_ctx_get_proc_address,
-#ifdef HAVE_EGL
-   NULL,
-   NULL,
-#endif
-   NULL,
-   "mali-fbdev",
+   .init = gfx_ctx_init,
+   .destroy = gfx_ctx_destroy,
+   .bind_api = gfx_ctx_bind_api,
+   .swap_interval = gfx_ctx_set_swap_interval,
+   .set_video_mode = gfx_ctx_set_video_mode,
+   .get_video_mode = gfx_ctx_get_video_size,
+   .update_window_title = gfx_ctx_update_window_title,
+   .check_window = gfx_ctx_check_window,
+   .set_resize = gfx_ctx_set_resize,
+   .has_focus = gfx_ctx_has_focus,
+   .swap_buffers = gfx_ctx_swap_buffers,
+   .input_driver = gfx_ctx_input_driver,
+   .get_proc_address = gfx_ctx_get_proc_address,
+   .ident = "mali-fbdev",
 };
 
