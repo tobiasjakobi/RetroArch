@@ -6,6 +6,7 @@ remove/cleanup:
 - remove excessive global labels from asm code (e.g. sinc_neon.S)
 - remove some of the 'compat' layer
 - logger
+- partially remove pthread abstraction
 
 fix const mismatch issues:
 - frontend/menu/disp/rgui.c: menu->font (font_bin_buf is static buffer)
