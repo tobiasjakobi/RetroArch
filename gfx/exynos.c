@@ -101,6 +101,20 @@ struct exynos_page {
   exynos_boundingbox_t damage[2];
 };
 
+struct exynos_software_framebuffer {
+  unsigned max_width, max_height;
+  unsigned width, height;
+
+  unsigned g2d_color_mode;
+  unsigned stride;
+
+  /* Rectangle from previous blitting operation. */
+  struct g2d_rect old_rect;
+
+  bool enabled;
+  bool configured;
+};
+
 struct exynos_data {
   struct exynos_data_base base;
 
@@ -118,6 +132,8 @@ struct exynos_data {
   /* parameters for blitting emulator fb to screen */
   exynos_boundingbox_t blit_damage;
   ushort blit_w, blit_h;
+
+  struct exynos_software_framebuffer sw_fb;
 
   bool sync;
 
@@ -722,6 +738,147 @@ static int exynos_blend_font(struct exynos_data *pdata) {
   return 0;
 }
 
+static bool swfb_set_format(void *ctx, enum retro_pixel_format pixel_format,
+                     unsigned width, unsigned height) {
+  struct exynos_data *pdata = ctx;
+  unsigned color_mode;
+
+  if (!pdata->sw_fb.enabled)
+    return false;
+
+  /* Translate from rarch pixelformat to G2D colormode. */
+  switch (pixel_format) {
+  case RETRO_PIXEL_FORMAT_0RGB1555:
+    color_mode = G2D_COLOR_FMT_XRGB1555 | G2D_ORDER_AXRGB;
+    break;
+
+  case RETRO_PIXEL_FORMAT_XRGB8888:
+    color_mode = G2D_COLOR_FMT_XRGB8888 | G2D_ORDER_AXRGB;
+    break;
+
+  case RETRO_PIXEL_FORMAT_RGB565:
+    color_mode = G2D_COLOR_FMT_RGB565 | G2D_ORDER_AXRGB;
+    break;
+
+  case RETRO_PIXEL_FORMAT_XBGR1555:
+    color_mode = G2D_COLOR_FMT_XRGB1555 | G2D_ORDER_AXBGR;
+    break;
+
+  case RETRO_PIXEL_FORMAT_PACKED_BGR888:
+    color_mode = G2D_COLOR_FMT_PACKED_RGB888 | G2D_ORDER_BGRAX;
+    break;
+
+  default:
+    RARCH_ERR("video_exynos: software framebuffer: unsupported pixel format (0x%x)\n",
+      pixel_format);
+    return false;
+  }
+
+  if (width > pdata->sw_fb.max_width || height > pdata->sw_fb.max_height)
+    return false;
+
+  RARCH_LOG("video_exynos: software framebuffer: format = %ux%u (0x%x) -> %ux%u (0x%x)\n",
+    pdata->sw_fb.width, pdata->sw_fb.height, pdata->sw_fb.g2d_color_mode,
+    width, height, color_mode);
+
+  pdata->sw_fb.g2d_color_mode = color_mode;
+  pdata->sw_fb.stride = width * colormode_to_bpp(color_mode);
+  pdata->sw_fb.width = width;
+  pdata->sw_fb.height = height;
+
+  exynos_setup_blit_src(pdata, width, height, color_mode, pdata->sw_fb.stride);
+
+  pdata->sw_fb.configured = true;
+
+  return true;
+}
+
+static bool swfb_get_current_addr(void *ctx, void **addr, size_t *pitch) {
+  struct exynos_data *pdata = ctx;
+
+  if (!pdata->sw_fb.configured)
+    return false;
+
+  const enum exynos_buffer_type buf_type = defaults[exynos_image_frame].buf_type;
+  const unsigned size = pdata->sw_fb.stride * pdata->sw_fb.height;
+
+  if (realloc_buffer(pdata, buf_type, size) != 0)
+    return false;
+
+  *addr = pdata->buf[exynos_image_frame]->vaddr;
+  *pitch = pdata->sw_fb.stride;
+
+  return true;
+}
+
+static bool swfb_video_refresh(void *ctx, const struct retro_rectangle *rect) {
+  struct exynos_data *pdata = ctx;
+  struct g2d_image *src = &pdata->src[exynos_image_frame];
+  struct exynos_software_framebuffer *sw_fb = &pdata->sw_fb;
+
+  struct exynos_page *page;
+
+  if (!sw_fb->configured)
+    return false;
+
+  /*
+   * struct g2d_rect and struct retro_rectangle are compatible, so
+   * it is safe to cast the pointer here.
+   */
+  if (!rect)
+    rect = (struct retro_rectangle*)&sw_fb->old_rect;
+
+  if (sw_fb->old_rect.w != rect->w || sw_fb->old_rect.h != rect->h) {
+    exynos_setup_scale(pdata, rect->w, rect->h);
+
+    sw_fb->old_rect = (struct g2d_rect){
+      .x = rect->x,
+      .y = rect->y,
+      .w = rect->w,
+      .h = rect->h
+    };
+  }
+
+  page = exynos_free_page(pdata);
+
+  /*
+   * TODO:
+   * - add menu rendering
+   * - add font rendering
+   * - integrate soft filter
+   */
+
+  if (rect->w == 0 || rect->h == 0)
+    goto skip_blit;
+
+  /*
+   * This clips the blitting rectangle, should it be
+   * not inside [0, w] x [0, h].
+   */
+  if (g2d_copy_with_scale(pdata->g2d, src, &pdata->dst,
+                          rect->x, rect->y, rect->w, rect->h,
+                          pdata->blit_damage.x, pdata->blit_damage.y,
+                          pdata->blit_damage.w, pdata->blit_damage.h, 0) ||
+      g2d_exec(pdata->g2d)) {
+    RARCH_ERR("video_exynos: software framebuffer: failed to blit\n");
+    return false;
+  }
+
+  apply_damage(page, 0, &pdata->blit_damage);
+
+skip_blit:
+  if (exynos_issue_flip(&pdata->base, &page->base) < 0)
+    goto fail;
+
+  g_extern.frame_count++;
+
+  return true;
+
+fail:
+  page->base.flags &= ~page_used;
+
+  return false;
+}
 
 struct exynos_video {
   struct exynos_data *data;
@@ -973,6 +1130,9 @@ static bool exynos_gfx_frame(void *driver_data, const void *frame, unsigned widt
 
   struct exynos_page *page = NULL;
 
+  if (data->sw_fb.enabled)
+    return false;
+
   /* Check if neither menu nor emulator framebuffer is to be displayed. */
   if (!vid->menu_active && !frame)
     return true;
@@ -1077,6 +1237,65 @@ static void exynos_gfx_viewport_info(void *data, struct rarch_viewport *vp) {
   vp->height = vp->full_height = vid->height;
 }
 
+static bool exynos_cfg_sw_fb(void *driver_data, struct retro_framebuffer_config *fb_cfg) {
+  static const enum retro_pixel_format formats[] = {
+    RETRO_PIXEL_FORMAT_0RGB1555,
+    RETRO_PIXEL_FORMAT_XRGB8888,
+    RETRO_PIXEL_FORMAT_RGB565,
+    RETRO_PIXEL_FORMAT_XBGR1555,
+    RETRO_PIXEL_FORMAT_PACKED_BGR888
+  };
+
+  struct exynos_video *vid = driver_data;
+  struct exynos_data *pdata = vid->data;
+
+  fprintf(stderr, "DEBUG: exynos_cfg_sw_fb()\n");
+
+  /* Disable software framebuffer support if requested. */
+  if (fb_cfg->max_width == 0 || fb_cfg->max_height == 0) {
+    struct g2d_image *src = &pdata->src[exynos_image_frame];
+
+    memset(fb_cfg, 0x00, sizeof(struct retro_framebuffer_config));
+
+    pdata->sw_fb.enabled = false;
+    pdata->sw_fb.configured = false;
+
+    /* Restore the color mode of the temporary G2D image. */
+    src->color_mode = defaults[exynos_image_frame].g2d_color_mode;
+
+    /*
+     * This triggers a scaling reconfig event the next
+     * time exynos_gfx_frame() is called.
+     */
+    vid->width = 0;
+    vid->height = 0;
+
+    return true;
+  }
+
+  /* Check against G2D hardware limitations. */
+  if (fb_cfg->max_width >= 8000 || fb_cfg->max_height >= 8000)
+    return false;
+
+  pdata->sw_fb.max_width = fb_cfg->max_width;
+  pdata->sw_fb.max_height = fb_cfg->max_height;
+
+  fb_cfg->framebuffer_context = pdata;
+
+  /* Set the function pointers. */
+  fb_cfg->set_format = swfb_set_format;
+  fb_cfg->get_current_addr = swfb_get_current_addr;
+  fb_cfg->video_refresh = swfb_video_refresh;
+
+  fb_cfg->num_formats = sizeof(formats) / sizeof(formats[0]);
+  fb_cfg->formats = formats;
+
+  pdata->sw_fb.enabled = true;
+  pdata->sw_fb.configured = false;
+
+  return true;
+}
+
 static void exynos_set_aspect_ratio(void *data, unsigned aspect_ratio_idx) {
   struct exynos_video *vid = data;
 
@@ -1155,6 +1374,7 @@ static void exynos_show_mouse(void *data, bool state) {
 }
 
 static const video_poke_interface_t exynos_poke_interface = {
+  .cfg_sw_fb = exynos_cfg_sw_fb,
   .set_aspect_ratio = exynos_set_aspect_ratio,
   .apply_state_changes = exynos_apply_state_changes,
 #ifdef HAVE_MENU
