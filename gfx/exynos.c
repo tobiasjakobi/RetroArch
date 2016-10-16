@@ -620,7 +620,7 @@ static struct exynos_page *exynos_free_page(struct exynos_data *pdata) {
 }
 
 static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
-                               unsigned height, unsigned src_bpp) {
+                               unsigned height, unsigned color_mode) {
   struct g2d_image *src = pdata->src[exynos_image_frame];
   struct exynos_page *pages = pdata->base.pages;
   unsigned w, h;
@@ -629,10 +629,7 @@ static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
 
   src->width = width;
   src->height = height;
-
-  src->color_mode = (src_bpp == 2) ?
-                    G2D_COLOR_FMT_RGB565 | G2D_ORDER_AXRGB:
-                    G2D_COLOR_FMT_XRGB8888 | G2D_ORDER_AXRGB;
+  src->color_mode = color_mode;
 
   if (fabsf(pdata->aspect - aspect) < 0.0001f) {
     w = pdata->base.width;
@@ -1023,13 +1020,28 @@ static bool exynos_gfx_frame(void *driver_data, const void *frame, unsigned widt
 
   if (frame) {
     if (width != vid->width || height != vid->height) {
+      unsigned color_mode;
+
+      switch (vid->bytes_per_pixel) {
+      case 2:
+        color_mode = G2D_COLOR_FMT_RGB565 | G2D_ORDER_AXRGB;
+        break;
+
+      case 4:
+        color_mode = G2D_COLOR_FMT_XRGB8888 | G2D_ORDER_AXRGB;
+        break;
+
+      default:
+        return true;
+      }
+
       /* Sanity check on new dimension parameters. */
       if (!width || !height)
         return true;
 
       RARCH_LOG("video_exynos: resolution changed by core: %ux%u -> %ux%u\n",
                 vid->width, vid->height, width, height);
-      exynos_setup_scale(vid->data, width, height, vid->bytes_per_pixel);
+      exynos_setup_scale(vid->data, width, height, color_mode);
 
       vid->width = width;
       vid->height = height;
