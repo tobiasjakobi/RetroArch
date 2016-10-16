@@ -285,6 +285,7 @@ typedef struct video_poke_interface
    uintptr_t (*get_current_framebuffer)(void *data);
    retro_proc_address_t (*get_proc_address)(void *data, const char *sym);
 #endif
+   bool (*cfg_sw_fb)(void *data, struct retro_framebuffer_config *fb_cfg);
    void (*set_aspect_ratio)(void *data, unsigned aspectratio_index);
    void (*apply_state_changes)(void *data);
 

@@ -558,6 +558,13 @@ bool rarch_environment_cb(unsigned cmd, void *data)
          RARCH_LOG("Environ GET_LANGUAGE: \"%d\".\n", g_settings.user_language);
          break;
 
+      case RETRO_ENVIRONMENT_CONFIG_SOFTWARE_FRAMEBUFFER:
+         if (driver.video_poke && driver.video_poke->cfg_sw_fb && driver.video_data)
+            return driver.video_poke->cfg_sw_fb(driver.video_data, data);
+         else
+            return false;
+         break;
+
       case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT:
       {
          enum retro_pixel_format pix_fmt = *(const enum retro_pixel_format*)data;
