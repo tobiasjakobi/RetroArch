@@ -614,23 +614,16 @@ static struct gfx_shader *thread_get_current_shader(void *data)
 }
 
 static const video_poke_interface_t thread_poke = {
-   thread_set_filtering,
-#ifdef HAVE_FBO
-   NULL,
-   NULL,
-#endif
-   thread_set_aspect_ratio,
-   thread_apply_state_changes,
+  .set_filtering = thread_set_filtering,
+
+  .set_aspect_ratio = thread_set_aspect_ratio,
+  .apply_state_changes = thread_apply_state_changes,
 #if defined(HAVE_MENU)
-   thread_set_texture_frame,
-   thread_set_texture_enable,
+  .set_texture_frame = thread_set_texture_frame,
+  .set_texture_enable = thread_set_texture_enable,
 #endif
 
-   NULL,
-   NULL,
-   NULL,
-
-   thread_get_current_shader,
+  .get_current_shader = thread_get_current_shader,
 };
 
 static void thread_get_poke_interface(void *data, const video_poke_interface_t **iface)
