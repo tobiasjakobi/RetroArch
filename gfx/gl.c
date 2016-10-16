@@ -2614,23 +2614,19 @@ static struct gfx_shader *gl_get_current_shader(void *data)
 }
 
 static const video_poke_interface_t gl_poke_interface = {
-   NULL,
 #ifdef HAVE_FBO
-   gl_get_current_framebuffer,
-   gl_get_proc_address,
+  .get_current_framebuffer = gl_get_current_framebuffer,
+  .get_proc_address = gl_get_proc_address,
 #endif
-   gl_set_aspect_ratio,
-   gl_apply_state_changes,
+  .set_aspect_ratio = gl_set_aspect_ratio,
+  .apply_state_changes = gl_apply_state_changes,
 #if defined(HAVE_MENU)
-   gl_set_texture_frame,
-   gl_set_texture_enable,
+  .set_texture_frame = gl_set_texture_frame,
+  .set_texture_enable = gl_set_texture_enable,
 #endif
-   gl_set_osd_msg,
-
-   gl_show_mouse,
-   NULL,
-
-   gl_get_current_shader,
+  .set_osd_msg = gl_set_osd_msg,
+  .show_mouse = gl_show_mouse,
+  .get_current_shader = gl_get_current_shader,
 };
 
 static void gl_get_poke_interface(void *data, const video_poke_interface_t **iface)
