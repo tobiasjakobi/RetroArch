@@ -650,6 +650,19 @@ enum retro_mod
                                            // It can be used by the core for localization purposes.
                                            //
 
+/*
+ * Upstream:
+ * RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER = 40
+ */
+
+/*
+ * Returns a pointer to struct retro_framebuffer_config.
+ *
+ * While software framebuffer support is enabled, regular calls to
+ * the video refresh call are ignored by the frontend.
+ */
+#define RETRO_ENVIRONMENT_CONFIG_SOFTWARE_FRAMEBUFFER (41 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+
 #define RETRO_MEMDESC_CONST     (1 << 0)   // The frontend will never change this memory area once retro_load_game has returned.
 #define RETRO_MEMDESC_BIGENDIAN (1 << 1)   // The memory area contains big endian data. Default is little endian.
 #define RETRO_MEMDESC_ALIGN_2   (1 << 16)  // All memory access in this area is aligned to their own size, or 2, whichever is smaller.
@@ -1211,6 +1224,103 @@ struct retro_game_info
    const void *data;       // Memory buffer of loaded game. Will be NULL if need_fullpath was set.
    size_t      size;       // Size of memory buffer.
    const char *meta;       // String of implementation specific meta-data.
+};
+
+
+/*
+ * Data structures for software framebuffer support (CONFIG_SOFTWARE_FRAMEBUFFER).
+ */
+
+struct retro_rectangle {
+  uint16_t x;
+	uint16_t y;
+	uint16_t w;
+	uint16_t h;
+};
+
+/*
+ * Set the format of the software framebuffer.
+ * @ctx: The software framebuffer context.
+ * @pixel_format: The pixel format of the framebuffer. Has to be one of the
+ *     formats that was queried with CONFIG_SOFTWARE_FRAMEBUFFER.
+ * @width: Width of framebuffer.
+ * @height: Height of framebuffer.
+ *
+ * Returns 'false' if setting the format fails.
+ */
+typedef bool (*retro_fb_cfg_set_format)(void *ctx, enum retro_pixel_format pixel_format,
+  unsigned width, unsigned height);
+
+/*
+ * Get the address of the current framebuffer.
+ * @ctx: The software framebuffer context.
+ * @addr: The memory address of the buffer.
+ * @pitch: The pitch in bytes of the buffer.
+ *
+ * The pitch is at least 'bpp' times 'width', where 'bpp' is derived from
+ * the pixel format used in set_format().
+ *
+ * Returns 'false' if the getting the address fails.
+ */
+typedef bool (*retro_fb_cfg_get_current_addr)(void *ctx, void **addr,
+  size_t *pitch);
+
+/*
+ * Issue a refresh of the video framebuffer.
+ * @ctx: The software framebuffer context.
+ * @rect: The rectangle that should be used for the refresh.
+ *
+ * After video_refresh() is called, the memory address
+ * returned by get_current_addr() becomes invalid.
+ *
+ * Frame duping is done by passing NULL as the rectangle.
+ *
+ * Returns 'false' if the refresh operation fails.
+ */
+typedef bool (*retro_fb_cfg_video_refresh)(void *ctx,
+  const struct retro_rectangle *rect);
+
+struct retro_framebuffer_config
+{
+  /*
+   * The framebuffer context. If NULL, no software framebuffer is available.
+   * Set by the frontend in CONFIG_SOFTWARE_FRAMEBUFFER.
+   */
+  void *framebuffer_context;
+
+  /*
+   * Function pointers to manipulate the software framebuffer.
+   *
+   * Manipulation has to be done in this order:
+   * set_format(), get_current_addr(), video_refresh()
+   *
+   * set_format() can be omitted if none of the format parameters
+   * (pixel format, dimensions) have changed since the last time,
+   *
+   * Set by the frontend in CONFIG_SOFTWARE_FRAMEBUFFER.
+   */
+  retro_fb_cfg_set_format set_format;
+  retro_fb_cfg_get_current_addr get_current_addr;
+  retro_fb_cfg_video_refresh video_refresh;
+
+  /*
+   * Maximum framebuffer width and height used by the core.
+   *
+   * If either width or height is zero, the software framebuffer support
+   * is disabled.
+   *
+   * Set by the core. The core is expected to strictly honor these values.
+   */
+  unsigned max_width;
+  unsigned max_height;
+
+  /*
+   * The pixel formats that are natively supported by the software
+   * framebuffer. These formats are the only ones that can be used
+   * for set_format().
+   */
+  unsigned num_formats;
+  const enum retro_pixel_format *formats;
 };
 
 // Callbacks
