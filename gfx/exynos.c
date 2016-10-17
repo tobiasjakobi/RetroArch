@@ -432,20 +432,6 @@ static void perf_g2d(struct exynos_perf *p, bool start) {
 }
 #endif
 
-static uint32_t bpp_to_g2d(uint32_t p) {
-  switch (p) {
-    case 2:
-      return G2D_COLOR_FMT_RGB565 | G2D_ORDER_AXRGB;
-
-    case 4:
-      return G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_AXRGB;
-
-    default:
-      assert(false);
-      return 0;
-  }
-}
-
 static int exynos_additional_init(struct exynos_data *pdata) {
   struct g2d_image *dst;
   struct g2d_context *g2d;
