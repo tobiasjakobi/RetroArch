@@ -62,11 +62,10 @@ static const struct exynos_config_default {
   unsigned width, height;
   enum exynos_buffer_type buf_type;
   unsigned g2d_color_mode;
-  unsigned bpp; /* bytes per pixel */
 } defaults[exynos_image_count] = {
-  {1024, 640, exynos_buffer_main, G2D_COLOR_FMT_RGB565   | G2D_ORDER_AXRGB, 2}, /* frame */
-  {720,  368, exynos_buffer_aux,  G2D_COLOR_FMT_ARGB4444 | G2D_ORDER_AXRGB, 2}, /* font */
-  {400,  240, exynos_buffer_aux,  G2D_COLOR_FMT_ARGB4444 | G2D_ORDER_RGBAX, 2}  /* menu */
+  {1024, 640, exynos_buffer_main, G2D_COLOR_FMT_RGB565   | G2D_ORDER_AXRGB}, /* frame */
+  {720,  368, exynos_buffer_aux,  G2D_COLOR_FMT_ARGB4444 | G2D_ORDER_AXRGB}, /* font */
+  {400,  240, exynos_buffer_aux,  G2D_COLOR_FMT_ARGB4444 | G2D_ORDER_RGBAX}  /* menu */
 };
 
 #if (EXYNOS_GFX_DEBUG_PERF == 1)
