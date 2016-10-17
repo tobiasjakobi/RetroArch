@@ -132,17 +132,19 @@ static int get_device_index() {
   return (found ? index : -1);
 }
 
-static uint32_t bpp_to_pixelformat(unsigned bpp) {
-  switch (bpp) {
-    case 2:
-      return DRM_FORMAT_RGB565;
+static unsigned pixelformat_to_bpp(uint32_t pf) {
+  switch (pf) {
+  case DRM_FORMAT_ARGB4444:
+  case DRM_FORMAT_RGBA4444:
+  case DRM_FORMAT_RGB565:
+    return 2;
 
-    case 4:
-      return DRM_FORMAT_XRGB8888;
+  case DRM_FORMAT_XRGB8888:
+    return 4;
 
-    default:
-      assert(false);
-      return 0;
+  default:
+    assert(false);
+    return 0;
   }
 }
 
@@ -287,8 +289,6 @@ static bool check_connector_type(uint32_t connector_type) {
 }
 
 int exynos_open(struct exynos_data_base *data) {
-  const uint32_t pixel_format = bpp_to_pixelformat(data->bpp);
-
   char buf[32];
   int devidx;
 
@@ -437,7 +437,7 @@ int exynos_open(struct exynos_data_base *data) {
 
   /* Check that the primary plane supports chose pixel format. */
   for (i = 0; i < planes[0]->count_formats; ++i) {
-    if (planes[0]->formats[i] == pixel_format)
+    if (planes[0]->formats[i] == data->pixel_format)
       break;
   }
 
@@ -639,6 +639,8 @@ fail:
 }
 
 int exynos_init(struct exynos_data_base *data) {
+  const unsigned bpp = pixelformat_to_bpp(data->pixel_format);
+
   struct exynos_drm *drm = data->drm;
   const int fd = data->fd;
 
@@ -704,11 +706,11 @@ int exynos_init(struct exynos_data_base *data) {
 
   drmModeFreeConnector(connector);
 
-  data->pitch = data->bpp * data->width;
+  data->pitch = bpp * data->width;
   data->size = data->pitch * data->height;
 
   RARCH_LOG("exynos_init: selected %ux%u resolution with %u bpp\n",
-            data->width, data->height, data->bpp);
+            data->width, data->height, bpp);
 
   return 0;
 
@@ -784,8 +786,6 @@ out:
 }
 
 int exynos_alloc(struct exynos_data_base *data) {
-  const uint32_t pixel_format = bpp_to_pixelformat(data->bpp);
-
   struct exynos_device *device;
   struct exynos_bo *bo;
   void *pages;
@@ -831,7 +831,7 @@ int exynos_alloc(struct exynos_data_base *data) {
 
     handles[0] = p->bo->handle;
 
-    if (drmModeAddFB2(data->fd, data->width, data->height, pixel_format,
+    if (drmModeAddFB2(data->fd, data->width, data->height, data->pixel_format,
                       handles, pitches, offsets, &p->buf_id, flags)) {
       RARCH_ERR("exynos_alloc: failed to add bo %u to fb\n", i);
       goto fail;

@@ -68,8 +68,8 @@ struct exynos_data_base {
   /* framebuffer dimensions */
   unsigned width, height;
 
-  /* bytes per pixel */
-  unsigned bpp;
+  /* DRM pixel_format */
+  uint32_t pixel_format;
 
   /* framebuffer parameters */
   unsigned pitch, size;

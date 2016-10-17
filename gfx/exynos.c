@@ -19,6 +19,7 @@
 
 #include <libdrm/exynos_drmif.h>
 #include <exynos/exynos_fimg2d.h>
+#include <drm_fourcc.h>
 
 #include "../general.h"
 #include "gfx_common.h"
@@ -152,6 +153,39 @@ static inline void apply_damage(struct exynos_page *p, unsigned idx,
 
 static inline unsigned align_common(unsigned i, unsigned j) {
   return (i + j - 1) & ~(j - 1);
+}
+
+static unsigned colormode_to_bpp(unsigned cm) {
+  switch (cm & G2D_COLOR_FMT_MASK) {
+  case G2D_COLOR_FMT_XRGB1555:
+  case G2D_COLOR_FMT_ARGB4444:
+  case G2D_COLOR_FMT_RGB565:
+    return 2;
+
+  case G2D_COLOR_FMT_PACKED_RGB888:
+    return 3;
+
+  case G2D_COLOR_FMT_XRGB8888:
+    return 4;
+
+  default:
+    assert(false);
+    return 0;
+  }
+}
+
+static unsigned pixelformat_to_colormode(uint32_t pf) {
+  switch (pf) {
+  case DRM_FORMAT_XRGB8888:
+    return G2D_COLOR_FMT_XRGB8888 | G2D_ORDER_AXRGB;
+
+  case DRM_FORMAT_RGB565:
+    return G2D_COLOR_FMT_RGB565 | G2D_ORDER_AXRGB;
+
+  default:
+    assert(false);
+    return (unsigned)-1;
+  }
 }
 
 
@@ -419,7 +453,8 @@ static int exynos_additional_init(struct exynos_data *pdata) {
   unsigned i;
 
   for (i = 0; i < exynos_buffer_count; ++i) {
-    const unsigned buffer_size = defaults[i].width * defaults[i].height * defaults[i].bpp;
+    const unsigned bpp = colormode_to_bpp(defaults[i].g2d_color_mode);
+    const unsigned buffer_size = defaults[i].width * defaults[i].height * bpp;
     struct exynos_bo *bo;
 
     bo = create_mapped_buffer(pdata->base.device, buffer_size);
@@ -447,7 +482,7 @@ static int exynos_additional_init(struct exynos_data *pdata) {
     goto alloc_fail;
 
   dst->buf_type = G2D_IMGBUF_GEM;
-  dst->color_mode = bpp_to_g2d(pdata->base.bpp);
+  dst->color_mode = pixelformat_to_colormode(pdata->base.pixel_format);
 
   dst->width = pdata->base.width;
   dst->height = pdata->base.height;
@@ -458,7 +493,8 @@ static int exynos_additional_init(struct exynos_data *pdata) {
 
   for (i = 0; i < exynos_image_count; ++i) {
     const enum exynos_buffer_type buf_type = defaults[i].buf_type;
-    const unsigned buf_size = defaults[i].width * defaults[i].height * defaults[i].bpp;
+    const unsigned bpp = colormode_to_bpp(defaults[i].g2d_color_mode);
+    const unsigned buf_size = defaults[i].width * defaults[i].height * bpp;
 
     struct g2d_image *src;
 
@@ -468,7 +504,7 @@ static int exynos_additional_init(struct exynos_data *pdata) {
 
     src->width = defaults[i].width;
     src->height = defaults[i].height;
-    src->stride = defaults[i].width * defaults[i].bpp;
+    src->stride = defaults[i].width * bpp;
 
     src->color_mode = defaults[i].g2d_color_mode;
 
@@ -761,7 +797,7 @@ static int exynos_init_font(struct exynos_video *vid) {
 
   const unsigned buf_height = defaults[exynos_image_font].height;
   const unsigned buf_width = align_common(pdata->aspect * (float)buf_height, 16);
-  const unsigned buf_bpp = defaults[exynos_image_font].bpp;
+  const unsigned buf_bpp = colormode_to_bpp(defaults[exynos_image_font].g2d_color_mode);
 
   if (!g_settings.video.font_enable)
     return 0;
@@ -880,7 +916,7 @@ static void *exynos_gfx_init(const video_info_t *video, const input_driver_t **i
   data->base.fd = -1;
   data->base.page_size = sizeof(struct exynos_page);
   data->base.num_pages = 3;
-  data->base.bpp = 4; /* Use XRGB8888 framebuffer. */
+  data->base.pixel_format = DRM_FORMAT_XRGB8888;
 
   if (exynos_open(&data->base) < 0) {
     RARCH_ERR("video_exynos: opening device failed\n");
