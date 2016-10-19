@@ -584,17 +584,12 @@ static void exynos_setup_blit_src(struct exynos_data *pdata, unsigned width,
   src->stride = pitch;
 }
 
-static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
-                               unsigned height, unsigned color_mode) {
-  struct g2d_image *src = &pdata->src[exynos_image_frame];
+static void exynos_setup_scale(struct exynos_data *pdata,
+                               unsigned width, unsigned height) {
   struct exynos_page *pages = pdata->base.pages;
   unsigned w, h;
 
   const float aspect = (float)width / (float)height;
-
-  src->width = width;
-  src->height = height;
-  src->color_mode = color_mode;
 
   if (fabsf(pdata->aspect - aspect) < 0.0001f) {
     w = pdata->base.width;
@@ -994,7 +989,7 @@ static bool exynos_gfx_frame(void *driver_data, const void *frame, unsigned widt
 
       RARCH_LOG("video_exynos: resolution changed by core: %ux%u -> %ux%u\n",
                 vid->width, vid->height, width, height);
-      exynos_setup_scale(vid->data, width, height, vid->color_mode);
+      exynos_setup_scale(vid->data, width, height);
 
       vid->width = width;
       vid->height = height;
