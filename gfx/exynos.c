@@ -573,6 +573,17 @@ static struct exynos_page *exynos_free_page(struct exynos_data *pdata) {
   return page;
 }
 
+static void exynos_setup_blit_src(struct exynos_data *pdata, unsigned width,
+                                  unsigned height, unsigned color_mode,
+                                  unsigned pitch) {
+  struct g2d_image *src = &pdata->src[exynos_image_frame];
+
+  src->width = width;
+  src->height = height;
+  src->color_mode = color_mode;
+  src->stride = pitch;
+}
+
 static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
                                unsigned height, unsigned color_mode) {
   struct g2d_image *src = &pdata->src[exynos_image_frame];
