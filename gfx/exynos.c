@@ -109,8 +109,8 @@ struct exynos_data {
 
   /* G2D is used for scaling to framebuffer dimensions. */
   struct g2d_context *g2d;
-  struct g2d_image *dst;
-  struct g2d_image *src[exynos_image_count];
+  struct g2d_image dst;
+  struct g2d_image src[exynos_image_count];
 
   /* framebuffer aspect ratio */
   float aspect;
@@ -272,7 +272,7 @@ static int realloc_buffer(struct exynos_data *pdata,
     /* Map new GEM buffer to the G2D images backed by it. */
     for (unsigned i = 0; i < exynos_image_count; ++i) {
       if (defaults[i].buf_type == type)
-        pdata->src[i]->bo[0] = buf->handle;
+        pdata->src[i].bo[0] = buf->handle;
     }
   }
 
@@ -365,7 +365,7 @@ static void put_glyph_rgba4444(struct exynos_data *pdata, const uint8_t *__restr
                                uint16_t color, unsigned g_width, unsigned g_height,
                                unsigned g_pitch, unsigned dst_x, unsigned dst_y) {
   const enum exynos_image_type buf_type = defaults[exynos_image_font].buf_type;
-  const unsigned buf_width = pdata->src[exynos_image_font]->width;
+  const unsigned buf_width = pdata->src[exynos_image_font].width;
 
   uint16_t *__restrict__ dst = (uint16_t*)pdata->buf[buf_type]->vaddr +
                                dst_y * buf_width + dst_x;
@@ -433,7 +433,6 @@ static void perf_g2d(struct exynos_perf *p, bool start) {
 #endif
 
 static int exynos_additional_init(struct exynos_data *pdata) {
-  struct g2d_image *dst;
   struct g2d_context *g2d;
   unsigned i;
 
@@ -462,71 +461,48 @@ static int exynos_additional_init(struct exynos_data *pdata) {
   if (!g2d)
     goto init_fail;
 
-  dst = calloc(1, sizeof(struct g2d_image));
-  if (!dst)
-    goto alloc_fail;
+  pdata->dst = (struct g2d_image){
+    .buf_type = G2D_IMGBUF_GEM,
+    .color_mode = pixelformat_to_colormode(pdata->base.pixel_format),
 
-  dst->buf_type = G2D_IMGBUF_GEM;
-  dst->color_mode = pixelformat_to_colormode(pdata->base.pixel_format);
+    .width = pdata->base.width,
+    .height = pdata->base.height,
+    .stride = pdata->base.pitch,
 
-  dst->width = pdata->base.width;
-  dst->height = pdata->base.height;
-  dst->stride = pdata->base.pitch;
-
-  /* Clear color for solid fill operation. */
-  dst->color = 0xff000000;
+    /* Clear color for solid fill operation. */
+    .color = 0xff000000
+  };
 
   for (i = 0; i < exynos_image_count; ++i) {
     const enum exynos_buffer_type buf_type = defaults[i].buf_type;
     const unsigned bpp = colormode_to_bpp(defaults[i].g2d_color_mode);
     const unsigned buf_size = defaults[i].width * defaults[i].height * bpp;
 
-    struct g2d_image *src;
+    pdata->src[i] = (struct g2d_image){
+      .width = defaults[i].width,
+      .height = defaults[i].height,
+      .stride = defaults[i].width * bpp,
 
-    src = calloc(1, sizeof(struct g2d_image));
-    if (!src)
-      break;
+      .color_mode = defaults[i].g2d_color_mode,
 
-    src->width = defaults[i].width;
-    src->height = defaults[i].height;
-    src->stride = defaults[i].width * bpp;
+      /* Associate GEM buffer storage with G2D image. */
+      .buf_type = G2D_IMGBUF_GEM,
+      .bo[0] = pdata->buf[buf_type]->handle,
 
-    src->color_mode = defaults[i].g2d_color_mode;
-
-    /* Associate GEM buffer storage with G2D image. */
-    src->buf_type = G2D_IMGBUF_GEM;
-    src->bo[0] = pdata->buf[buf_type]->handle;
-
-    src->repeat_mode = G2D_REPEAT_MODE_PAD; /* Pad creates no border artifacts. */
+      /* Pad creates no border artifacts. */
+      .repeat_mode = G2D_REPEAT_MODE_PAD
+    };
 
     /* Make sure that the storage buffer is large enough. If the code is working *
      * properly, then this is just a NOP. Still put it here as an insurance.     */
     realloc_buffer(pdata, buf_type, buf_size);
-
-    pdata->src[i] = src;
   }
 
-  if (i != exynos_image_count) {
-    while (i-- > 0) {
-      free(pdata->src[i]);
-      pdata->src[i] = NULL;
-    }
-
-    goto fail_src;
-  }
-
-  pdata->dst = dst;
   pdata->g2d = g2d;
 
   pdata->aspect = (float)pdata->base.width / (float)pdata->base.height;
 
   return 0;
-
-fail_src:
-  free(dst);
-
-alloc_fail:
-  g2d_fini(g2d);
 
 init_fail:
   for (i = 0; i < exynos_buffer_count; ++i) {
@@ -539,13 +515,6 @@ init_fail:
 
 static void exynos_additional_deinit(struct exynos_data *pdata) {
   unsigned i;
-
-  free(pdata->dst);
-
-  for (i = 0; i < exynos_image_count; ++i) {
-    free(pdata->src[i]);
-    pdata->src[i] = NULL;
-  }
 
   g2d_fini(pdata->g2d);
 
@@ -573,7 +542,7 @@ static void exynos_alloc_status(struct exynos_data *pdata) {
  * no free page is available when called, wait for a page flip.      */
 static struct exynos_page *exynos_free_page(struct exynos_data *pdata) {
   struct exynos_page *page = NULL;
-  struct g2d_image *dst = pdata->dst;
+  struct g2d_image *dst = &pdata->dst;
 
   /* Wait until a free page is available. */
   while (!page) {
@@ -606,7 +575,7 @@ static struct exynos_page *exynos_free_page(struct exynos_data *pdata) {
 
 static void exynos_setup_scale(struct exynos_data *pdata, unsigned width,
                                unsigned height, unsigned color_mode) {
-  struct g2d_image *src = pdata->src[exynos_image_frame];
+  struct g2d_image *src = &pdata->src[exynos_image_frame];
   struct exynos_page *pages = pdata->base.pages;
   unsigned w, h;
 
@@ -666,7 +635,7 @@ static int exynos_blit_frame(struct exynos_data *pdata, const void *frame,
   const enum exynos_buffer_type buf_type = defaults[exynos_image_frame].buf_type;
   const unsigned size = src_pitch * pdata->blit_h;
 
-  struct g2d_image *src = pdata->src[exynos_image_frame];
+  struct g2d_image *src = &pdata->src[exynos_image_frame];
 
   src->buf_type = G2D_IMGBUF_GEM;
 
@@ -689,7 +658,7 @@ static int exynos_blit_frame(struct exynos_data *pdata, const void *frame,
   perf_g2d(&pdata->perf, true);
 #endif
 
-  if (g2d_copy_with_scale(pdata->g2d, src, pdata->dst, 0, 0,
+  if (g2d_copy_with_scale(pdata->g2d, src, &pdata->dst, 0, 0,
                           pdata->blit_w, pdata->blit_h,
                           pdata->blit_damage.x, pdata->blit_damage.y,
                           pdata->blit_damage.w, pdata->blit_damage.h, 0) ||
@@ -707,13 +676,13 @@ static int exynos_blit_frame(struct exynos_data *pdata, const void *frame,
 
 static int exynos_blend_menu(struct exynos_data *pdata,
                              unsigned rotation) {
-  struct g2d_image *src = pdata->src[exynos_image_menu];
+  struct g2d_image *src = &pdata->src[exynos_image_menu];
 
 #if (EXYNOS_GFX_DEBUG_PERF == 1)
   perf_g2d(&pdata->perf, true);
 #endif
 
-  if (g2d_scale_and_blend(pdata->g2d, src, pdata->dst, 0, 0,
+  if (g2d_scale_and_blend(pdata->g2d, src, &pdata->dst, 0, 0,
                           src->width, src->height, pdata->blit_damage.x,
                           pdata->blit_damage.y, pdata->blit_damage.w,
                           pdata->blit_damage.h, G2D_OP_INTERPOLATE) ||
@@ -730,13 +699,13 @@ static int exynos_blend_menu(struct exynos_data *pdata,
 }
 
 static int exynos_blend_font(struct exynos_data *pdata) {
-  struct g2d_image *src = pdata->src[exynos_image_font];
+  struct g2d_image *src = &pdata->src[exynos_image_font];
 
 #if (EXYNOS_GFX_DEBUG_PERF == 1)
   perf_g2d(&pdata->perf, true);
 #endif
 
-  if (g2d_scale_and_blend(pdata->g2d, src, pdata->dst, 0, 0, src->width,
+  if (g2d_scale_and_blend(pdata->g2d, src, &pdata->dst, 0, 0, src->width,
                           src->height, 0, 0, pdata->base.width,
                           pdata->base.height, G2D_OP_INTERPOLATE) ||
       g2d_exec(pdata->g2d)) {
@@ -775,7 +744,7 @@ struct exynos_video {
 
 static int exynos_init_font(struct exynos_video *vid) {
   struct exynos_data *pdata = vid->data;
-  struct g2d_image *src = pdata->src[exynos_image_font];
+  struct g2d_image *src = &pdata->src[exynos_image_font];
 
   const unsigned buf_height = defaults[exynos_image_font].height;
   const unsigned buf_width = align_common(pdata->aspect * (float)buf_height, 16);
@@ -821,7 +790,7 @@ static int exynos_init_font(struct exynos_video *vid) {
 static int exynos_render_msg(struct exynos_video *vid,
                              const char *msg) {
   struct exynos_data *pdata = vid->data;
-  struct g2d_image *dst = pdata->src[exynos_image_font];
+  struct g2d_image *dst = &pdata->src[exynos_image_font];
 
   const struct font_atlas *atlas;
 
@@ -1150,7 +1119,7 @@ static void exynos_set_texture_frame(void *data, const void *frame, bool rgb32,
 
   struct exynos_video *vid = data;
   struct exynos_data *pdata = vid->data;
-  struct g2d_image *src = pdata->src[exynos_image_menu];
+  struct g2d_image *src = &pdata->src[exynos_image_menu];
 
   const unsigned size = width * height * (rgb32 ? 4 : 2);
 
