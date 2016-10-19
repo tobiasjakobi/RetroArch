@@ -1002,6 +1002,8 @@ static bool exynos_gfx_frame(void *driver_data, const void *frame, unsigned widt
 
     page = exynos_free_page(data);
 
+    exynos_setup_blit_src(data, vid->width, vid->height, vid->color_mode, pitch);
+
     if (exynos_blit_frame(data, frame, pitch) != 0)
       goto fail;
   }
