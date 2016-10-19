@@ -636,12 +636,11 @@ static void exynos_set_fake_blit(struct exynos_data *pdata) {
   }
 }
 
-static int exynos_blit_frame(struct exynos_data *pdata, const void *frame,
-                             unsigned src_pitch) {
+static int exynos_blit_frame(struct exynos_data *pdata, const void *frame) {
   const enum exynos_buffer_type buf_type = defaults[exynos_image_frame].buf_type;
-  const unsigned size = src_pitch * pdata->blit_h;
-
   struct g2d_image *src = &pdata->src[exynos_image_frame];
+
+  const unsigned size = src->stride * pdata->blit_h;
 
   src->buf_type = G2D_IMGBUF_GEM;
 
@@ -654,7 +653,6 @@ static int exynos_blit_frame(struct exynos_data *pdata, const void *frame,
 
   /* Without IOMMU the G2D only works properly between GEM buffers. */
   memcpy_neon(pdata->buf[buf_type]->vaddr, frame, size);
-  src->stride = src_pitch;
 
 #if (EXYNOS_GFX_DEBUG_PERF == 1)
   perf_memcpy(&pdata->perf, false);
@@ -999,7 +997,7 @@ static bool exynos_gfx_frame(void *driver_data, const void *frame, unsigned widt
 
     exynos_setup_blit_src(data, vid->width, vid->height, vid->color_mode, pitch);
 
-    if (exynos_blit_frame(data, frame, pitch) != 0)
+    if (exynos_blit_frame(data, frame) != 0)
       goto fail;
   }
 
