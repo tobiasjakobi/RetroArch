@@ -642,8 +642,6 @@ static int exynos_blit_frame(struct exynos_data *pdata, const void *frame) {
 
   const unsigned size = src->stride * pdata->blit_h;
 
-  src->buf_type = G2D_IMGBUF_GEM;
-
   if (realloc_buffer(pdata, buf_type, size) != 0)
     return -1;
 
