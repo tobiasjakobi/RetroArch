@@ -1137,6 +1137,14 @@ enum retro_pixel_format
    // It is also natively supported in APIs like OpenGL ES.
    RETRO_PIXEL_FORMAT_RGB565   = 2,
 
+   // XBGR1555, native endian. This pixel format is a most common native format of the
+   // PlayStation 1 GPU.
+   RETRO_PIXEL_FORMAT_XBGR1555 = 3,
+
+   // Packed BGR888, native endian. Each pixel uses three bytes. This pixel format is a native format of the
+   // PlayStation 1 GPU, although not widely used by games.
+   RETRO_PIXEL_FORMAT_PACKED_BGR888 = 4,
+
    // Ensure sizeof() == sizeof(int).
    RETRO_PIXEL_FORMAT_UNKNOWN  = INT_MAX
 };
