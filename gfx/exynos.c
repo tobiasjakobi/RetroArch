@@ -728,7 +728,7 @@ struct exynos_video {
   const font_renderer_driver_t *font_driver;
   uint16_t font_color; /* ARGB4444 */
 
-  unsigned bytes_per_pixel;
+  unsigned color_mode;
 
   /* current dimensions of the emulator fb */
   unsigned width;
@@ -862,7 +862,10 @@ static void *exynos_gfx_init(const video_info_t *video, const input_driver_t **i
   if (!data)
     goto fail_data;
 
-  vid->bytes_per_pixel = video->rgb32 ? 4 : 2;
+  if (video->rgb32)
+    vid->color_mode = G2D_COLOR_FMT_XRGB8888 | G2D_ORDER_AXRGB;
+  else
+    vid->color_mode = G2D_COLOR_FMT_RGB565 | G2D_ORDER_AXRGB;
 
   data->base.fd = -1;
   data->base.page_size = sizeof(struct exynos_page);
@@ -974,28 +977,13 @@ static bool exynos_gfx_frame(void *driver_data, const void *frame, unsigned widt
 
   if (frame) {
     if (width != vid->width || height != vid->height) {
-      unsigned color_mode;
-
-      switch (vid->bytes_per_pixel) {
-      case 2:
-        color_mode = G2D_COLOR_FMT_RGB565 | G2D_ORDER_AXRGB;
-        break;
-
-      case 4:
-        color_mode = G2D_COLOR_FMT_XRGB8888 | G2D_ORDER_AXRGB;
-        break;
-
-      default:
-        return true;
-      }
-
       /* Sanity check on new dimension parameters. */
       if (!width || !height)
         return true;
 
       RARCH_LOG("video_exynos: resolution changed by core: %ux%u -> %ux%u\n",
                 vid->width, vid->height, width, height);
-      exynos_setup_scale(vid->data, width, height, color_mode);
+      exynos_setup_scale(vid->data, width, height, vid->color_mode);
 
       vid->width = width;
       vid->height = height;
