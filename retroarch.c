@@ -2654,13 +2654,8 @@ void rarch_init_system_info()
    if (!info->library_version)
       info->library_version = "v0";
 
-#ifdef RARCH_CONSOLE
-   snprintf(g_extern.title_buf, sizeof(g_extern.title_buf), "%s %s",
-         info->library_name, info->library_version);
-#else
    snprintf(g_extern.title_buf, sizeof(g_extern.title_buf), "RetroArch : %s %s",
          info->library_name, info->library_version);
-#endif
    strlcpy(g_extern.system.valid_extensions, info->valid_extensions ? info->valid_extensions : DEFAULT_EXT,
          sizeof(g_extern.system.valid_extensions));
    g_extern.system.block_extract = info->block_extract;

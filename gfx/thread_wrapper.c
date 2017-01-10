@@ -373,12 +373,11 @@ static bool thread_frame(void *data, const void *frame_,
 
    slock_lock(thr->lock);
 
-   // scond_wait_timeout cannot be implemented on consoles.
-#ifndef RARCH_CONSOLE
    if (!thr->nonblock)
    {
       retro_time_t target_frame_time = (retro_time_t)roundf(1000000LL / g_settings.video.refresh_rate);
       retro_time_t target = thr->last_time + target_frame_time;
+
       // Ideally, use absolute time, but that is only a good idea on POSIX.
       while (thr->frame.updated)
       {
@@ -392,7 +391,6 @@ static bool thread_frame(void *data, const void *frame_,
             break;
       }
    }
-#endif
 
    // Drop frame if updated flag is still set, as thread is still working on last frame.
    if (!thr->frame.updated)

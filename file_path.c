@@ -550,7 +550,6 @@ bool path_is_absolute(const char *path)
 
 void path_resolve_realpath(char *buf, size_t size)
 {
-#ifndef RARCH_CONSOLE
    char tmp[PATH_MAX];
    strlcpy(tmp, buf, sizeof(tmp));
 
@@ -560,11 +559,6 @@ void path_resolve_realpath(char *buf, size_t size)
    // POSIX 2008 can automatically allocate for you, but don't rely on that.
    if (!realpath(tmp, buf))
       strlcpy(buf, tmp, size);
-
-#else
-   (void)buf;
-   (void)size;
-#endif
 }
 
 static bool path_mkdir_norecurse(const char *dir)
@@ -641,7 +635,6 @@ void fill_pathname_join(char *out_path, const char *dir, const char *path, size_
 
 void fill_pathname_expand_special(char *out_path, const char *in_path, size_t size)
 {
-#if !defined(RARCH_CONSOLE)
    if (*in_path == '~')
    {
       const char *home = getenv("HOME");
@@ -669,14 +662,12 @@ void fill_pathname_expand_special(char *out_path, const char *in_path, size_t si
       size -= src_size;
       in_path += 2;
    }
-#endif
 
    rarch_assert(strlcpy(out_path, in_path, size) < size);
 }
 
 void fill_pathname_abbreviate_special(char *out_path, const char *in_path, size_t size)
 {
-#if !defined(RARCH_CONSOLE)
    const char *home = getenv("HOME");
    char application_dir[PATH_MAX];
    fill_pathname_application_path(application_dir, sizeof(application_dir));
@@ -710,12 +701,10 @@ void fill_pathname_abbreviate_special(char *out_path, const char *in_path, size_
          break; // Don't allow more abbrevs to take place.
       }
    }
-#endif
 
    rarch_assert(strlcpy(out_path, in_path, size) < size);
 }
 
-#ifndef RARCH_CONSOLE
 void fill_pathname_application_path(char *buf, size_t size)
 {
    if (!size)
@@ -738,4 +727,3 @@ void fill_pathname_application_path(char *buf, size_t size)
    
    RARCH_ERR("Cannot resolve application path! This should not happen.\n");
 }
-#endif

@@ -130,11 +130,7 @@ static const unsigned monitor_index = 0; // Which monitor to prefer. 0 is any mo
 static const unsigned fullscreen_x = 0; // Fullscreen resolution. A value of 0 uses the desktop resolution.
 static const unsigned fullscreen_y = 0;
 
-#if defined(RARCH_CONSOLE)
-static const bool load_dummy_on_core_shutdown = false;
-#else
 static const bool load_dummy_on_core_shutdown = true;
-#endif
 
 // Video VSYNC (recommended)
 static const bool vsync = true;
@@ -168,11 +164,7 @@ static const bool video_smooth = true;
 static const bool force_aspect = true; 
 
 // Enable use of shaders.
-#ifdef RARCH_CONSOLE
-static const bool shader_enable = true;
-#else
 static const bool shader_enable = false;
-#endif
 
 // Only scale in integer steps.
 // The base size depends on system-reported geometry and aspect ratio.
@@ -183,11 +175,7 @@ static const bool scale_integer = false;
 static const float aspect_ratio = DEFAULT_ASPECT_RATIO; // Automatic
 static const bool aspect_ratio_auto = false; // 1:1 PAR
 
-#if defined(RARCH_CONSOLE)
-static unsigned aspect_ratio_idx = ASPECT_RATIO_4_3;
-#else
 static unsigned aspect_ratio_idx = ASPECT_RATIO_CONFIG; // Use g_settings.video.aspect_ratio.
-#endif
 
 // Save configuration file on exit
 static bool config_save_on_exit = true;
@@ -201,11 +189,7 @@ static bool default_block_config_read = true;
 static bool default_block_config_read = false;
 #endif
 
-#ifdef RARCH_CONSOLE
-static bool default_core_specific_config = true;
-#else
 static bool default_core_specific_config = false;
-#endif
 
 // Crop overscanned frames.
 static const bool crop_overscan = true;
@@ -219,11 +203,8 @@ static const float font_size = 32;
 
 // Offset for where messages will be placed on-screen. Values are in range [0.0, 1.0].
 static const float message_pos_offset_x = 0.05;
-#ifdef RARCH_CONSOLE
-static const float message_pos_offset_y = 0.90;
-#else
 static const float message_pos_offset_y = 0.05;
-#endif
+
 // Color of the message.
 static const uint32_t message_color = 0xffff00; // RGB hex value.
 
@@ -247,11 +228,7 @@ static const bool font_enable = true;
 // This value should stay close to 60Hz to avoid large pitch changes.
 // If your monitor does not run at 60Hz, or something close to it, disable VSync,
 // and leave this at its default.
-#if defined(RARCH_CONSOLE)
-static const float refresh_rate = 60/1.001; 
-#else
 static const float refresh_rate = 59.95; 
-#endif
 
 // Allow games to set rotation. If false, rotation requests are honored, but ignored.
 // Used for setups where one manually rotates the monitor.
@@ -276,13 +253,8 @@ static const int out_latency = 64;
 // Will sync audio. (recommended) 
 static const bool audio_sync = true;
 
-
 // Audio rate control
-#if !defined(RARCH_CONSOLE)
 static const bool rate_control = true;
-#else
-static const bool rate_control = false;
-#endif
 
 // Rate control delta. Defines how much rate_control is allowed to adjust input rate.
 static const float rate_control_delta = 0.005;

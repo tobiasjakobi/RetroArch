@@ -144,7 +144,7 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          file_list_push(menu->selection_buf, "", "video_scale_integer", MENU_SETTINGS_VIDEO_INTEGER_SCALE, 0);
          file_list_push(menu->selection_buf, "", "aspect_ratio_index", MENU_SETTINGS_VIDEO_ASPECT_RATIO, 0);
          file_list_push(menu->selection_buf, "Custom Ratio", "", MENU_SETTINGS_CUSTOM_VIEWPORT, 0);
-#if !defined(RARCH_CONSOLE) && !defined(RARCH_MOBILE)
+#if !defined(RARCH_MOBILE)
          file_list_push(menu->selection_buf, "", "video_fullscreen", MENU_SETTINGS_TOGGLE_FULLSCREEN, 0);
 #endif
          file_list_push(menu->selection_buf, "", "video_rotation", MENU_SETTINGS_VIDEO_ROTATION, 0);
@@ -155,10 +155,10 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          file_list_push(menu->selection_buf, "", "video_black_frame_insertion", MENU_SETTINGS_VIDEO_BLACK_FRAME_INSERTION, 0);
 #endif
          file_list_push(menu->selection_buf, "", "video_swap_interval", MENU_SETTINGS_VIDEO_SWAP_INTERVAL, 0);
-#if defined(HAVE_THREADS) && !defined(RARCH_CONSOLE)
+#if defined(HAVE_THREADS)
          file_list_push(menu->selection_buf, "", "video_threaded", MENU_SETTINGS_VIDEO_THREADED, 0);
 #endif
-#if !defined(RARCH_CONSOLE) && !defined(RARCH_MOBILE)
+#if !defined(RARCH_MOBILE)
          file_list_push(menu->selection_buf, "", "video_scale", MENU_SETTINGS_VIDEO_WINDOW_SCALE, 0);
 #endif
          file_list_push(menu->selection_buf, "", "video_crop_overscan", MENU_SETTINGS_VIDEO_CROP_OVERSCAN, 0);
@@ -871,7 +871,7 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
       case MENU_SETTINGS_BIND_BEGIN + RARCH_QUIT_KEY:
          snprintf(msg, sizeof(msg),
                " -- Key to exit RetroArch cleanly."
-#if !defined(RARCH_MOBILE) && !defined(RARCH_CONSOLE)
+#if !defined(RARCH_MOBILE)
                "\nKilling it in any hard way (SIGKILL, \n"
                "etc) will terminate without saving\n"
                "RAM, etc. On Unix-likes,\n"
@@ -2217,10 +2217,6 @@ static int menu_common_iterate(unsigned action)
 
                // Core selection on non-console just updates directory listing.
                // Will take effect on new content load.
-#elif defined(RARCH_CONSOLE)
-               g_extern.lifecycle_state &= ~(1ULL << MODE_GAME);
-               g_extern.lifecycle_state |= (1ULL << MODE_EXITSPAWN);
-               ret = -1;
 #endif
 
                menu_flush_stack_type(MENU_SETTINGS);

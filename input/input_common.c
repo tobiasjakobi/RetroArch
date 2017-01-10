@@ -1181,7 +1181,6 @@ void input_get_bind_string(char *buf, const struct retro_keybind *bind,
    else if (auto_bind && auto_bind->joyaxis != AXIS_NONE)
       input_get_bind_string_joyaxis(buf, "Auto: ", auto_bind, size);
 
-#ifndef RARCH_CONSOLE
    char key[64];
    input_translate_rk_to_str(bind->key, key, sizeof(key));
    if (!strcmp(key, "nul"))
@@ -1190,7 +1189,6 @@ void input_get_bind_string(char *buf, const struct retro_keybind *bind,
    char keybuf[64];
    snprintf(keybuf, sizeof(keybuf), "(Key: %s)", key);
    strlcat(buf, keybuf, size);
-#endif
 }
 #else
 void input_config_autoconfigure_joypad(unsigned index, const char *name, const char *driver)

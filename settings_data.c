@@ -500,7 +500,7 @@ void setting_data_get_description(const void *data, char *msg, size_t sizeof_msg
                "likely maintained by the user, \n"
                "and should not be overwritten \n"
                "behind the user's back."
-#if defined(RARCH_CONSOLE) || defined(RARCH_MOBILE)
+#if defined(RARCH_MOBILE)
                "\nThis is not not the case on \n"
                "consoles however, where \n"
                "looking at the config file \n"
@@ -1397,7 +1397,7 @@ rarch_setting_t* setting_data_get_list()
          END_SUB_GROUP()
          START_SUB_GROUP("Monitor")
          CONFIG_UINT(g_settings.video.monitor_index,        "video_monitor_index",        "Monitor Index",              monitor_index, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_RANGE(0, 1, 1, true, false)
-#if !defined(RARCH_CONSOLE) && !defined(RARCH_MOBILE)
+#if !defined(RARCH_MOBILE)
          CONFIG_BOOL(g_settings.video.fullscreen,           "video_fullscreen",           "Use Fullscreen mode",        fullscreen, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
 #endif
          CONFIG_BOOL(g_settings.video.windowed_fullscreen,  "video_windowed_fullscreen",  "Windowed Fullscreen Mode",   windowed_fullscreen, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
@@ -1415,7 +1415,7 @@ rarch_setting_t* setting_data_get_list()
          END_SUB_GROUP()
 
          START_SUB_GROUP("Scaling")
-#if !defined(RARCH_CONSOLE) && !defined(RARCH_MOBILE)
+#if !defined(RARCH_MOBILE)
          CONFIG_FLOAT(g_settings.video.scale,              "video_scale",               "Windowed Scale",                    scale, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_RANGE(1.0, 10.0, 1.0, true, true) 
 #endif
          CONFIG_BOOL(g_settings.video.scale_integer,        "video_scale_integer",        "Integer Scale",      scale_integer, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
@@ -1430,7 +1430,7 @@ rarch_setting_t* setting_data_get_list()
 
 
          START_SUB_GROUP("Synchronization")
-#if defined(HAVE_THREADS) && !defined(RARCH_CONSOLE)
+#if defined(HAVE_THREADS)
          CONFIG_BOOL(g_settings.video.threaded,             "video_threaded",             "Threaded Video",         video_threaded, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
 #endif
          CONFIG_BOOL(g_settings.video.vsync,                "video_vsync",                "VSync",                      vsync, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)

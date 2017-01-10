@@ -1388,11 +1388,11 @@ static void netplay_post_frame_net(netplay_t *handle)
       while (first || (handle->tmp_ptr != handle->self_ptr))
       {
          pretro_serialize(handle->buffer[handle->tmp_ptr].state, handle->state_size);
-#if defined(HAVE_THREADS) && !defined(RARCH_CONSOLE)
+#if defined(HAVE_THREADS)
          lock_autosave();
 #endif
          pretro_run();
-#if defined(HAVE_THREADS) && !defined(RARCH_CONSOLE)
+#if defined(HAVE_THREADS)
          unlock_autosave();
 #endif
          handle->tmp_ptr = NEXT_PTR(handle->tmp_ptr);

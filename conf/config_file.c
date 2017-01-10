@@ -627,9 +627,6 @@ bool config_get_array(config_file_t *conf, const char *key, char *buf, size_t si
 
 bool config_get_path(config_file_t *conf, const char *key, char *buf, size_t size)
 {
-#if defined(RARCH_CONSOLE)
-   return config_get_array(conf, key, buf, size);
-#else
    struct config_entry_list *list = conf->entries;
 
    while (list)
@@ -642,7 +639,6 @@ bool config_get_path(config_file_t *conf, const char *key, char *buf, size_t siz
       list = list->next;
    }
    return false;
-#endif
 }
 
 bool config_get_bool(config_file_t *conf, const char *key, bool *in)
@@ -700,13 +696,9 @@ void config_set_string(config_file_t *conf, const char *key, const char *val)
 
 void config_set_path(config_file_t *conf, const char *entry, const char *val)
 {
-#if defined(RARCH_CONSOLE)
-   config_set_string(conf, entry, val);
-#else
    char buf[PATH_MAX];
    fill_pathname_abbreviate_special(buf, val, sizeof(buf));
    config_set_string(conf, entry, buf);
-#endif
 }
 
 void config_set_double(config_file_t *conf, const char *key, double val)

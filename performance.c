@@ -19,9 +19,7 @@
 #include "performance.h"
 #include "general.h"
 
-#if !defined(RARCH_CONSOLE)
 #include <unistd.h>
-#endif
 
 #if defined(_POSIX_MONOTONIC_CLOCK)
 #include <time.h>
@@ -102,7 +100,7 @@ retro_perf_tick_t rarch_get_perf_counter()
    else
       time = 0;
 
-#elif defined(__GNUC__) && !defined(RARCH_CONSOLE) 
+#elif defined(__GNUC__)
 
 #if defined(__i386__) || defined(__i486__) || defined(__i686__)
    __asm__ volatile ("rdtsc" : "=A" (time));

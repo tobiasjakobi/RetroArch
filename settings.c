@@ -311,17 +311,6 @@ void config_set_defaults()
 
    g_settings.user_language = 0;
 
-#ifdef RARCH_CONSOLE
-   g_extern.console.screen.gamma_correction = DEFAULT_GAMMA;
-   g_extern.lifecycle_state |= (1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE);
-   g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_TRIPLE_BUFFERING_ENABLE);
-   g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE);
-   g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_FLICKER_FILTER_ENABLE);
-
-   g_extern.console.screen.resolutions.current.id = 0;
-   g_extern.console.sound.mode = SOUND_MODE_NORMAL;
-#endif
-   
    if (default_filter_dir)
       fill_pathname_expand_special(g_settings.video.filter_dir, default_filter_dir, sizeof(g_settings.video.filter_dir));
 
@@ -610,60 +599,6 @@ bool config_load_file(const char *path, bool set_defaults)
    CONFIG_GET_FLOAT(video.msg_pos_x, "video_message_pos_x");
    CONFIG_GET_FLOAT(video.msg_pos_y, "video_message_pos_y");
    CONFIG_GET_INT(video.rotation, "video_rotation");
-
-#ifdef RARCH_CONSOLE
-   /* TODO - will be refactored later to make it more clean - it's more 
-    * important that it works for consoles right now */
-
-   CONFIG_GET_BOOL_EXTERN(console.screen.gamma_correction, "gamma_correction");
-
-   bool triple_buffering_enable = false;
-   bool custom_bgm_enable = false;
-   bool flicker_filter_enable = false;
-   bool soft_filter_enable = false;
-
-#ifdef HAVE_RMENU
-   if (config_get_path(conf, "menu_texture_path", tmp_str, sizeof(tmp_str)))
-      strlcpy(g_extern.menu_texture_path, tmp_str, sizeof(g_extern.menu_texture_path));
-#endif
-
-   if (config_get_bool(conf, "triple_buffering_enable", &triple_buffering_enable))
-   {
-      if (triple_buffering_enable)
-         g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_TRIPLE_BUFFERING_ENABLE);
-      else
-         g_extern.lifecycle_state &= ~(1ULL << MODE_VIDEO_TRIPLE_BUFFERING_ENABLE);
-   }
-
-   if (config_get_bool(conf, "custom_bgm_enable", &custom_bgm_enable))
-   {
-      if (custom_bgm_enable)
-         g_extern.lifecycle_state |= (1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE);
-      else
-         g_extern.lifecycle_state &= ~(1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE);
-   }
-
-   if (config_get_bool(conf, "flicker_filter_enable", &flicker_filter_enable))
-   {
-      if (flicker_filter_enable)
-         g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_FLICKER_FILTER_ENABLE);
-      else 
-         g_extern.lifecycle_state &= ~(1ULL << MODE_VIDEO_FLICKER_FILTER_ENABLE);
-   }
-
-   if (config_get_bool(conf, "soft_filter_enable", &soft_filter_enable))
-   {
-      if (soft_filter_enable)
-         g_extern.lifecycle_state |= (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE);
-      else 
-         g_extern.lifecycle_state &= ~(1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE);
-   }
-
-   CONFIG_GET_INT_EXTERN(console.screen.flicker_filter_index, "flicker_filter_index");
-   CONFIG_GET_INT_EXTERN(console.screen.soft_filter_index, "soft_filter_index");
-   CONFIG_GET_INT_EXTERN(console.screen.resolutions.current.id, "current_resolution_id");
-   CONFIG_GET_INT_EXTERN(console.sound.mode, "sound_mode");
-#endif
    CONFIG_GET_INT(state_slot, "state_slot");
 
    CONFIG_GET_INT_EXTERN(console.screen.viewports.custom_vp.x, "custom_viewport_x");

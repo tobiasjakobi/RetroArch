@@ -27,7 +27,7 @@
 
 #include "../file_ext.h"
 
-#if defined(RARCH_CONSOLE) || defined(RARCH_MOBILE)
+#if defined(RARCH_MOBILE)
 #include "../config.def.h"
 #endif
 
@@ -290,7 +290,7 @@ returntype main_entry(signature())
       return_var(ret);
 
 #if defined(HAVE_MENU)
-#if defined(RARCH_CONSOLE) || defined(RARCH_MOBILE)
+#if defined(RARCH_MOBILE)
    if (ret)
 #endif
    {

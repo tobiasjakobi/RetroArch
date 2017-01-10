@@ -27,10 +27,6 @@
 #define LOG_FILE (stderr)
 #endif
 
-#if defined(RARCH_CONSOLE) && defined(HAVE_LOGGER)
-#include <logger_override.h>
-#else
-
 #if defined(RARCH_DUMMY_LOG)
 #define RARCH_LOG_VERBOSE (true)
 #else
@@ -96,5 +92,3 @@
 #endif
 
 #endif
-#endif
-
