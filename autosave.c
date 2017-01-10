@@ -29,7 +29,7 @@ extern void *memcmp_neon(void *dst, const void *src, size_t n);
 
 struct autosave
 {
-   volatile bool quit;
+   bool quit;
    slock_t *lock;
 
    slock_t *cond_lock;
@@ -49,7 +49,7 @@ static void autosave_thread(void *data)
 
    bool first_log = true;
 
-   while (!save->quit)
+   while (true)
    {
       autosave_lock(save);
       bool differ = memcmp_impl(save->buffer, save->retro_buffer, save->bufsize) != 0;
@@ -59,31 +59,27 @@ static void autosave_thread(void *data)
 
       if (differ)
       {
-         // Should probably deal with this more elegantly.
-         FILE *file = fopen(save->path, "wb");
-         if (file)
+         if (first_log)
          {
-            // Avoid spamming down stderr ... :)
-            if (first_log)
-            {
-               RARCH_LOG("Autosaving SRAM to \"%s\", will continue to check every %u seconds ...\n", save->path, save->interval);
-               first_log = false;
-            }
-            else
-               RARCH_LOG("SRAM changed ... autosaving ...\n");
-
-            bool failed = false;
-            failed |= fwrite(save->buffer, 1, save->bufsize, file) != save->bufsize;
-            failed |= fflush(file) != 0;
-            failed |= fclose(file) != 0;
-            if (failed)
-               RARCH_WARN("Failed to autosave SRAM. Disk might be full.\n");
+            RARCH_WARN("Autosaving SRAM to \"%s\", will continue to check every %u seconds...\n", save->path, save->interval);
+            first_log = false;
          }
+         else
+            RARCH_LOG("SRAM changed: Autosaving...\n");
+
+         if (!write_file(save->path, save->buffer, save->bufsize))
+            RARCH_WARN("Failed to autosave SRAM. Disk might be full.\n");
       }
 
       slock_lock(save->cond_lock);
-      if (!save->quit)
-         scond_wait_timeout(save->cond, save->cond_lock, save->interval * 1000000LL);
+
+      if (save->quit) {
+         slock_unlock(save->cond_lock);
+         break;
+      }
+
+      scond_wait_timeout(save->cond, save->cond_lock, save->interval * 1000000LL);
+
       slock_unlock(save->cond_lock);
    }
 }
