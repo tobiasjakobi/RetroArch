@@ -123,12 +123,6 @@ core_info_list_t *core_info_list_new(const char *modules_path)
       fill_pathname_base(info_path_base, contents->elems[i].data, sizeof(info_path_base));
       path_remove_extension(info_path_base);
 
-#if defined(RARCH_MOBILE)
-      char *substr = strrchr(info_path_base, '_');
-      if (substr)
-         *substr = '\0';
-#endif
-
       strlcat(info_path_base, ".info", sizeof(info_path_base));
 
       fill_pathname_join(info_path, (*g_settings.libretro_info_path) ? g_settings.libretro_info_path : modules_path,

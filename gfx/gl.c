@@ -826,12 +826,6 @@ void gl_set_viewport(gl_t *gl, unsigned width, unsigned height, bool force_full,
       gl->vp.height = height;
    }
 
-#if defined(RARCH_MOBILE)
-   // In portrait mode, we want viewport to gravitate to top of screen.
-   if (device_aspect < 1.0f)
-      gl->vp.y *= 2;
-#endif
-
    glViewport(gl->vp.x, gl->vp.y, gl->vp.width, gl->vp.height);
    gl_set_projection(gl, &ortho, allow_rotate);
 

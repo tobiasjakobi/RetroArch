@@ -500,12 +500,6 @@ void setting_data_get_description(const void *data, char *msg, size_t sizeof_msg
                "likely maintained by the user, \n"
                "and should not be overwritten \n"
                "behind the user's back."
-#if defined(RARCH_MOBILE)
-               "\nThis is not not the case on \n"
-               "consoles however, where \n"
-               "looking at the config file \n"
-               "manually isn't really an option."
-#endif
                );
     else if (!strcmp(setting->name, "core_specific_config"))
          snprintf(msg, sizeof_msg,
@@ -1397,9 +1391,7 @@ rarch_setting_t* setting_data_get_list()
          END_SUB_GROUP()
          START_SUB_GROUP("Monitor")
          CONFIG_UINT(g_settings.video.monitor_index,        "video_monitor_index",        "Monitor Index",              monitor_index, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_RANGE(0, 1, 1, true, false)
-#if !defined(RARCH_MOBILE)
          CONFIG_BOOL(g_settings.video.fullscreen,           "video_fullscreen",           "Use Fullscreen mode",        fullscreen, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
-#endif
          CONFIG_BOOL(g_settings.video.windowed_fullscreen,  "video_windowed_fullscreen",  "Windowed Fullscreen Mode",   windowed_fullscreen, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
          CONFIG_UINT(g_settings.video.fullscreen_x,         "video_fullscreen_x",         "Fullscreen Width",           fullscreen_x, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
          CONFIG_UINT(g_settings.video.fullscreen_y,         "video_fullscreen_y",         "Fullscreen Height",          fullscreen_y, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
@@ -1415,9 +1407,7 @@ rarch_setting_t* setting_data_get_list()
          END_SUB_GROUP()
 
          START_SUB_GROUP("Scaling")
-#if !defined(RARCH_MOBILE)
          CONFIG_FLOAT(g_settings.video.scale,              "video_scale",               "Windowed Scale",                    scale, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler) WITH_RANGE(1.0, 10.0, 1.0, true, true) 
-#endif
          CONFIG_BOOL(g_settings.video.scale_integer,        "video_scale_integer",        "Integer Scale",      scale_integer, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
 
          CONFIG_INT(g_extern.console.screen.viewports.custom_vp.x,         "custom_viewport_x",       "Custom Viewport X",       0, GROUP_NAME, SUBGROUP_NAME, NULL, NULL)
@@ -1437,9 +1427,7 @@ rarch_setting_t* setting_data_get_list()
          CONFIG_UINT(g_settings.video.swap_interval,        "video_swap_interval",        "VSync Swap Interval",        swap_interval, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)       WITH_RANGE(1, 4, 1, true, true)
          CONFIG_BOOL(g_settings.video.hard_sync,            "video_hard_sync",            "Hard GPU Sync",              hard_sync, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
          CONFIG_UINT(g_settings.video.hard_sync_frames,     "video_hard_sync_frames",     "Hard GPU Sync Frames",       hard_sync_frames, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)    WITH_RANGE(0, 3, 1, true, true)
-#if !defined(RARCH_MOBILE)
          CONFIG_BOOL(g_settings.video.black_frame_insertion, "video_black_frame_insertion", "Black Frame Insertion",      black_frame_insertion, GROUP_NAME, SUBGROUP_NAME, general_write_handler, general_read_handler)
-#endif
          END_SUB_GROUP()
 
          START_SUB_GROUP("Miscellaneous")

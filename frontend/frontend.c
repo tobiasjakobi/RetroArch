@@ -27,10 +27,6 @@
 
 #include "../file_ext.h"
 
-#if defined(RARCH_MOBILE)
-#include "../config.def.h"
-#endif
-
 #define main_entry main
 
 #define returntype int
@@ -290,15 +286,10 @@ returntype main_entry(signature())
       return_var(ret);
 
 #if defined(HAVE_MENU)
-#if defined(RARCH_MOBILE)
-   if (ret)
-#endif
-   {
-      // If we started content directly from command line,
-      // push it to content history.
-      if (!g_extern.libretro_dummy)
-         menu_content_history_push_current();
-   }
+   // If we started content directly from command line,
+   // push it to content history.
+   if (!g_extern.libretro_dummy)
+      menu_content_history_push_current();
 #endif
 
 #if defined(HAVE_MAIN_LOOP)

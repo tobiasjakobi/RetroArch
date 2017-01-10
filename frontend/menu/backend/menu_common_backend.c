@@ -144,23 +144,17 @@ static void menu_common_entries_init(menu_handle_t *menu, unsigned menu_type)
          file_list_push(menu->selection_buf, "", "video_scale_integer", MENU_SETTINGS_VIDEO_INTEGER_SCALE, 0);
          file_list_push(menu->selection_buf, "", "aspect_ratio_index", MENU_SETTINGS_VIDEO_ASPECT_RATIO, 0);
          file_list_push(menu->selection_buf, "Custom Ratio", "", MENU_SETTINGS_CUSTOM_VIEWPORT, 0);
-#if !defined(RARCH_MOBILE)
          file_list_push(menu->selection_buf, "", "video_fullscreen", MENU_SETTINGS_TOGGLE_FULLSCREEN, 0);
-#endif
          file_list_push(menu->selection_buf, "", "video_rotation", MENU_SETTINGS_VIDEO_ROTATION, 0);
          file_list_push(menu->selection_buf, "", "video_vsync", MENU_SETTINGS_VIDEO_VSYNC, 0);
          file_list_push(menu->selection_buf, "", "video_hard_sync", MENU_SETTINGS_VIDEO_HARD_SYNC, 0);
          file_list_push(menu->selection_buf, "", "video_hard_sync_frames", MENU_SETTINGS_VIDEO_HARD_SYNC_FRAMES, 0);
-#if !defined(RARCH_MOBILE)
          file_list_push(menu->selection_buf, "", "video_black_frame_insertion", MENU_SETTINGS_VIDEO_BLACK_FRAME_INSERTION, 0);
-#endif
          file_list_push(menu->selection_buf, "", "video_swap_interval", MENU_SETTINGS_VIDEO_SWAP_INTERVAL, 0);
 #if defined(HAVE_THREADS)
          file_list_push(menu->selection_buf, "", "video_threaded", MENU_SETTINGS_VIDEO_THREADED, 0);
 #endif
-#if !defined(RARCH_MOBILE)
          file_list_push(menu->selection_buf, "", "video_scale", MENU_SETTINGS_VIDEO_WINDOW_SCALE, 0);
-#endif
          file_list_push(menu->selection_buf, "", "video_crop_overscan", MENU_SETTINGS_VIDEO_CROP_OVERSCAN, 0);
          file_list_push(menu->selection_buf, "", "video_monitor_index", MENU_SETTINGS_VIDEO_MONITOR_INDEX, 0);
          file_list_push(menu->selection_buf, "", "video_refresh_rate", MENU_SETTINGS_VIDEO_REFRESH_RATE, 0);
@@ -871,13 +865,11 @@ static int menu_info_screen_iterate(unsigned action, rarch_setting_t *setting)
       case MENU_SETTINGS_BIND_BEGIN + RARCH_QUIT_KEY:
          snprintf(msg, sizeof(msg),
                " -- Key to exit RetroArch cleanly."
-#if !defined(RARCH_MOBILE)
                "\nKilling it in any hard way (SIGKILL, \n"
                "etc) will terminate without saving\n"
                "RAM, etc. On Unix-likes,\n"
                "SIGINT/SIGTERM allows\n"
                "a clean deinitialization."
-#endif
                );
          break;
       case MENU_SETTINGS_BIND_BEGIN + RARCH_REWIND:
