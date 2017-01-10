@@ -119,11 +119,18 @@ struct scond
 
 scond_t *scond_new()
 {
+   pthread_condattr_t attr;
+
    scond_t *cond = calloc(1, sizeof(*cond));
    if (!cond)
       return NULL;
 
-   if (pthread_cond_init(&cond->cond, NULL) < 0)
+   // Always use the monotonic (and not the realtime) clock
+   // for condition variables.
+   pthread_condattr_init(&attr);
+   pthread_condattr_setclock(&attr, CLOCK_MONOTONIC);
+
+   if (pthread_cond_init(&cond->cond, &attr) < 0)
    {
       free(cond);
       return NULL;
@@ -150,14 +157,19 @@ int scond_broadcast(scond_t *cond)
 
 bool scond_wait_timeout(scond_t *cond, slock_t *lock, int64_t timeout_us)
 {
-   struct timespec now = {0};
+   struct timespec now;
    int ret;
    int64_t seconds, remainder;
 
-   clock_gettime(CLOCK_REALTIME, &now);
+   if (timeout_us < 0)
+      return false;
+
+   ret = clock_gettime(CLOCK_MONOTONIC, &now);
+   if (ret < 0)
+      return false;
 
    seconds = timeout_us / 1000000LL;
-   remainder = timeout_us % 1000000LL;
+   remainder = timeout_us - seconds * 1000000LL;
 
    now.tv_sec += seconds;
    now.tv_nsec += remainder * 1000LL;
