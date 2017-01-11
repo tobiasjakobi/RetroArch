@@ -29,15 +29,16 @@
 // Dump stuff to file.
 bool write_file(const char *path, const void *data, size_t size)
 {
-   FILE *file = fopen(path, "wb");
+   bool ret;
+   FILE *file;
+
+   file = fopen(path, "wb");
    if (!file)
       return false;
-   else
-   {
-      bool ret = fwrite(data, 1, size, file) == size;
-      fclose(file);
-      return ret;
-   }
+
+   ret = fwrite(data, 1, size, file) == size;
+   fclose(file);
+   return ret;
 }
 
 // Generic file loader.
