@@ -114,8 +114,6 @@ enum
 // Video
 ////////////////
 
-#define DEFAULT_GAMMA 0
-
 static const unsigned int def_user_language = 0;
 
 // Windowed

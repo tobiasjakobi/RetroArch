@@ -2942,8 +2942,6 @@ static int menu_common_core_setting_toggle(unsigned setting, unsigned action)
    return 0;
 }
 
-#define MAX_GAMMA_SETTING 1
-
 #ifndef RARCH_DEFAULT_PORT
 #define RARCH_DEFAULT_PORT 55435
 #endif
@@ -3092,7 +3090,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             if (action == MENU_ACTION_OK)
             {
                g_extern.lifecycle_state &= ~(1ULL << MODE_GAME);
-               g_extern.lifecycle_state |= (1ULL << MODE_EXITSPAWN);
                return -1;
             }
             break;
@@ -3436,33 +3433,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
                find_next_menu_driver();
             break;
 #endif
-         case MENU_SETTINGS_VIDEO_GAMMA:
-            if (action == MENU_ACTION_START)
-            {
-               g_extern.console.screen.gamma_correction = 0;
-               if (driver.video_data && driver.video_poke && driver.video_poke->apply_state_changes)
-                  driver.video_poke->apply_state_changes(driver.video_data);
-            }
-            else if (action == MENU_ACTION_LEFT)
-            {
-               if (g_extern.console.screen.gamma_correction > 0)
-               {
-                  g_extern.console.screen.gamma_correction--;
-                  if (driver.video_data && driver.video_poke && driver.video_poke->apply_state_changes)
-                     driver.video_poke->apply_state_changes(driver.video_data);
-               }
-            }
-            else if (action == MENU_ACTION_RIGHT)
-            {
-               if (g_extern.console.screen.gamma_correction < MAX_GAMMA_SETTING)
-               {
-                  g_extern.console.screen.gamma_correction++;
-                  if (driver.video_data && driver.video_poke && driver.video_poke->apply_state_changes)
-                     driver.video_poke->apply_state_changes(driver.video_data);
-               }
-            }
-            break;
-
          case MENU_SETTINGS_VIDEO_REFRESH_RATE_AUTO:
             switch (action)
             {
@@ -3566,29 +3536,6 @@ static int menu_common_setting_set(unsigned id, unsigned action, rarch_setting_t
             }
             break;
 #endif
-         case MENU_SETTINGS_CUSTOM_BGM_CONTROL_ENABLE:
-            switch (action)
-            {
-               case MENU_ACTION_OK:
-#if (CELL_SDK_VERSION > 0x340000)
-                  if (g_extern.lifecycle_state & (1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE))
-                     g_extern.lifecycle_state &= ~(1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE);
-                  else
-                     g_extern.lifecycle_state |= (1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE);
-                  if (g_extern.lifecycle_state & (1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE))
-                     cellSysutilEnableBgmPlayback();
-                  else
-                     cellSysutilDisableBgmPlayback();
-
-#endif
-                  break;
-               case MENU_ACTION_START:
-#if (CELL_SDK_VERSION > 0x340000)
-                  g_extern.lifecycle_state |= (1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE);
-#endif
-                  break;
-            }
-            break;
 #ifdef HAVE_NETPLAY
          case MENU_SETTINGS_NETPLAY_HOST_IP_ADDRESS:
             if (action == MENU_ACTION_OK)
@@ -3662,9 +3609,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
                strlcpy(type_str, "Bilinear filtering", type_str_size);
             else
                strlcpy(type_str, "Point filtering", type_str_size);
-            break;
-         case MENU_SETTINGS_VIDEO_GAMMA:
-            snprintf(type_str, type_str_size, "%d", g_extern.console.screen.gamma_correction);
             break;
          case MENU_SETTINGS_VIDEO_VSYNC:
             strlcpy(type_str, g_settings.video.vsync ? "ON" : "OFF", type_str_size);
@@ -4018,9 +3962,6 @@ static void menu_common_setting_set_label(char *type_str, size_t type_str_size, 
             break;
          case MENU_SETTINGS_AUDIO_VOLUME:
             snprintf(type_str, type_str_size, "%.1f dB", g_extern.audio_data.volume_db);
-            break;
-         case MENU_SETTINGS_CUSTOM_BGM_CONTROL_ENABLE:
-            strlcpy(type_str, (g_extern.lifecycle_state & (1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE)) ? "ON" : "OFF", type_str_size);
             break;
          case MENU_SETTINGS_PAUSE_IF_WINDOW_FOCUS_LOST:
             strlcpy(type_str, g_settings.pause_nonactive ? "ON" : "OFF", type_str_size);

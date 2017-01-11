@@ -1091,17 +1091,6 @@ bool config_save_file(const char *path)
    config_set_path(conf, "joypad_autoconfig_dir", g_settings.input.autoconfig_dir);
    config_set_bool(conf, "input_autodetect_enable", g_settings.input.autodetect_enable);
 
-   config_set_bool(conf, "gamma_correction", g_extern.console.screen.gamma_correction);
-   bool triple_buffering_enable_val = g_extern.lifecycle_state & (1ULL << MODE_VIDEO_TRIPLE_BUFFERING_ENABLE);
-   bool soft_filter_enable_val = g_extern.lifecycle_state & (1ULL << MODE_VIDEO_SOFT_FILTER_ENABLE);
-   bool flicker_filter_enable_val = g_extern.lifecycle_state & (1ULL << MODE_VIDEO_FLICKER_FILTER_ENABLE);
-
-   config_set_bool(conf, "triple_buffering_enable", triple_buffering_enable_val);
-   config_set_bool(conf, "soft_filter_enable", soft_filter_enable_val);
-   config_set_bool(conf, "flicker_filter_enable", flicker_filter_enable_val);
-
-   config_set_int(conf, "flicker_filter_index", g_extern.console.screen.flicker_filter_index);
-   config_set_int(conf, "soft_filter_index", g_extern.console.screen.soft_filter_index);
    config_set_int(conf, "current_resolution_id", g_extern.console.screen.resolutions.current.id);
    config_set_int(conf, "custom_viewport_width", g_extern.console.screen.viewports.custom_vp.width);
    config_set_int(conf, "custom_viewport_height", g_extern.console.screen.viewports.custom_vp.height);
@@ -1134,9 +1123,6 @@ bool config_save_file(const char *path)
 #endif
    config_set_string(conf, "netplay_nickname", g_settings.username);
    config_set_int(conf, "user_language", g_settings.user_language);
-
-   bool custom_bgm_enable_val = g_extern.lifecycle_state & (1ULL << MODE_AUDIO_CUSTOM_BGM_ENABLE);
-   config_set_bool(conf, "custom_bgm_enable", custom_bgm_enable_val);
 
    config_set_string(conf, "input_driver", g_settings.input.driver);
    config_set_string(conf, "input_joypad_driver", g_settings.input.joypad_driver);

@@ -81,28 +81,13 @@ enum menu_enums
    MODE_GAME = 0,
    MODE_LOAD_GAME,
    MODE_MENU,
-   MODE_MENU_WIDESCREEN,
-   MODE_MENU_HD,
    MODE_MENU_PREINIT,
-   MODE_EXTLAUNCH_MULTIMAN,
-   MODE_EXITSPAWN,
-   MODE_EXITSPAWN_START_GAME,
-   MODE_EXITSPAWN_MULTIMAN,
-   MODE_VIDEO_TRIPLE_BUFFERING_ENABLE,
-   MODE_VIDEO_FLICKER_FILTER_ENABLE,
-   MODE_VIDEO_SOFT_FILTER_ENABLE,
-   MODE_VIDEO_PAL_ENABLE,
-   MODE_VIDEO_PAL_TEMPORAL_ENABLE,
-   MODE_AUDIO_CUSTOM_BGM_ENABLE,
    MODE_CLEAR_INPUT,
 };
 
 enum sound_mode_enums
 {
    SOUND_MODE_NORMAL = 0,
-#ifdef HAVE_HEADSET
-   SOUND_MODE_HEADSET,
-#endif
    SOUND_MODE_LAST
 };
 
@@ -588,16 +573,10 @@ struct global
             bool check;
          } resolutions;
 
-
          struct
          {
             rarch_viewport_t custom_vp;
          } viewports;
-
-         unsigned gamma_correction;
-         unsigned char flicker_filter_index;
-         unsigned char soft_filter_index;
-         bool pal_enable;
       } screen;
 
       struct
