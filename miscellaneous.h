@@ -19,7 +19,7 @@
 
 #include <time.h>
 
-#include "retroarch_logger.h"
+#include "logger.h"
 #include <limits.h>
 
 // Some platforms do not set this value.

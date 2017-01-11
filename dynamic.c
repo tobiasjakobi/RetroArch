@@ -16,7 +16,7 @@
 #include "dynamic.h"
 #include "general.h"
 #include "compat/strl.h"
-#include "retroarch_logger.h"
+#include "logger.h"
 #include "performance.h"
 #include "file.h"
 #include <string.h>
