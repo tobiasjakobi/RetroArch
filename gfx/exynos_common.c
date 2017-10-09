@@ -166,7 +166,7 @@ static void clean_up_pages(void *p, unsigned s, unsigned cnt) {
 
     if (page->bo) {
       if (page->buf_id)
-        drmModeRmFB(page->buf_id, page->bo->handle);
+        drmModeRmFB(page->root->fd, page->buf_id);
 
       exynos_bo_destroy(page->bo);
     }
