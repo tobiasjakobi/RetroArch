@@ -56,8 +56,7 @@ struct exynos_data_base {
   struct exynos_drm *drm;
   struct exynos_fliphandler *fliphandler;
 
-  void *pages;
-  unsigned page_size; /* size of a page object in size */
+  struct exynos_page_base **pages;
   unsigned num_pages;
 
   /* currently displayed page */
@@ -77,10 +76,19 @@ struct exynos_data_base {
 
 int exynos_open(struct exynos_data_base *data);
 void exynos_close(struct exynos_data_base *data);
+
 int exynos_init(struct exynos_data_base *data);
 void exynos_deinit(struct exynos_data_base *data);
+
+int exynos_register_page(struct exynos_data_base *data,
+                         struct exynos_page_base *page);
+void exynos_unregister_pages(struct exynos_data_base *data);
+
 int exynos_alloc(struct exynos_data_base *data);
 void exynos_free(struct exynos_data_base *data);
 
+struct exynos_page_base* exynos_get_free_page(struct exynos_data_base *data);
+
 void exynos_wait_for_flip(struct exynos_data_base *data);
-int exynos_issue_flip(struct exynos_data_base *data, struct exynos_page_base *page);
+int exynos_issue_flip(struct exynos_data_base *data,
+                      struct exynos_page_base *page);

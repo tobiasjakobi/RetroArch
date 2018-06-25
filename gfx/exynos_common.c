@@ -104,7 +104,8 @@ struct prop_assign {
 
 
 /* Find the index of a compatible DRM device. */
-static int get_device_index() {
+static int get_device_index()
+{
   char buf[32];
   drmVersionPtr ver;
 
@@ -132,7 +133,8 @@ static int get_device_index() {
   return (found ? index : -1);
 }
 
-static unsigned pixelformat_to_bpp(uint32_t pf) {
+static unsigned pixelformat_to_bpp(uint32_t pf)
+{
   switch (pf) {
   case DRM_FORMAT_ARGB4444:
   case DRM_FORMAT_RGBA4444:
@@ -148,7 +150,8 @@ static unsigned pixelformat_to_bpp(uint32_t pf) {
   }
 }
 
-static void clean_up_drm(struct exynos_drm *d, int fd) {
+static void clean_up_drm(struct exynos_drm *d, int fd)
+{
   if (d) {
     drmModeAtomicFree(d->modeset_request);
     drmModeAtomicFree(d->restore_request);
@@ -158,29 +161,31 @@ static void clean_up_drm(struct exynos_drm *d, int fd) {
   close(fd);
 }
 
-static void clean_up_pages(void *p, unsigned s, unsigned cnt) {
+static void clean_up_pages(struct exynos_page_base **pages, unsigned cnt)
+{
   unsigned i;
 
   for (i = 0; i < cnt; ++i) {
-    struct exynos_page_base *page = p + i * s;
+    struct exynos_page_base *p = pages[i];
 
-    if (page->bo) {
-      if (page->buf_id)
-        drmModeRmFB(page->root->fd, page->buf_id);
+    if (p->bo) {
+      if (p->buf_id)
+        drmModeRmFB(p->root->fd, p->buf_id);
 
-      exynos_bo_destroy(page->bo);
+      exynos_bo_destroy(p->bo);
     }
 
-    drmModeAtomicFree(page->atomic_request);
+    drmModeAtomicFree(p->atomic_request);
   }
 }
 
-/*
+/**
  * The main pageflip handler which is used by drmHandleEvent.
  * Decreases the pending pageflip count and updates the current page.
  */
 static void page_flip_handler(int fd, unsigned frame, unsigned sec,
-                              unsigned usec, void *data) {
+                              unsigned usec, void *data)
+{
   struct exynos_page_base *page = data;
   struct exynos_data_base *root = page->root;
 
@@ -195,9 +200,12 @@ static void page_flip_handler(int fd, unsigned frame, unsigned sec,
   root->cur_page = page;
 }
 
-/* Get the ID of an object's property using the property name. */
+/**
+ * Get the ID of an object's property using the property name.
+ */
 static bool get_propid_by_name(int fd, uint32_t object_id, uint32_t object_type,
-                               const char *name, uint32_t *prop_id) {
+                               const char *name, uint32_t *prop_id)
+{
   drmModeObjectProperties *properties;
   unsigned i;
   bool found = false;
@@ -231,9 +239,12 @@ out:
   return found;
 }
 
-/* Get the value of an object's property using the ID. */
+/**
+ * Get the value of an object's property using the ID.
+ */
 static bool get_propval_by_id(int fd, uint32_t object_id, uint32_t object_type,
-                              uint32_t id, uint64_t *prop_value) {
+                              uint32_t id, uint64_t *prop_value)
+{
   drmModeObjectProperties *properties;
   unsigned i;
   bool found = false;
@@ -267,7 +278,8 @@ out:
   return found;
 }
 
-static bool check_connector_type(uint32_t connector_type) {
+static bool check_connector_type(uint32_t connector_type)
+{
   unsigned t;
 
   switch (connector_type) {
@@ -288,7 +300,8 @@ static bool check_connector_type(uint32_t connector_type) {
   return (t == g_settings.video.monitor_index);
 }
 
-int exynos_open(struct exynos_data_base *data) {
+int exynos_open(struct exynos_data_base *data)
+{
   char buf[32];
   int devidx;
 
@@ -303,6 +316,8 @@ int exynos_open(struct exynos_data_base *data) {
   drmModePlane *planes[2] = {NULL, NULL};
 
   assert(data->fd == -1);
+  assert(data->drm == NULL);
+  assert(data->fliphandler == NULL);
 
   devidx = get_device_index();
   if (devidx != -1) {
@@ -488,7 +503,9 @@ fail:
   return -1;
 }
 
-/* Counterpart to exynos_open. */
+/**
+ * Counterpart to exynos_open().
+ */
 void exynos_close(struct exynos_data_base *data) {
   free(data->fliphandler);
   data->fliphandler = NULL;
@@ -498,7 +515,8 @@ void exynos_close(struct exynos_data_base *data) {
   data->drm = NULL;
 }
 
-static uint32_t get_id_from_type(struct exynos_drm *drm, uint32_t object_type) {
+static uint32_t get_id_from_type(struct exynos_drm *drm, uint32_t object_type)
+{
   switch (object_type) {
     case DRM_MODE_OBJECT_CONNECTOR:
       return drm->connector_id;
@@ -515,7 +533,8 @@ static uint32_t get_id_from_type(struct exynos_drm *drm, uint32_t object_type) {
   }
 }
 
-static int exynos_get_properties(int fd, struct exynos_drm *drm) {
+static int exynos_get_properties(int fd, struct exynos_drm *drm)
+{
   const unsigned num_props = sizeof(prop_template) / sizeof(prop_template[0]);
   unsigned i;
 
@@ -545,7 +564,8 @@ fail:
   return -1;
 }
 
-static int exynos_create_restore_req(int fd, struct exynos_drm *drm) {
+static int exynos_create_restore_req(int fd, struct exynos_drm *drm)
+{
   static const enum e_exynos_prop restore_props[] = {
     connector_prop_crtc_id,
     crtc_prop_active,
@@ -589,7 +609,8 @@ fail:
   return -1;
 }
 
-static int exynos_create_modeset_req(int fd, struct exynos_drm *drm, unsigned w, unsigned h) {
+static int exynos_create_modeset_req(int fd, struct exynos_drm *drm, unsigned w, unsigned h)
+{
   uint64_t temp;
   unsigned i;
 
@@ -638,7 +659,8 @@ fail:
   return -1;
 }
 
-int exynos_init(struct exynos_data_base *data) {
+int exynos_init(struct exynos_data_base *data)
+{
   const unsigned bpp = pixelformat_to_bpp(data->pixel_format);
 
   struct exynos_drm *drm = data->drm;
@@ -652,6 +674,9 @@ int exynos_init(struct exynos_data_base *data) {
     g_settings.video.fullscreen_x,
     g_settings.video.fullscreen_y
   };
+
+  assert(drm != NULL);
+  assert(fd >= 0);
 
   connector = drmModeGetConnector(fd, drm->connector_id);
 
@@ -721,9 +746,15 @@ fail:
   return -1;
 }
 
-/* Counterpart to exynos_init. */
-void exynos_deinit(struct exynos_data_base *data) {
+/*
+ * Counterpart to exynos_init().
+ */
+void exynos_deinit(struct exynos_data_base *data)
+{
   struct exynos_drm *drm = data->drm;
+
+  assert(data->num_pages == 0);
+  assert(data->pages == NULL);
 
   drmModeDestroyPropertyBlob(data->fd, drm->mode_blob_id);
 
@@ -736,8 +767,10 @@ void exynos_deinit(struct exynos_data_base *data) {
   data->size = 0;
 }
 
-static int exynos_create_page_req(struct exynos_page_base *p) {
+static int exynos_create_page_req(struct exynos_page_base *p)
+{
   struct exynos_drm *drm;
+  int ret;
 
   assert(p);
 
@@ -749,8 +782,10 @@ static int exynos_create_page_req(struct exynos_page_base *p) {
   if (!p->atomic_request)
     goto fail;
 
-  if (drmModeAtomicAddProperty(p->atomic_request, drm->primary_plane_id,
-      drm->properties[plane_prop_fb_id].prop_id, p->buf_id) < 0) {
+  ret = drmModeAtomicAddProperty(p->atomic_request, drm->primary_plane_id,
+                                 drm->properties[plane_prop_fb_id].prop_id, p->buf_id);
+
+  if (ret < 0) {
     drmModeAtomicFree(p->atomic_request);
     p->atomic_request = NULL;
     goto fail;
@@ -762,7 +797,8 @@ fail:
   return -1;
 }
 
-static int initial_modeset(int fd, struct exynos_page_base *page, struct exynos_drm *drm) {
+static int initial_modeset(int fd, struct exynos_page_base *page, struct exynos_drm *drm)
+{
   int ret = 0;
   drmModeAtomicReq *request;
 
@@ -785,10 +821,36 @@ out:
   return ret;
 }
 
-int exynos_alloc(struct exynos_data_base *data) {
+int exynos_register_page(struct exynos_data_base *data,
+                         struct exynos_page_base *page)
+{
+  void *npages;
+
+  npages = realloc(data->pages, sizeof(void*) * (data->num_pages + 1));
+  if (!npages)
+    return -1;
+
+  data->pages = npages;
+  data->pages[data->num_pages] = page;
+
+  data->num_pages++;
+
+  return 0;
+}
+
+void exynos_unregister_pages(struct exynos_data_base *data)
+{
+  if (data->num_pages == 0)
+    return;
+
+  free(data->pages);
+  data->num_pages = 0;
+}
+
+int exynos_alloc(struct exynos_data_base *data)
+{
   struct exynos_device *device;
   struct exynos_bo *bo;
-  void *pages;
   unsigned i;
 
   uint32_t handles[4] = {0}, pitches[4] = {0}, offsets[4] = {0};
@@ -800,16 +862,13 @@ int exynos_alloc(struct exynos_data_base *data) {
     return -1;
   }
 
-  assert(data->page_size);
-
-  pages = calloc(data->num_pages, data->page_size);
-  if (!pages) {
-    RARCH_ERR("exynos_alloc: failed to allocate pages\n");
-    goto fail_alloc;
+  if (data->num_pages == 0) {
+    RARCH_ERR("exynos_alloc: no pages registered\n");
+    goto fail_register;
   }
 
   for (i = 0; i < data->num_pages; ++i) {
-    struct exynos_page_base *p = pages + i * data->page_size;
+    struct exynos_page_base *p = data->pages[i];
 
     bo = exynos_bo_create(device, data->size, flags);
     if (bo == NULL) {
@@ -827,7 +886,7 @@ int exynos_alloc(struct exynos_data_base *data) {
   pitches[0] = data->pitch;
 
   for (i = 0; i < data->num_pages; ++i) {
-    struct exynos_page_base *p = pages + i * data->page_size;
+    struct exynos_page_base *p = data->pages[i];
 
     handles[0] = p->bo->handle;
 
@@ -844,43 +903,57 @@ int exynos_alloc(struct exynos_data_base *data) {
   }
 
   /* Setup framebuffer: display the last allocated page. */
-  if (initial_modeset(data->fd, pages + (data->num_pages - 1) * data->page_size, data->drm)) {
+  if (initial_modeset(data->fd, data->pages[data->num_pages - 1], data->drm)) {
     RARCH_ERR("exynos_alloc: initial atomic modeset failed\n");
     goto fail;
   }
 
-  data->pages = pages;
   data->device = device;
 
   return 0;
 
 fail:
-  clean_up_pages(pages, data->page_size, data->num_pages);
+  clean_up_pages(data->pages, data->num_pages);
 
-fail_alloc:
+fail_register:
   exynos_device_destroy(device);
 
   return -1;
 }
 
-/* Counterpart to exynos_alloc. */
-void exynos_free(struct exynos_data_base *data) {
+/**
+ * Counterpart to exynos_alloc().
+ */
+void exynos_free(struct exynos_data_base *data)
+{
   /* Restore the display state. */
   if (drmModeAtomicCommit(data->fd, data->drm->restore_request,
       DRM_MODE_ATOMIC_ALLOW_MODESET, NULL)) {
     RARCH_WARN("exynos_free: failed to restore the display\n");
   }
 
-  clean_up_pages(data->pages, data->page_size, data->num_pages);
-
-  free(data->pages);
-  data->pages = NULL;
+  clean_up_pages(data->pages, data->num_pages);
 
   exynos_device_destroy(data->device);
   data->device = NULL;
 }
 
-void exynos_wait_for_flip(struct exynos_data_base *data) {
+struct exynos_page_base* exynos_get_free_page(struct exynos_data_base *data)
+{
+  struct exynos_page_base **pages = data->pages;
+
+  for (unsigned i = 0; i < data->num_pages; ++i) {
+    if (pages[i]->flags & page_used)
+      continue;
+
+    return pages[i];
+  }
+
+  return NULL;
+}
+
+void exynos_wait_for_flip(struct exynos_data_base *data)
+{
   struct exynos_fliphandler *fh = data->fliphandler;
   const int timeout = -1;
 
@@ -896,7 +969,8 @@ void exynos_wait_for_flip(struct exynos_data_base *data) {
     drmHandleEvent(fh->fds.fd, &fh->evctx);
 }
 
-int exynos_issue_flip(struct exynos_data_base *data, struct exynos_page_base *page) {
+int exynos_issue_flip(struct exynos_data_base *data, struct exynos_page_base *page)
+{
   assert(data && page);
 
   /* We don't queue multiple page flips. */
