@@ -33,17 +33,29 @@ enum exynos_page_base_flags {
   /* Page has to be cleared before use. */
   page_clear = (1 << 1),
 
+  /* Overlay plane is enabled. */
+  page_overlay = (1 << 2),
+
   /* Use this to extend the flags. */
-  base_flag  = (1 << 2)
+  base_flag  = (1 << 2),
+};
+
+enum exynos_plane_type {
+  plane_primary,
+  plane_overlay,
+  exynos_plane_max,
 };
 
 struct exynos_data_base;
 
-struct exynos_page_base {
+struct exynos_plane {
   struct exynos_bo *bo;
   uint32_t buf_id;
   drmModeAtomicReq *atomic_request;
+};
 
+struct exynos_page_base {
+  struct exynos_plane planes[exynos_plane_max];
   struct exynos_data_base *root;
 
   uint32_t flags;
