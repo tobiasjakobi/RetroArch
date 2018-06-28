@@ -616,7 +616,7 @@ exynos_additional_init(struct exynos_data *pdata)
 
   pdata->dst = (struct g2d_image){
     .buf_type = G2D_IMGBUF_GEM,
-    .color_mode = pixelformat_to_colormode(pdata->base.pixel_format),
+    .color_mode = pixelformat_to_colormode(pdata->base.pixel_format[plane_primary]), // TODO/FIXME
 
     .width = pdata->base.width,
     .height = pdata->base.height,
@@ -737,6 +737,8 @@ exynos_free_page(struct exynos_data *pdata)
   }
 
   page->base.flags |= page_used;
+  page->base.flags &= ~page_overlay;
+
   return page;
 }
 
@@ -1182,7 +1184,8 @@ exynos_gfx_init(const video_info_t *video, const input_driver_t **input, void **
     vid->color_mode = G2D_COLOR_FMT_RGB565 | G2D_ORDER_AXRGB;
 
   data->base.fd = -1;
-  data->base.pixel_format = DRM_FORMAT_XRGB8888;
+  data->base.pixel_format[plane_primary] = DRM_FORMAT_XRGB8888;
+  data->base.pixel_format[plane_overlay] = DRM_FORMAT_ARGB4444;
 
   ret = exynos_open(&data->base);
   if (ret < 0) {

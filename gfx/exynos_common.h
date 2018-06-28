@@ -80,7 +80,7 @@ struct exynos_data_base {
   unsigned width, height;
 
   // DRM pixel_format.
-  uint32_t pixel_format;
+  uint32_t pixel_format[exynos_plane_max];
 
   // Framebuffer parameters.
   unsigned pitch, size;

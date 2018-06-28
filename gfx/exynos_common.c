@@ -629,6 +629,45 @@ out:
   return ret;
 }
 
+static bool
+plane_has_format(const drmModePlane *plane, uint32_t pixel_format)
+{
+  unsigned i;
+
+  for (i = 0; i < plane->count_formats; ++i) {
+    if (plane->formats[i] == pixel_format)
+      return true;
+  }
+
+  return false;
+}
+
+static void
+check_plane(struct exynos_data_base *data, unsigned crtc_index,
+            drmModePlane *plane, drmModePlane **planes)
+{
+  uint32_t prop_id;
+  uint64_t type;
+
+  // Make sure that the plane can be used with the selected CRTC.
+  if (!(plane->possible_crtcs & (1 << crtc_index)))
+    return;
+
+  if (!get_propid_by_name(data->fd, plane->plane_id, DRM_MODE_OBJECT_PLANE, "type", &prop_id))
+    return;
+
+  if (!get_propval_by_id(data->fd, plane->plane_id, DRM_MODE_OBJECT_PLANE, prop_id, &type))
+    return;
+
+  if (planes[plane_primary] == NULL) {
+    if (plane_has_format(plane, data->pixel_format[plane_primary]) && type == DRM_PLANE_TYPE_PRIMARY)
+      planes[plane_primary] = plane;
+  } else if (planes[plane_overlay] == NULL) {
+    if (plane_has_format(plane, data->pixel_format[plane_overlay]) && type != DRM_PLANE_TYPE_PRIMARY)
+          planes[plane_overlay] = plane;
+  }
+}
+
 
 // -----------------------------------------------------------------------------------------
 // Global functions
@@ -639,7 +678,6 @@ int exynos_open(struct exynos_data_base *data)
   char buf[32];
   int devidx;
 
-  int fd;
   struct exynos_drm *drm;
   struct exynos_fliphandler *fliphandler = NULL;
   unsigned i, j;
@@ -647,7 +685,7 @@ int exynos_open(struct exynos_data_base *data)
   drmModeRes *resources = NULL;
   drmModePlaneRes *plane_resources = NULL;
   drmModeConnector *connector = NULL;
-  drmModePlane *planes[2] = {NULL, NULL};
+  drmModePlane *planes[exynos_plane_max] = { 0 };
 
   assert(data->fd == -1);
   assert(data->drm == NULL);
@@ -661,40 +699,40 @@ int exynos_open(struct exynos_data_base *data)
 
   snprintf(buf, sizeof(buf), "/dev/dri/card%d", devidx);
 
-  fd = open(buf, O_RDWR, 0);
-  if (fd < 0) {
+  data->fd = open(buf, O_RDWR, 0);
+  if (data->fd < 0) {
     RARCH_ERR("exynos_open: failed to open DRM device\n");
     return -1;
   }
 
   // Request atomic DRM support. This also enables universal planes.
-  if (drmSetClientCap(fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0) {
+  if (drmSetClientCap(data->fd, DRM_CLIENT_CAP_ATOMIC, 1) < 0) {
     RARCH_ERR("exynos_open: failed to enable atomic support\n");
-    close(fd);
+    close(data->fd);
     return -1;
   }
 
   drm = calloc(1, sizeof(struct exynos_drm));
   if (!drm) {
     RARCH_ERR("exynos_open: failed to allocate DRM\n");
-    close(fd);
+    close(data->fd);
     return -1;
   }
 
-  resources = drmModeGetResources(fd);
+  resources = drmModeGetResources(data->fd);
   if (!resources) {
     RARCH_ERR("exynos_open: failed to get DRM resources\n");
     goto fail;
   }
 
-  plane_resources = drmModeGetPlaneResources(fd);
+  plane_resources = drmModeGetPlaneResources(data->fd);
   if (!plane_resources) {
     RARCH_ERR("exynos_open: failed to get DRM plane resources\n");
     goto fail;
   }
 
   for (i = 0; i < resources->count_connectors; ++i) {
-    connector = drmModeGetConnector(fd, resources->connectors[i]);
+    connector = drmModeGetConnector(data->fd, resources->connectors[i]);
     if (connector == NULL)
       continue;
 
@@ -715,7 +753,7 @@ int exynos_open(struct exynos_data_base *data)
   drm->connector_id = connector->connector_id;
 
   for (i = 0; i < connector->count_encoders; i++) {
-    drmModeEncoder *encoder = drmModeGetEncoder(fd, connector->encoders[i]);
+    drmModeEncoder *encoder = drmModeGetEncoder(data->fd, connector->encoders[i]);
 
     if (!encoder)
       continue;
@@ -741,64 +779,33 @@ int exynos_open(struct exynos_data_base *data)
   drm->crtc_id = resources->crtcs[j];
 
   for (i = 0; i < plane_resources->count_planes; ++i) {
+    const uint32_t plane_id = plane_resources->planes[i];
     drmModePlane *plane;
-    uint32_t plane_id, prop_id;
-    uint64_t type;
 
-    plane_id = plane_resources->planes[i];
-    plane = drmModeGetPlane(fd, plane_id);
+    plane = drmModeGetPlane(data->fd, plane_id);
 
     if (!plane)
       continue;
 
-    /* Make sure that the plane can be used with the selected CRTC. */
-    if (!(plane->possible_crtcs & (1 << j)) ||
-        !get_propid_by_name(fd, plane_id, DRM_MODE_OBJECT_PLANE, "type", &prop_id) ||
-        !get_propval_by_id(fd, plane_id, DRM_MODE_OBJECT_PLANE, prop_id, &type)) {
-      drmModeFreePlane(plane);
-      continue;
-    }
+    check_plane(data, j, plane, planes);
 
-    switch (type) {
-      case DRM_PLANE_TYPE_PRIMARY:
-        if (planes[0])
-          RARCH_WARN("exynos_open: found more than one primary plane\n");
-        else
-          planes[0] = plane;
-        break;
-
-      case DRM_PLANE_TYPE_CURSOR:
-        if (!planes[1])
-          planes[1] = plane;
-        break;
-
-      case DRM_PLANE_TYPE_OVERLAY:
-      default:
-        drmModeFreePlane(plane);
-        break;
-    }
+    drmModeFreePlane(plane);
   }
 
-  if (!planes[0] || !planes[1]) {
-    RARCH_ERR("exynos_open: no primary plane or overlay plane found\n");
+  if (planes[plane_primary] == NULL) {
+    RARCH_ERR("exynos_open: no primary plane found\n");
     goto fail;
   }
 
-  // Check that the primary plane supports chose pixel format.
-  for (i = 0; i < planes[0]->count_formats; ++i) {
-    if (planes[0]->formats[i] == data->pixel_format)
-      break;
-  }
-
-  if (i == planes[0]->count_formats) {
-    RARCH_ERR("exynos_open: primary plane has no support for pixel format\n");
+  if (planes[plane_overlay] == NULL) {
+    RARCH_ERR("exynos_open: no overlay plane found\n");
     goto fail;
   }
 
-  drm->plane_id[plane_primary] = planes[0]->plane_id;
-  drm->plane_id[plane_overlay] = planes[1]->plane_id;
+  for (i = 0; i < exynos_plane_max; ++i)
+    drm->plane_id[i] = planes[i]->plane_id;
 
-  if (setup_properties(fd, drm, resources, plane_resources)) {
+  if (setup_properties(data->fd, drm, resources, plane_resources)) {
     RARCH_ERR("exynos_open: failed to get object properties\n");
     goto fail;
   }
@@ -810,7 +817,7 @@ int exynos_open(struct exynos_data_base *data)
   }
 
   // Setup the flip handler.
-  fliphandler->fds.fd = fd;
+  fliphandler->fds.fd = data->fd;
   fliphandler->fds.events = POLLIN;
   fliphandler->evctx.version = DRM_EVENT_CONTEXT_VERSION;
   fliphandler->evctx.page_flip_handler = page_flip_handler;
@@ -821,7 +828,6 @@ int exynos_open(struct exynos_data_base *data)
   RARCH_LOG("exynos_open: primary plane has ID %u, overlay plane has ID %u\n",
           drm->plane_id[plane_primary], drm->plane_id[plane_overlay]);
 
-  data->fd = fd;
   data->drm = drm;
   data->fliphandler = fliphandler;
 
@@ -837,7 +843,7 @@ fail:
   drmModeFreePlaneResources(plane_resources);
   drmModeFreeResources(resources);
 
-  clean_up_drm(drm, fd);
+  clean_up_drm(drm, data->fd);
 
   return -1;
 }
@@ -856,7 +862,7 @@ void exynos_close(struct exynos_data_base *data) {
 
 int exynos_init(struct exynos_data_base *data)
 {
-  const unsigned bpp = pixelformat_to_bpp(data->pixel_format);
+  const unsigned bpp = pixelformat_to_bpp(data->pixel_format[plane_primary]); // TODO/FIXME
 
   struct exynos_drm *drm = data->drm;
   const int fd = data->fd;
@@ -1033,7 +1039,7 @@ int exynos_alloc(struct exynos_data_base *data)
 
     handles[0] = plane->bo->handle;
 
-    if (drmModeAddFB2(data->fd, data->width, data->height, data->pixel_format,
+    if (drmModeAddFB2(data->fd, data->width, data->height, data->pixel_format[plane_primary], // TODO/FIXME
                       handles, pitches, offsets, &plane->buf_id, flags)) {
       RARCH_ERR("exynos_alloc: failed to add bo %u to fb\n", i);
       goto fail;
