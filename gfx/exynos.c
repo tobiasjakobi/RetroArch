@@ -58,19 +58,6 @@ static void exynos_gfx_get_poke_interface(void*, const video_poke_interface_t**)
 
 
 // -----------------------------------------------------------------------------------------
-// Type definitions
-// -----------------------------------------------------------------------------------------
-
-typedef union exynos_boundingbox {
-  struct {
-    uint16_t x, y;
-    uint16_t w, h;
-  };
-  uint64_t data;
-} exynos_boundingbox_t;
-
-
-// -----------------------------------------------------------------------------------------
 // Enumerator definitions
 // -----------------------------------------------------------------------------------------
 
@@ -121,6 +108,12 @@ enum exynos_page_flags {
 // Structure definitions
 // -----------------------------------------------------------------------------------------
 
+struct bounding_box {
+  uint16_t x, y;
+  uint16_t w, h;
+};
+
+
 struct exynos_perf {
   unsigned memcpy_calls;
   unsigned g2d_calls;
@@ -138,7 +131,7 @@ struct exynos_page {
    * Track damage done by blit operations (damage[0])
    * and damage by font rendering (damage[1]).
    */
-  exynos_boundingbox_t damage[2];
+  struct bounding_box damage[2];
 };
 
 struct exynos_software_framebuffer {
@@ -172,7 +165,7 @@ struct exynos_data {
   float aspect;
 
   // Parameters for blitting emulator fb to screen.
-  exynos_boundingbox_t blit_damage;
+  struct bounding_box blit_damage;
   ushort blit_w, blit_h;
 
   struct exynos_software_framebuffer sw_fb;
@@ -244,20 +237,19 @@ const video_driver_t video_exynos = {
 // -----------------------------------------------------------------------------------------
 
 static inline void
-exynos_boundingbox_clear(exynos_boundingbox_t *bb)
+bb_clear(struct bounding_box *bb)
 {
-  bb->data = 0;
+  memset(bb, 0, sizeof(struct bounding_box));
 }
 
 static inline bool
-exynos_boundingbox_empty(const exynos_boundingbox_t *bb)
+bb_empty(const struct bounding_box *bb)
 {
-  return bb->data == 0;
+  return bb->x == 0 && bb->y == 0 && bb->w == 0 && bb->h == 0;
 }
 
 static void
-exynos_boundingbox_merge(exynos_boundingbox_t *bb,
-                         const exynos_boundingbox_t* merge)
+bb_merge(struct bounding_box *bb, const struct bounding_box *merge)
 {
   if (merge->x < bb->x)
     bb->x = merge->x;
@@ -273,10 +265,9 @@ exynos_boundingbox_merge(exynos_boundingbox_t *bb,
 }
 
 static inline void
-apply_damage(struct exynos_page *p, unsigned idx,
-             const exynos_boundingbox_t *bb)
+apply_damage(struct exynos_page *p, unsigned idx, struct bounding_box *bb)
 {
-  p->damage[idx].data = bb->data;
+  memcpy(&p->damage[idx], bb, sizeof(struct bounding_box));
 }
 
 static inline unsigned
@@ -438,12 +429,12 @@ clear_buffer(struct g2d_context *g2d, struct g2d_image *img)
  */
 static int
 clear_buffer_bb(struct g2d_context *g2d, struct g2d_image *img,
-                const exynos_boundingbox_t *obb,
-                const exynos_boundingbox_t *nbb)
+                const struct bounding_box *obb,
+                const struct bounding_box *nbb)
 {
   int ret = 0;
 
-  if (exynos_boundingbox_empty(obb))
+  if (bb_empty(obb))
     goto out; /* nothing to clear */
 
   if (obb->x == 0 && nbb->x == 0) {
@@ -484,7 +475,7 @@ out:
  */
 static int
 clear_buffer_complement(struct g2d_context *g2d, struct g2d_image *img,
-                        const exynos_boundingbox_t *bb)
+                        const struct bounding_box *bb)
 {
   int ret = 0;
 

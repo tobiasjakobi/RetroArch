@@ -654,12 +654,12 @@ int exynos_open(struct exynos_data_base *data)
   assert(data->fliphandler == NULL);
 
   devidx = get_device_index();
-  if (devidx != -1) {
-    snprintf(buf, sizeof(buf), "/dev/dri/card%d", devidx);
-  } else {
+  if (devidx < 0) {
     RARCH_ERR("exynos_open: no compatible DRM device found\n");
     return -1;
   }
+
+  snprintf(buf, sizeof(buf), "/dev/dri/card%d", devidx);
 
   fd = open(buf, O_RDWR, 0);
   if (fd < 0) {
@@ -1114,29 +1114,52 @@ void exynos_wait_for_flip(struct exynos_data_base *data)
 
 int exynos_issue_flip(struct exynos_data_base *data, struct exynos_page_base *page)
 {
-  struct exynos_plane *plane;
+  struct exynos_plane *primary, *overlay;
+  drmModeAtomicReq *request;
+
+  int ret;
 
   assert(data != NULL);
   assert(page != NULL);
 
-  plane = &page->planes[plane_primary];
+  primary = &page->planes[plane_primary];
+
+  if (page->flags & page_overlay) {
+    overlay = &page->planes[plane_overlay];
+
+    request = drmModeAtomicDuplicate(primary->atomic_request);
+
+    ret = drmModeAtomicMerge(request, overlay->atomic_request);
+    if (ret < 0) {
+      RARCH_ERR("exynos_issue_flip: failed to merge requests (%d)\n", ret);
+      return -1;
+    }
+  } else {
+    request = primary->atomic_request;
+  }
 
   // We don't queue multiple page flips.
   if (data->pageflip_pending > 0)
     exynos_wait_for_flip(data);
 
   // Issue a page flip at the next vblank interval.
-  if (drmModeAtomicCommit(data->fd, plane->atomic_request,
-                          DRM_MODE_PAGE_FLIP_EVENT, page)) {
-    RARCH_ERR("exynos_issue_flip: failed to issue atomic page flip\n");
-    return -1;
-  } else {
-    data->pageflip_pending++;
+  ret = drmModeAtomicCommit(data->fd, request, DRM_MODE_PAGE_FLIP_EVENT, page);
+  if (ret < 0) {
+    RARCH_ERR("exynos_issue_flip: failed to issue atomic page flip (%d)\n", ret);
+
+    ret = -2;
+    goto out;
   }
+
+  data->pageflip_pending++;
 
   // On startup no frame is displayed. We therefore wait for the initial flip to finish.
   if (!data->cur_page)
     exynos_wait_for_flip(data);
 
-  return 0;
+out:
+  if (page->flags & page_overlay)
+    drmModeAtomicFree(request);
+
+  return ret;
 }

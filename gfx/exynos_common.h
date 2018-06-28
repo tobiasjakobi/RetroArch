@@ -20,23 +20,23 @@
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
-/* Set to '1' to enable debug logging code. */
+// Set to '1' to enable debug logging code.
 #define EXYNOS_GFX_DEBUG_LOG 0
 
-/* Set to '1' to enable debug perf code. */
+// Set to '1' to enable debug perf code.
 #define EXYNOS_GFX_DEBUG_PERF 0
 
 enum exynos_page_base_flags {
-  /* Page is currently in use. */
+  // Page is currently in use.
   page_used  = (1 << 0),
 
-  /* Page has to be cleared before use. */
+  // Page has to be cleared before use.
   page_clear = (1 << 1),
 
-  /* Overlay plane is enabled. */
+  // Overlay plane is enabled.
   page_overlay = (1 << 2),
 
-  /* Use this to extend the flags. */
+  // Use this to extend the flags.
   base_flag  = (1 << 2),
 };
 
@@ -71,18 +71,18 @@ struct exynos_data_base {
   struct exynos_page_base **pages;
   unsigned num_pages;
 
-  /* currently displayed page */
+  // Currently displayed page.
   struct exynos_page_base *cur_page;
 
   unsigned pageflip_pending;
 
-  /* framebuffer dimensions */
+  // Framebuffer dimensions.
   unsigned width, height;
 
-  /* DRM pixel_format */
+  // DRM pixel_format.
   uint32_t pixel_format;
 
-  /* framebuffer parameters */
+  // Framebuffer parameters.
   unsigned pitch, size;
 };
 
