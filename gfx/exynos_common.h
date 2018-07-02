@@ -54,6 +54,17 @@ struct exynos_plane {
   drmModeAtomicReq *atomic_request;
 };
 
+struct plane_info {
+  // Dimensions of the plane.
+  unsigned width, height;
+
+  // DRM pixel format used for the plane.
+  uint32_t pixel_format;
+
+  // Pitch and size for the BO backing the plane.
+  unsigned pitch, size;
+};
+
 struct exynos_page_base {
   struct exynos_plane planes[exynos_plane_max];
   struct exynos_data_base *root;
@@ -74,16 +85,11 @@ struct exynos_data_base {
   // Currently displayed page.
   struct exynos_page_base *cur_page;
 
+  // Counter of pending pageflips.
   unsigned pageflip_pending;
 
-  // Framebuffer dimensions.
-  unsigned width, height;
-
-  // DRM pixel_format.
-  uint32_t pixel_format[exynos_plane_max];
-
-  // Framebuffer parameters.
-  unsigned pitch, size;
+  // Informations about primary and overlay plane.
+  struct plane_info plane_infos[exynos_plane_max];
 };
 
 int exynos_open(struct exynos_data_base *data);

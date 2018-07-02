@@ -587,14 +587,20 @@ static int
 exynos_additional_init(struct exynos_data *pdata)
 {
   struct g2d_context *g2d;
+  struct exynos_data_base *base;
+  struct plane_info *primary;
+
   unsigned i;
+
+  base = &pdata->base;
+  primary = &base->plane_infos[plane_primary];
 
   for (i = 0; i < exynos_buffer_count; ++i) {
     const unsigned bpp = colormode_to_bpp(defaults[i].g2d_color_mode);
     const unsigned buffer_size = defaults[i].width * defaults[i].height * bpp;
     struct exynos_bo *bo;
 
-    bo = create_mapped_buffer(pdata->base.device, buffer_size);
+    bo = create_mapped_buffer(base->device, buffer_size);
     if (!bo)
       break;
 
@@ -610,17 +616,17 @@ exynos_additional_init(struct exynos_data *pdata)
     return -1;
   }
 
-  g2d = g2d_init(pdata->base.fd);
+  g2d = g2d_init(base->fd);
   if (!g2d)
     goto init_fail;
 
   pdata->dst = (struct g2d_image){
     .buf_type = G2D_IMGBUF_GEM,
-    .color_mode = pixelformat_to_colormode(pdata->base.pixel_format[plane_primary]), // TODO/FIXME
+    .color_mode = pixelformat_to_colormode(primary->pixel_format), // TODO/FIXME
 
-    .width = pdata->base.width,
-    .height = pdata->base.height,
-    .stride = pdata->base.pitch,
+    .width = primary->width,
+    .height = primary->height,
+    .stride = primary->pitch,
 
     // Clear color for solid fill operation.
     .color = 0xff000000
@@ -655,7 +661,7 @@ exynos_additional_init(struct exynos_data *pdata)
 
   pdata->g2d = g2d;
 
-  pdata->aspect = (float)pdata->base.width / (float)pdata->base.height;
+  pdata->aspect = (float)primary->width / (float)primary->height;
 
   return 0;
 
@@ -759,25 +765,27 @@ static void
 exynos_setup_scale(struct exynos_data *pdata, unsigned width, unsigned height)
 {
   struct exynos_page *pages = pdata->pages;
-  unsigned w, h;
+  struct plane_info *primary = &pdata->base.plane_infos[plane_primary];
 
   const float aspect = (float)width / (float)height;
 
+  unsigned w, h;
+
   if (fabsf(pdata->aspect - aspect) < 0.0001f) {
-    w = pdata->base.width;
-    h = pdata->base.height;
+    w = primary->width;
+    h = primary->height;
   } else {
     if (pdata->aspect > aspect) {
-      w = (float)pdata->base.width * aspect / pdata->aspect;
-      h = pdata->base.height;
+      w = (float)primary->width * aspect / pdata->aspect;
+      h = primary->height;
     } else {
-      w = pdata->base.width;
-      h = (float)pdata->base.height * pdata->aspect / aspect;
+      w = primary->width;
+      h = (float)primary->height * pdata->aspect / aspect;
     }
   }
 
-  pdata->blit_damage.x = (pdata->base.width - w) / 2;
-  pdata->blit_damage.y = (pdata->base.height - h) / 2;
+  pdata->blit_damage.x = (primary->width - w) / 2;
+  pdata->blit_damage.y = (primary->height - h) / 2;
   pdata->blit_damage.w = w;
   pdata->blit_damage.h = h;
   pdata->blit_w = width;
@@ -797,11 +805,12 @@ static void
 exynos_set_fake_blit(struct exynos_data *pdata)
 {
   struct exynos_page *pages = pdata->pages;
+  struct plane_info *primary = &pdata->base.plane_infos[plane_primary];
 
   pdata->blit_damage.x = 0;
   pdata->blit_damage.y = 0;
-  pdata->blit_damage.w = pdata->base.width;
-  pdata->blit_damage.h = pdata->base.height;
+  pdata->blit_damage.w = primary->width;
+  pdata->blit_damage.h = primary->height;
 
   // For all pages issue a full clear.
   for (unsigned i = 0; i < pdata->base.num_pages; ++i) {
@@ -881,14 +890,15 @@ static int
 exynos_blend_font(struct exynos_data *pdata)
 {
   struct g2d_image *src = &pdata->src[exynos_image_font];
+  struct plane_info *primary = &pdata->base.plane_infos[plane_primary];
 
 #if (EXYNOS_GFX_DEBUG_PERF == 1)
   perf_g2d(&pdata->perf, true);
 #endif
 
   if (g2d_scale_and_blend(pdata->g2d, src, &pdata->dst, 0, 0, src->width,
-                          src->height, 0, 0, pdata->base.width,
-                          pdata->base.height, G2D_OP_INTERPOLATE) ||
+                          src->height, 0, 0, primary->width,
+                          primary->height, G2D_OP_INTERPOLATE) ||
       g2d_exec(pdata->g2d)) {
     RARCH_ERR("video_exynos: failed to blend font\n");
     return -1;
@@ -1184,8 +1194,8 @@ exynos_gfx_init(const video_info_t *video, const input_driver_t **input, void **
     vid->color_mode = G2D_COLOR_FMT_RGB565 | G2D_ORDER_AXRGB;
 
   data->base.fd = -1;
-  data->base.pixel_format[plane_primary] = DRM_FORMAT_XRGB8888;
-  data->base.pixel_format[plane_overlay] = DRM_FORMAT_ARGB4444;
+  data->base.plane_infos[plane_primary].pixel_format = DRM_FORMAT_XRGB8888;
+  data->base.plane_infos[plane_overlay].pixel_format = DRM_FORMAT_ARGB4444;
 
   ret = exynos_open(&data->base);
   if (ret < 0) {

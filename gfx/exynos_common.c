@@ -192,6 +192,26 @@ pixelformat_to_bpp(uint32_t pf)
 }
 
 static void
+fill_plane_info(struct plane_info *pi)
+{
+  const unsigned bpp = pixelformat_to_bpp(pi->pixel_format);
+
+  pi->pitch = bpp * pi->width;
+  pi->size = pi->pitch * pi->height;
+}
+
+static const char*
+fmt_pixel_format(const struct plane_info *pi)
+{
+  static char buffer[5];
+
+  buffer[4] = 0;
+  memcpy(buffer, &pi->pixel_format, sizeof(uint32_t));
+
+  return buffer;
+}
+
+static void
 clean_up_drm(struct exynos_drm *d, int fd)
 {
   if (d) {
@@ -219,13 +239,15 @@ clean_up_plane(struct exynos_plane *plane, int fd)
 static void
 clean_up_pages(struct exynos_page_base **pages, unsigned cnt)
 {
-  unsigned i;
+  unsigned i, j;
 
   for (i = 0; i < cnt; ++i) {
     struct exynos_page_base *p = pages[i];
 
-    clean_up_plane(&p->planes[plane_primary], p->root->fd);
-    clean_up_plane(&p->planes[plane_overlay], p->root->fd);
+    for (j = 0; j < exynos_plane_max; ++j)
+      clean_up_plane(&p->planes[j], p->root->fd);
+
+    memset(p, 0, sizeof(struct exynos_page_base));
   }
 }
 
@@ -262,8 +284,9 @@ lookup_mapping(const struct exynos_drm *drm,
                uint32_t object_id, enum e_prop prop)
 {
   const struct prop_key key = {object_id, prop};
+  unsigned i;
 
-  for (unsigned i = 0; i < drm->pmap_size; ++i) {
+  for (i = 0; i < drm->pmap_size; ++i) {
     const struct prop_mapping *p = &drm->pmap[i];
 
     if (is_key_equal(&p->key, &key))
@@ -476,14 +499,15 @@ create_restore_request(int fd, struct exynos_drm *drm)
 
   drm->restore_request = drmModeAtomicAlloc();
 
-  for (unsigned i = 0; i < num_props; ++i) {
+  for (i = 0; i < num_props; ++i) {
     const uint32_t object_type = prop_template[i].object_type;
 
     struct object_ids ids;
+    unsigned j;
 
     get_ids_from_type(drm, object_type, &ids);
 
-    for (unsigned j = 0; j < ids.num_ids; ++i) {
+    for (j = 0; j < ids.num_ids; ++i) {
       const uint32_t object_id = ids.ids[j];
       const struct prop_mapping *mapping = lookup_mapping(drm, object_id, prop_template[i].prop);
 
@@ -648,6 +672,7 @@ check_plane(struct exynos_data_base *data, unsigned crtc_index,
 {
   uint32_t prop_id;
   uint64_t type;
+  struct plane_info *primary, *overlay;
 
   // Make sure that the plane can be used with the selected CRTC.
   if (!(plane->possible_crtcs & (1 << crtc_index)))
@@ -659,11 +684,14 @@ check_plane(struct exynos_data_base *data, unsigned crtc_index,
   if (!get_propval_by_id(data->fd, plane->plane_id, DRM_MODE_OBJECT_PLANE, prop_id, &type))
     return;
 
+  primary = &data->plane_infos[plane_primary];
+  overlay = &data->plane_infos[plane_overlay];
+
   if (planes[plane_primary] == NULL) {
-    if (plane_has_format(plane, data->pixel_format[plane_primary]) && type == DRM_PLANE_TYPE_PRIMARY)
+    if (plane_has_format(plane, primary->pixel_format) && type == DRM_PLANE_TYPE_PRIMARY)
       planes[plane_primary] = plane;
   } else if (planes[plane_overlay] == NULL) {
-    if (plane_has_format(plane, data->pixel_format[plane_overlay]) && type != DRM_PLANE_TYPE_PRIMARY)
+    if (plane_has_format(plane, overlay->pixel_format) && type != DRM_PLANE_TYPE_PRIMARY)
           planes[plane_overlay] = plane;
   }
 }
@@ -862,9 +890,9 @@ void exynos_close(struct exynos_data_base *data) {
 
 int exynos_init(struct exynos_data_base *data)
 {
-  const unsigned bpp = pixelformat_to_bpp(data->pixel_format[plane_primary]); // TODO/FIXME
-
   struct exynos_drm *drm = data->drm;
+  struct plane_info *primary, *overlay;
+
   const int fd = data->fd;
 
   drmModeConnector *connector = NULL;
@@ -922,16 +950,21 @@ int exynos_init(struct exynos_data_base *data)
     goto fail;
   }
 
-  data->width = mode->hdisplay;
-  data->height = mode->vdisplay;
+  primary = &data->plane_infos[plane_primary];
+  overlay = &data->plane_infos[plane_overlay];
+
+  primary->width = mode->hdisplay;
+  primary->height = mode->vdisplay;
+  overlay->width = mode->hdisplay / 2;
+  overlay->height = mode->vdisplay / 2;
+
+  fill_plane_info(primary);
+  fill_plane_info(overlay);
+
+  RARCH_LOG("exynos_init: selected %ux%u resolution with %s pixel format (primary plane)\n",
+            mode->hdisplay, mode->vdisplay, fmt_pixel_format(primary));
 
   drmModeFreeConnector(connector);
-
-  data->pitch = bpp * data->width;
-  data->size = data->pitch * data->height;
-
-  RARCH_LOG("exynos_init: selected %ux%u resolution with %u bpp\n",
-            data->width, data->height, bpp);
 
   return 0;
 
@@ -956,11 +989,7 @@ void exynos_deinit(struct exynos_data_base *data)
 
   drm = NULL;
 
-  data->width = 0;
-  data->height = 0;
-
-  data->pitch = 0;
-  data->size = 0;
+  memset(data->plane_infos, 0, sizeof(struct plane_info) * exynos_plane_max);
 }
 
 int exynos_register_page(struct exynos_data_base *data,
@@ -991,15 +1020,17 @@ void exynos_unregister_pages(struct exynos_data_base *data)
 
 int exynos_alloc(struct exynos_data_base *data)
 {
-  struct exynos_device *device;
+  //struct exynos_device *device;
 
   unsigned i;
 
   uint32_t handles[4] = {0}, pitches[4] = {0}, offsets[4] = {0};
   const unsigned flags = 0;
 
-  device = exynos_device_create(data->fd);
-  if (!device) {
+  assert(data != NULL);
+
+  data->device = exynos_device_create(data->fd);
+  if (data->device == NULL) {
     RARCH_ERR("exynos_alloc: failed to create device from fd\n");
     return -1;
   }
@@ -1010,45 +1041,41 @@ int exynos_alloc(struct exynos_data_base *data)
   }
 
   for (i = 0; i < data->num_pages; ++i) {
-    struct exynos_bo *bo;
-    struct exynos_plane *plane;
     struct exynos_page_base *p = data->pages[i];
+    unsigned j;
 
-    plane = &p->planes[plane_primary];
+    for (j = 0; j < exynos_plane_max; ++j) {
+      struct exynos_plane *plane;
+      struct plane_info *pi;
 
-    bo = exynos_bo_create(device, data->size, flags);
-    if (bo == NULL) {
-      RARCH_ERR("exynos_alloc: failed to create buffer object %u\n", i);
-      goto fail;
+      plane = &p->planes[j];
+      pi = &data->plane_infos[j];
+
+      plane->bo = exynos_bo_create(data->device, pi->size, flags);
+      if (plane->bo == NULL) {
+        RARCH_ERR("exynos_alloc: failed to create buffer object %u\n", i);
+        goto fail;
+      }
+
+      // Don't map the BO, since we don't access it through userspace.
+
+      handles[0] = plane->bo->handle;
+      pitches[0] = pi->pitch;
+
+      if (drmModeAddFB2(data->fd, pi->width, pi->height, pi->pixel_format,
+                        handles, pitches, offsets, &plane->buf_id, flags)) {
+        RARCH_ERR("exynos_alloc: failed to add bo %u to fb\n", i);
+        goto fail;
+      }
+
+      if (create_page_request(p)) {
+        RARCH_ERR("exynos_alloc: failed to create atomic request for page %u\n", i);
+        goto fail;
+      }
     }
 
-    // Don't map the BO, since we don't access it through userspace.
-    plane->bo = bo;
     p->root = data;
-
     p->flags |= page_clear;
-  }
-
-  pitches[0] = data->pitch;
-
-  for (i = 0; i < data->num_pages; ++i) {
-    struct exynos_plane *plane;
-    struct exynos_page_base *p = data->pages[i];
-
-    plane = &p->planes[plane_primary];
-
-    handles[0] = plane->bo->handle;
-
-    if (drmModeAddFB2(data->fd, data->width, data->height, data->pixel_format[plane_primary], // TODO/FIXME
-                      handles, pitches, offsets, &plane->buf_id, flags)) {
-      RARCH_ERR("exynos_alloc: failed to add bo %u to fb\n", i);
-      goto fail;
-    }
-
-    if (create_page_request(p)) {
-      RARCH_ERR("exynos_alloc: failed to create atomic request for page %u\n", i);
-      goto fail;
-    }
   }
 
   // Setup framebuffer: display the last allocated page.
@@ -1057,15 +1084,14 @@ int exynos_alloc(struct exynos_data_base *data)
     goto fail;
   }
 
-  data->device = device;
-
   return 0;
 
 fail:
   clean_up_pages(data->pages, data->num_pages);
 
 fail_register:
-  exynos_device_destroy(device);
+  exynos_device_destroy(data->device);
+  data->device = NULL;
 
   return -1;
 }
@@ -1090,8 +1116,9 @@ void exynos_free(struct exynos_data_base *data)
 struct exynos_page_base* exynos_get_free_page(struct exynos_data_base *data)
 {
   struct exynos_page_base **pages = data->pages;
+  unsigned i;
 
-  for (unsigned i = 0; i < data->num_pages; ++i) {
+  for (i = 0; i < data->num_pages; ++i) {
     if (pages[i]->flags & page_used)
       continue;
 
