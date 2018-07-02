@@ -103,6 +103,13 @@ struct exynos_drm {
   drmModeAtomicReq *restore_request;
 };
 
+struct drm_mode {
+  drmModeRes *res;
+  drmModePlaneRes *plane_res;
+  drmModeConnector *connector;
+  drmModePlane *planes[exynos_plane_max];
+};
+
 struct prop_assign {
   enum e_prop prop;
   uint64_t value;
@@ -212,19 +219,36 @@ fmt_pixel_format(const struct plane_info *pi)
 }
 
 static void
-clean_up_drm(struct exynos_drm *d, int fd)
+cleanup_drm_mode(struct drm_mode *dm)
 {
-  if (d) {
-    drmModeAtomicFree(d->modeset_request);
-    drmModeAtomicFree(d->restore_request);
+  unsigned i;
+
+  for (i = 0; i < exynos_plane_max; ++i)
+    drmModeFreePlane(dm->planes[i]);
+
+  drmModeFreeConnector(dm->connector);
+  drmModeFreePlaneResources(dm->plane_res);
+  drmModeFreeResources(dm->res);
+}
+
+static void
+cleanup_drm(struct exynos_drm *drm, int fd)
+{
+  if (drm) {
+    drmModeAtomicFree(drm->modeset_request);
+    drmModeAtomicFree(drm->restore_request);
+
+    free(drm->pmap);
+
+    memset(drm, 0, sizeof(struct exynos_drm));
   }
 
-  free(d);
+  free(drm);
   close(fd);
 }
 
 static void
-clean_up_plane(struct exynos_plane *plane, int fd)
+cleanup_plane(struct exynos_plane *plane, int fd)
 {
   if (plane->bo) {
     if (plane->buf_id)
@@ -237,7 +261,7 @@ clean_up_plane(struct exynos_plane *plane, int fd)
 }
 
 static void
-clean_up_pages(struct exynos_page_base **pages, unsigned cnt)
+cleanup_pages(struct exynos_page_base **pages, unsigned cnt)
 {
   unsigned i, j;
 
@@ -245,7 +269,7 @@ clean_up_pages(struct exynos_page_base **pages, unsigned cnt)
     struct exynos_page_base *p = pages[i];
 
     for (j = 0; j < exynos_plane_max; ++j)
-      clean_up_plane(&p->planes[j], p->root->fd);
+      cleanup_plane(&p->planes[j], p->root->fd);
 
     memset(p, 0, sizeof(struct exynos_page_base));
   }
@@ -706,14 +730,8 @@ int exynos_open(struct exynos_data_base *data)
   char buf[32];
   int devidx;
 
-  struct exynos_drm *drm;
-  struct exynos_fliphandler *fliphandler = NULL;
+  struct drm_mode dm = { 0 };
   unsigned i, j;
-
-  drmModeRes *resources = NULL;
-  drmModePlaneRes *plane_resources = NULL;
-  drmModeConnector *connector = NULL;
-  drmModePlane *planes[exynos_plane_max] = { 0 };
 
   assert(data->fd == -1);
   assert(data->drm == NULL);
@@ -740,54 +758,56 @@ int exynos_open(struct exynos_data_base *data)
     return -1;
   }
 
-  drm = calloc(1, sizeof(struct exynos_drm));
-  if (!drm) {
+  data->drm = calloc(1, sizeof(struct exynos_drm));
+  if (data->drm == NULL) {
     RARCH_ERR("exynos_open: failed to allocate DRM\n");
     close(data->fd);
     return -1;
   }
 
-  resources = drmModeGetResources(data->fd);
-  if (!resources) {
+  dm.res = drmModeGetResources(data->fd);
+  if (dm.res == NULL) {
     RARCH_ERR("exynos_open: failed to get DRM resources\n");
     goto fail;
   }
 
-  plane_resources = drmModeGetPlaneResources(data->fd);
-  if (!plane_resources) {
+  dm.plane_res = drmModeGetPlaneResources(data->fd);
+  if (dm.plane_res == NULL) {
     RARCH_ERR("exynos_open: failed to get DRM plane resources\n");
     goto fail;
   }
 
-  for (i = 0; i < resources->count_connectors; ++i) {
-    connector = drmModeGetConnector(data->fd, resources->connectors[i]);
-    if (connector == NULL)
+  for (i = 0; i < dm.res->count_connectors; ++i) {
+    dm.connector = drmModeGetConnector(data->fd, dm.res->connectors[i]);
+    if (dm.connector == NULL)
       continue;
 
-    if (check_connector_type(connector->connector_type) &&
-        connector->connection == DRM_MODE_CONNECTED &&
-        connector->count_modes > 0)
+    if (check_connector_type(dm.connector->connector_type) &&
+        dm.connector->connection == DRM_MODE_CONNECTED &&
+        dm.connector->count_modes > 0)
       break;
 
-    drmModeFreeConnector(connector);
-    connector = NULL;
+    drmModeFreeConnector(dm.connector);
+    dm.connector = NULL;
   }
 
-  if (i == resources->count_connectors) {
+  if (i == dm.res->count_connectors) {
     RARCH_ERR("exynos_open: no currently active connector found\n");
     goto fail;
   }
 
-  drm->connector_id = connector->connector_id;
+  data->drm->connector_id = dm.connector->connector_id;
 
-  for (i = 0; i < connector->count_encoders; i++) {
-    drmModeEncoder *encoder = drmModeGetEncoder(data->fd, connector->encoders[i]);
+  for (i = 0; i < dm.connector->count_encoders; i++) {
+    drmModeEncoder *encoder;
+
+    encoder = drmModeGetEncoder(data->fd, dm.connector->encoders[i]);
 
     if (!encoder)
       continue;
 
     // Find a CRTC that is compatible with the encoder.
-    for (j = 0; j < resources->count_crtcs; ++j) {
+    for (j = 0; j < dm.res->count_crtcs; ++j) {
       if (encoder->possible_crtcs & (1 << j))
         break;
     }
@@ -795,19 +815,19 @@ int exynos_open(struct exynos_data_base *data)
     drmModeFreeEncoder(encoder);
 
     // Stop when a suitable CRTC was found.
-    if (j != resources->count_crtcs)
+    if (j != dm.res->count_crtcs)
       break;
   }
 
-  if (i == connector->count_encoders) {
+  if (i == dm.connector->count_encoders) {
     RARCH_ERR("exynos_open: no compatible encoder found\n");
     goto fail;
   }
 
-  drm->crtc_id = resources->crtcs[j];
+  data->drm->crtc_id = dm.res->crtcs[j];
 
-  for (i = 0; i < plane_resources->count_planes; ++i) {
-    const uint32_t plane_id = plane_resources->planes[i];
+  for (i = 0; i < dm.plane_res->count_planes; ++i) {
+    const uint32_t plane_id = dm.plane_res->planes[i];
     drmModePlane *plane;
 
     plane = drmModeGetPlane(data->fd, plane_id);
@@ -815,63 +835,60 @@ int exynos_open(struct exynos_data_base *data)
     if (!plane)
       continue;
 
-    check_plane(data, j, plane, planes);
+    check_plane(data, j, plane, dm.planes);
 
     drmModeFreePlane(plane);
   }
 
-  if (planes[plane_primary] == NULL) {
+  if (dm.planes[plane_primary] == NULL) {
     RARCH_ERR("exynos_open: no primary plane found\n");
     goto fail;
   }
 
-  if (planes[plane_overlay] == NULL) {
+  if (dm.planes[plane_overlay] == NULL) {
     RARCH_ERR("exynos_open: no overlay plane found\n");
     goto fail;
   }
 
   for (i = 0; i < exynos_plane_max; ++i)
-    drm->plane_id[i] = planes[i]->plane_id;
+    data->drm->plane_id[i] = dm.planes[i]->plane_id;
 
-  if (setup_properties(data->fd, drm, resources, plane_resources)) {
+  if (setup_properties(data->fd, data->drm, dm.res, dm.plane_res)) {
     RARCH_ERR("exynos_open: failed to get object properties\n");
     goto fail;
   }
 
-  fliphandler = calloc(1, sizeof(struct exynos_fliphandler));
-  if (!fliphandler) {
+  data->fliphandler = calloc(1, sizeof(struct exynos_fliphandler));
+  if (data->fliphandler == NULL) {
     RARCH_ERR("exynos_open: failed to allocate fliphandler\n");
     goto fail;
   }
 
   // Setup the flip handler.
-  fliphandler->fds.fd = data->fd;
-  fliphandler->fds.events = POLLIN;
-  fliphandler->evctx.version = DRM_EVENT_CONTEXT_VERSION;
-  fliphandler->evctx.page_flip_handler = page_flip_handler;
+  data->fliphandler->fds.fd = data->fd;
+  data->fliphandler->fds.events = POLLIN;
+  data->fliphandler->evctx.version = DRM_EVENT_CONTEXT_VERSION;
+  data->fliphandler->evctx.page_flip_handler = page_flip_handler;
 
   RARCH_LOG("exynos_open: using DRM device \"%s\" with connector id %u\n",
-          buf, drm->connector_id);
+            buf, data->drm->connector_id);
 
   RARCH_LOG("exynos_open: primary plane has ID %u, overlay plane has ID %u\n",
-          drm->plane_id[plane_primary], drm->plane_id[plane_overlay]);
+            data->drm->plane_id[plane_primary], data->drm->plane_id[plane_overlay]);
 
-  data->drm = drm;
-  data->fliphandler = fliphandler;
+  cleanup_drm_mode(&dm);
 
   return 0;
 
 fail:
-  free(fliphandler);
+  free(data->fliphandler);
+  data->fliphandler = NULL;
 
-  drmModeFreePlane(planes[0]);
-  drmModeFreePlane(planes[1]);
+  cleanup_drm_mode(&dm);
 
-  drmModeFreeConnector(connector);
-  drmModeFreePlaneResources(plane_resources);
-  drmModeFreeResources(resources);
-
-  clean_up_drm(drm, data->fd);
+  cleanup_drm(data->drm, data->fd);
+  data->fd = -1;
+  data->drm = NULL;
 
   return -1;
 }
@@ -883,7 +900,7 @@ void exynos_close(struct exynos_data_base *data) {
   free(data->fliphandler);
   data->fliphandler = NULL;
 
-  clean_up_drm(data->drm, data->fd);
+  cleanup_drm(data->drm, data->fd);
   data->fd = -1;
   data->drm = NULL;
 }
@@ -897,7 +914,6 @@ int exynos_init(struct exynos_data_base *data)
 
   drmModeConnector *connector = NULL;
   drmModeModeInfo *mode = NULL;
-  unsigned i;
 
   const unsigned fullscreen[2] = {
     g_settings.video.fullscreen_x,
@@ -910,6 +926,7 @@ int exynos_init(struct exynos_data_base *data)
   connector = drmModeGetConnector(fd, drm->connector_id);
 
   if (fullscreen[0] != 0 && fullscreen[1] != 0) {
+    unsigned i;
 
     for (i = 0; i < connector->count_modes; i++) {
       if (connector->modes[i].hdisplay == fullscreen[0] &&
@@ -921,7 +938,7 @@ int exynos_init(struct exynos_data_base *data)
 
     if (!mode) {
       RARCH_ERR("exynos_init: requested resolution (%dx%d) not available\n",
-              fullscreen[0], fullscreen[1]);
+                fullscreen[0], fullscreen[1]);
       goto fail;
     }
 
@@ -1020,8 +1037,6 @@ void exynos_unregister_pages(struct exynos_data_base *data)
 
 int exynos_alloc(struct exynos_data_base *data)
 {
-  //struct exynos_device *device;
-
   unsigned i;
 
   uint32_t handles[4] = {0}, pitches[4] = {0}, offsets[4] = {0};
@@ -1087,7 +1102,7 @@ int exynos_alloc(struct exynos_data_base *data)
   return 0;
 
 fail:
-  clean_up_pages(data->pages, data->num_pages);
+  cleanup_pages(data->pages, data->num_pages);
 
 fail_register:
   exynos_device_destroy(data->device);
@@ -1107,7 +1122,7 @@ void exynos_free(struct exynos_data_base *data)
     RARCH_WARN("exynos_free: failed to restore the display\n");
   }
 
-  clean_up_pages(data->pages, data->num_pages);
+  cleanup_pages(data->pages, data->num_pages);
 
   exynos_device_destroy(data->device);
   data->device = NULL;
