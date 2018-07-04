@@ -512,6 +512,47 @@ fail:
 }
 
 static int
+refresh_overlay_config(const struct exynos_drm *drm, struct exynos_page_base *page)
+{
+  struct exynos_plane *plane = &page->planes[plane_overlay];
+  struct bounding_box *bb = &page->overlay_box;
+
+  const struct prop_mapping *mapping;
+  uint32_t plane_id;
+  unsigned i;
+
+  const struct prop_assign assign[] = {
+      { plane_prop_fb_id, plane->buf_id },
+      { plane_prop_crtc_x, bb->x },
+      { plane_prop_crtc_y, bb->y },
+      { plane_prop_crtc_w, bb->w },
+      { plane_prop_crtc_h, bb->h },
+      { plane_prop_src_x, bb->x },
+      { plane_prop_src_y, bb->y },
+      { plane_prop_src_w, bb->w << 16 },
+      { plane_prop_src_h, bb->h << 16 },
+  };
+
+  const unsigned num_assign = sizeof(assign) / sizeof(assign[0]);
+
+  drmModeAtomicSetCursor(plane->atomic_request, plane->atomic_cursor);
+
+  plane_id = drm->plane_id[plane_primary];
+
+  for (i = 0; i < num_assign; ++i) {
+    int ret;
+
+    mapping = lookup_mapping(drm, plane_id, assign[i].prop);
+    ret = drmModeAtomicAddProperty(plane->atomic_request, plane_id, mapping->id, assign[i].value);
+
+    if (ret < 0)
+      return ret;
+  }
+
+  return 0;
+}
+
+static int
 create_restore_request(int fd, struct exynos_drm *drm)
 {
   const unsigned num_props = sizeof(prop_template) / sizeof(prop_template[0]);
@@ -574,7 +615,7 @@ create_modeset_request(int fd, struct exynos_drm *drm, unsigned w, unsigned h)
     { plane_prop_src_x, 0 },
     { plane_prop_src_y, 0 },
     { plane_prop_src_w, w << 16 },
-    { plane_prop_src_h, h << 16 }
+    { plane_prop_src_h, h << 16 },
   };
 
   const unsigned num_assign = sizeof(assign) / sizeof(assign[0]);
@@ -613,39 +654,113 @@ fail:
 }
 
 static int
-create_page_request(struct exynos_page_base *page)
+primary_plane_request(const struct exynos_drm *drm, struct exynos_plane *plane)
 {
-  struct exynos_drm *drm;
-  struct exynos_plane *plane;
-  int ret;
-
   const struct prop_mapping *mapping;
-
-  assert(page != NULL);
-
-  drm = page->root->drm;
-  plane = &page->planes[plane_primary];
+  uint32_t plane_id;
+  int ret;
 
   assert(plane->atomic_request == NULL);
 
   plane->atomic_request = drmModeAtomicAlloc();
   if (!plane->atomic_request)
-    goto fail;
+    return -1;
 
-  mapping = lookup_mapping(drm, drm->plane_id[plane_primary], plane_prop_fb_id);
-  ret = drmModeAtomicAddProperty(plane->atomic_request, drm->plane_id[plane_primary],
-                                 mapping->id, plane->buf_id);
+  plane_id = drm->plane_id[plane_primary];
+  mapping = lookup_mapping(drm, plane_id, plane_prop_fb_id);
+
+  ret = drmModeAtomicAddProperty(plane->atomic_request, plane_id, mapping->id, plane->buf_id);
 
   if (ret < 0) {
     drmModeAtomicFree(plane->atomic_request);
     plane->atomic_request = NULL;
-    goto fail;
+
+    return -2;
   }
+
+  return 0;
+}
+
+static int
+overlay_plane_request(const struct exynos_drm *drm, struct exynos_plane *plane)
+{
+  const enum e_prop dummy[] = {
+    plane_prop_fb_id,
+    plane_prop_crtc_x,
+    plane_prop_crtc_y,
+    plane_prop_crtc_w,
+    plane_prop_crtc_h,
+    plane_prop_src_x,
+    plane_prop_src_y,
+    plane_prop_src_w,
+    plane_prop_src_h,
+  };
+
+  const unsigned num_dummy = sizeof(dummy) / sizeof(dummy[0]);
+
+  const struct prop_mapping *mapping;
+  uint32_t plane_id;
+  unsigned i;
+  int ret;
+
+  assert(plane->atomic_request == NULL);
+
+  plane->atomic_request = drmModeAtomicAlloc();
+  if (!plane->atomic_request)
+    return -1;
+
+  plane_id = drm->plane_id[plane_overlay];
+
+  mapping = lookup_mapping(drm, plane_id, plane_prop_crtc_id);
+  ret = drmModeAtomicAddProperty(plane->atomic_request, plane_id, mapping->id, drm->crtc_id);
+  if (ret < 0)
+    goto fail;
+
+  ret = drmModeAtomicGetCursor(plane->atomic_request);
+  if (ret < 0)
+    goto fail;
+  else
+    plane->atomic_cursor = ret;
+
+  for (i = 0; i < num_dummy; ++i) {
+    mapping = lookup_mapping(drm, plane_id, dummy[i]);
+    ret = drmModeAtomicAddProperty(plane->atomic_request, plane_id, mapping->id, 0);
+    if (ret < 0)
+      break;
+  }
+
+  if (i != num_dummy)
+    goto fail;
 
   return 0;
 
 fail:
-  return -1;
+  drmModeAtomicFree(plane->atomic_request);
+  plane->atomic_request = NULL;
+
+  return -2;
+}
+
+static int
+create_page_request(struct exynos_page_base *page)
+{
+  struct exynos_drm *drm;
+  int ret;
+
+  assert(page != NULL);
+
+  drm = page->root->drm;
+
+  ret = primary_plane_request(drm, &page->planes[plane_primary]);
+  if (ret < 0)
+    goto out;
+
+  ret = overlay_plane_request(drm, &page->planes[plane_overlay]);
+  if (ret < 0)
+    goto out;
+
+out:
+  return ret;
 }
 
 static int
@@ -1175,7 +1290,14 @@ int exynos_issue_flip(struct exynos_data_base *data, struct exynos_page_base *pa
   if (page->flags & page_overlay) {
     overlay = &page->planes[plane_overlay];
 
+    ret = refresh_overlay_config(data->drm, page);
+    if (ret < 0) {
+      RARCH_ERR("exynos_issue_flip: failed to refresh overlay config (%d)\n", ret);
+      return -1;
+    }
+
     request = drmModeAtomicDuplicate(primary->atomic_request);
+    // TODO: handle alloc failure
 
     ret = drmModeAtomicMerge(request, overlay->atomic_request);
     if (ret < 0) {

@@ -26,6 +26,18 @@
 // Set to '1' to enable debug perf code.
 #define EXYNOS_GFX_DEBUG_PERF 0
 
+
+// -----------------------------------------------------------------------------------------
+// Forward declarations
+// -----------------------------------------------------------------------------------------
+
+struct exynos_data_base;
+
+
+// -----------------------------------------------------------------------------------------
+// Enumerator definitions
+// -----------------------------------------------------------------------------------------
+
 enum exynos_page_base_flags {
   // Page is currently in use.
   page_used  = (1 << 0),
@@ -46,12 +58,21 @@ enum exynos_plane_type {
   exynos_plane_max,
 };
 
-struct exynos_data_base;
+
+// -----------------------------------------------------------------------------------------
+// Structure definitions
+// -----------------------------------------------------------------------------------------
+
+struct bounding_box {
+  uint16_t x, y;
+  uint16_t w, h;
+};
 
 struct exynos_plane {
   struct exynos_bo *bo;
   uint32_t buf_id;
   drmModeAtomicReq *atomic_request;
+  uint32_t atomic_cursor;
 };
 
 struct plane_info {
@@ -67,6 +88,8 @@ struct plane_info {
 
 struct exynos_page_base {
   struct exynos_plane planes[exynos_plane_max];
+  struct bounding_box overlay_box;
+
   struct exynos_data_base *root;
 
   uint32_t flags;
@@ -91,6 +114,11 @@ struct exynos_data_base {
   // Informations about primary and overlay plane.
   struct plane_info plane_infos[exynos_plane_max];
 };
+
+
+// -----------------------------------------------------------------------------------------
+// Global functions
+// -----------------------------------------------------------------------------------------
 
 int exynos_open(struct exynos_data_base *data);
 void exynos_close(struct exynos_data_base *data);
