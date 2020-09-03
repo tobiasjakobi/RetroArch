@@ -38,24 +38,18 @@ struct exynos_data_base;
 // Enumerator definitions
 // -----------------------------------------------------------------------------------------
 
-enum exynos_page_base_flags {
-  // Page is currently in use.
-  page_used  = (1 << 0),
-
-  // Page has to be cleared before use.
-  page_clear = (1 << 1),
-
-  // Overlay plane is enabled.
-  page_overlay = (1 << 2),
-
-  // Use this to extend the flags.
-  base_flag  = (1 << 2),
+enum clear_type {
+  eClearNone,
+  eClearAll,
+  eClearPartial,
+  eClearComplement,
 };
 
-enum exynos_plane_type {
-  plane_primary,
-  plane_overlay,
-  exynos_plane_max,
+enum plane_type {
+  ePlanePrimary,
+  ePlaneOverlay,
+
+  ePlaneTypeNum,
 };
 
 
@@ -72,6 +66,7 @@ struct exynos_plane {
   struct exynos_bo *bo;
   uint32_t buf_id;
   drmModeAtomicReq *atomic_request;
+  enum clear_type ctype;
   uint32_t atomic_cursor;
 };
 
@@ -87,12 +82,19 @@ struct plane_info {
 };
 
 struct exynos_page_base {
-  struct exynos_plane planes[exynos_plane_max];
+  struct exynos_plane planes[ePlaneTypeNum];
+
+  // @overlay_box: bounding box describing position and size of overlay.
   struct bounding_box overlay_box;
 
   struct exynos_data_base *root;
 
-  uint32_t flags;
+  /*
+   * @bUsed: page is currently in use.
+   * @bOverlay: overlay plane is enabled.
+   */
+  unsigned bUsed:1;
+  unsigned bOverlay:1;
 };
 
 struct exynos_data_base {
@@ -108,11 +110,14 @@ struct exynos_data_base {
   // Currently displayed page.
   struct exynos_page_base *cur_page;
 
+  // Temporary atomic request for combining multiple requests.
+  drmModeAtomicReq *temp_request;
+
   // Counter of pending pageflips.
   unsigned pageflip_pending;
 
   // Informations about primary and overlay plane.
-  struct plane_info plane_infos[exynos_plane_max];
+  struct plane_info plane_infos[ePlaneTypeNum];
 };
 
 

@@ -91,7 +91,7 @@ struct exynos_drm {
   // IDs for connector, CRTC and plane objects.
   uint32_t connector_id;
   uint32_t crtc_id;
-  uint32_t plane_id[exynos_plane_max];
+  uint32_t plane_id[ePlaneTypeNum];
   uint32_t mode_blob_id;
 
   // Mapping from properties to IDs.
@@ -107,7 +107,7 @@ struct drm_mode {
   drmModeRes *res;
   drmModePlaneRes *plane_res;
   drmModeConnector *connector;
-  drmModePlane *planes[exynos_plane_max];
+  drmModePlane *planes[ePlaneTypeNum];
 };
 
 struct prop_assign {
@@ -122,24 +122,24 @@ struct prop_assign {
 
 static const struct drm_prop prop_template[] = {
   // Property IDs of the connector object.
-  { DRM_MODE_OBJECT_CONNECTOR, connector_prop_crtc_id, "CRTC_ID" },
+  { .object_type = DRM_MODE_OBJECT_CONNECTOR, .prop = connector_prop_crtc_id, .prop_name = "CRTC_ID" },
 
   // Property IDs of the CRTC object.
-  { DRM_MODE_OBJECT_CRTC, crtc_prop_active, "ACTIVE" },
-  { DRM_MODE_OBJECT_CRTC, crtc_prop_mode_id, "MODE_ID" },
+  { .object_type = DRM_MODE_OBJECT_CRTC, .prop = crtc_prop_active,  .prop_name = "ACTIVE" },
+  { .object_type = DRM_MODE_OBJECT_CRTC, .prop = crtc_prop_mode_id, .prop_name = "MODE_ID" },
 
   // Property IDs of the plane object.
-  { DRM_MODE_OBJECT_PLANE, plane_prop_fb_id, "FB_ID" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_crtc_id, "CRTC_ID" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_crtc_x, "CRTC_X" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_crtc_y, "CRTC_Y" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_crtc_w, "CRTC_W" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_crtc_h, "CRTC_H" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_src_x, "SRC_X" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_src_y, "SRC_Y" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_src_w, "SRC_W" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_src_h, "SRC_H" },
-  { DRM_MODE_OBJECT_PLANE, plane_prop_zpos, "zpos" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_fb_id,   .prop_name = "FB_ID" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_crtc_id, .prop_name = "CRTC_ID" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_crtc_x,  .prop_name = "CRTC_X" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_crtc_y,  .prop_name = "CRTC_Y" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_crtc_w,  .prop_name = "CRTC_W" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_crtc_h,  .prop_name = "CRTC_H" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_src_x,   .prop_name = "SRC_X" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_src_y,   .prop_name = "SRC_Y" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_src_w,   .prop_name = "SRC_W" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_src_h,   .prop_name = "SRC_H" },
+  { .object_type = DRM_MODE_OBJECT_PLANE, .prop = plane_prop_zpos,    .prop_name = "zpos" },
 };
 
 
@@ -153,18 +153,19 @@ static const struct drm_prop prop_template[] = {
 static int
 get_device_index(void)
 {
-  char buf[32];
-  drmVersionPtr ver;
-
   int index = 0;
   int fd;
   bool found = false;
 
   while (!found) {
+    char buf[32];
+    drmVersionPtr ver;
+
     snprintf(buf, sizeof(buf), "/dev/dri/card%d", index);
 
     fd = open(buf, O_RDWR);
-    if (fd < 0) break;
+    if (fd < 0)
+      break;
 
     ver = drmGetVersion(fd);
 
@@ -177,24 +178,24 @@ get_device_index(void)
     close(fd);
   }
 
-  return (found ? index : -1);
+  return found ? index : -1;
 }
 
 static unsigned
 pixelformat_to_bpp(uint32_t pf)
 {
   switch (pf) {
-  case DRM_FORMAT_ARGB4444:
-  case DRM_FORMAT_RGBA4444:
-  case DRM_FORMAT_RGB565:
-    return 2;
+    case DRM_FORMAT_ARGB4444:
+    case DRM_FORMAT_RGBA4444:
+    case DRM_FORMAT_RGB565:
+      return 2;
 
-  case DRM_FORMAT_XRGB8888:
-    return 4;
+    case DRM_FORMAT_XRGB8888:
+      return 4;
 
-  default:
-    assert(false);
-    return 0;
+    default:
+      assert(false);
+      return 0;
   }
 }
 
@@ -223,7 +224,7 @@ cleanup_drm_mode(struct drm_mode *dm)
 {
   unsigned i;
 
-  for (i = 0; i < exynos_plane_max; ++i)
+  for (i = 0; i < ePlaneTypeNum; ++i)
     drmModeFreePlane(dm->planes[i]);
 
   drmModeFreeConnector(dm->connector);
@@ -234,13 +235,13 @@ cleanup_drm_mode(struct drm_mode *dm)
 static void
 cleanup_drm(struct exynos_drm *drm, int fd)
 {
-  if (drm) {
+  if (drm != NULL) {
     drmModeAtomicFree(drm->modeset_request);
     drmModeAtomicFree(drm->restore_request);
 
     free(drm->pmap);
 
-    memset(drm, 0, sizeof(struct exynos_drm));
+    *drm = (struct exynos_drm) { 0 };
   }
 
   free(drm);
@@ -250,7 +251,7 @@ cleanup_drm(struct exynos_drm *drm, int fd)
 static void
 cleanup_plane(struct exynos_plane *plane, int fd)
 {
-  if (plane->bo) {
+  if (plane->bo != NULL) {
     if (plane->buf_id)
       drmModeRmFB(fd, plane->buf_id);
 
@@ -268,10 +269,10 @@ cleanup_pages(struct exynos_page_base **pages, unsigned cnt)
   for (i = 0; i < cnt; ++i) {
     struct exynos_page_base *p = pages[i];
 
-    for (j = 0; j < exynos_plane_max; ++j)
+    for (j = 0; j < ePlaneTypeNum; ++j)
       cleanup_plane(&p->planes[j], p->root->fd);
 
-    memset(p, 0, sizeof(struct exynos_page_base));
+    *p = (struct exynos_page_base) { 0 };
   }
 }
 
@@ -283,15 +284,21 @@ static void
 page_flip_handler(int fd, unsigned frame, unsigned sec,
                   unsigned usec, void *data)
 {
-  struct exynos_page_base *page = data;
-  struct exynos_data_base *root = page->root;
+  struct exynos_page_base *page;
+  struct exynos_data_base *root;
+
+  assert(data != NULL);
+  page = data;
+
+  root = page->root;
+  assert(root != NULL);
 
 #if (EXYNOS_GFX_DEBUG_LOG == 1)
   RARCH_LOG("video_exynos: in page_flip_handler, page = %p\n", page);
 #endif
 
-  if (root->cur_page)
-    root->cur_page->flags &= ~page_used;
+  if (root->cur_page != NULL)
+    root->cur_page->bUsed = false;
 
   root->pageflip_pending--;
   root->cur_page = page;
@@ -300,6 +307,9 @@ page_flip_handler(int fd, unsigned frame, unsigned sec,
 static bool
 is_key_equal(const struct prop_key *k1, const struct prop_key *k2)
 {
+  assert(k1 != NULL);
+  assert(k2 != NULL);
+
   return k1->object_id == k2->object_id && k1->prop == k2->prop;
 }
 
@@ -332,15 +342,14 @@ get_propid_by_name(int fd, uint32_t object_id, uint32_t object_type,
   bool found = false;
 
   properties = drmModeObjectGetProperties(fd, object_id, object_type);
-
-  if (!properties)
+  if (properties == NULL)
     goto out;
 
   for (i = 0; i < properties->count_props; ++i) {
     drmModePropertyRes *prop;
 
     prop = drmModeGetProperty(fd, properties->props[i]);
-    if (!prop)
+    if (prop == NULL)
       continue;
 
     if (!strcmp(prop->name, name)) {
@@ -372,15 +381,14 @@ get_propval_by_id(int fd, uint32_t object_id, uint32_t object_type,
   bool found = false;
 
   properties = drmModeObjectGetProperties(fd, object_id, object_type);
-
-  if (!properties)
+  if (properties == NULL)
     goto out;
 
   for (i = 0; i < properties->count_props; ++i) {
     drmModePropertyRes *prop;
 
     prop = drmModeGetProperty(fd, properties->props[i]);
-    if (!prop)
+    if (prop == NULL)
       continue;
 
     if (prop->prop_id == id) {
@@ -440,8 +448,8 @@ get_ids_from_type(struct exynos_drm *drm, uint32_t object_type,
 
     case DRM_MODE_OBJECT_PLANE:
       ids->num_ids = 2;
-      ids->ids[0] = drm->plane_id[plane_primary];
-      ids->ids[1] = drm->plane_id[plane_overlay];
+      ids->ids[0] = drm->plane_id[ePlanePrimary];
+      ids->ids[1] = drm->plane_id[ePlaneOverlay];
     break;
 
     default:
@@ -457,7 +465,7 @@ setup_properties(int fd, struct exynos_drm *drm, const drmModeRes *res,
   const unsigned num_props = sizeof(prop_template) / sizeof(prop_template[0]);
   unsigned i;
 
-  assert(!drm->pmap);
+  assert(drm->pmap != NULL);
 
   drm->pmap_size = num_props;
   drm->pmap = calloc(num_props, sizeof(struct prop_mapping));
@@ -466,7 +474,8 @@ setup_properties(int fd, struct exynos_drm *drm, const drmModeRes *res,
     const uint32_t object_type = prop_template[i].object_type;
     const char* prop_name = prop_template[i].prop_name;
 
-    int j, object_count;
+    int j;
+    int object_count;
     uint32_t *object_ids;
 
     switch (object_type) {
@@ -487,14 +496,14 @@ setup_properties(int fd, struct exynos_drm *drm, const drmModeRes *res,
       break;
     }
 
-    for (int j = 0; j < object_count; ++j) {
+    for (j = 0; j < object_count; ++j) {
       const uint32_t object_id = object_ids[j];
       uint32_t prop_id;
 
       if (!get_propid_by_name(fd, object_id, object_type, prop_name, &prop_id))
         goto fail;
 
-      drm->pmap[i] = (struct prop_mapping){
+      drm->pmap[i] = (struct prop_mapping) {
         (struct prop_key){ object_id, prop_template[i].prop },
         prop_id
       };
@@ -514,7 +523,7 @@ fail:
 static int
 refresh_overlay_config(const struct exynos_drm *drm, struct exynos_page_base *page)
 {
-  struct exynos_plane *plane = &page->planes[plane_overlay];
+  struct exynos_plane *plane = &page->planes[ePlaneOverlay];
   struct bounding_box *bb = &page->overlay_box;
 
   const struct prop_mapping *mapping;
@@ -537,7 +546,7 @@ refresh_overlay_config(const struct exynos_drm *drm, struct exynos_page_base *pa
 
   drmModeAtomicSetCursor(plane->atomic_request, plane->atomic_cursor);
 
-  plane_id = drm->plane_id[plane_primary];
+  plane_id = drm->plane_id[ePlaneOverlay];
 
   for (i = 0; i < num_assign; ++i) {
     int ret;
@@ -620,7 +629,7 @@ create_modeset_request(int fd, struct exynos_drm *drm, unsigned w, unsigned h)
 
   const unsigned num_assign = sizeof(assign) / sizeof(assign[0]);
 
-  assert(!drm->modeset_request);
+  assert(drm->modeset_request == NULL);
 
   drm->modeset_request = drmModeAtomicAlloc();
 
@@ -637,9 +646,9 @@ create_modeset_request(int fd, struct exynos_drm *drm, unsigned w, unsigned h)
     goto fail;
 
   for (i = 0; i < num_assign; ++i) {
-    mapping = lookup_mapping(drm, drm->plane_id[plane_primary], assign[i].prop);
+    mapping = lookup_mapping(drm, drm->plane_id[ePlanePrimary], assign[i].prop);
 
-    if (drmModeAtomicAddProperty(drm->modeset_request, drm->plane_id[plane_primary],
+    if (drmModeAtomicAddProperty(drm->modeset_request, drm->plane_id[ePlanePrimary],
                                  mapping->id, assign[i].value) < 0)
       goto fail;
   }
@@ -663,10 +672,10 @@ primary_plane_request(const struct exynos_drm *drm, struct exynos_plane *plane)
   assert(plane->atomic_request == NULL);
 
   plane->atomic_request = drmModeAtomicAlloc();
-  if (!plane->atomic_request)
+  if (plane->atomic_request == NULL)
     return -1;
 
-  plane_id = drm->plane_id[plane_primary];
+  plane_id = drm->plane_id[ePlanePrimary];
   mapping = lookup_mapping(drm, plane_id, plane_prop_fb_id);
 
   ret = drmModeAtomicAddProperty(plane->atomic_request, plane_id, mapping->id, plane->buf_id);
@@ -709,7 +718,7 @@ overlay_plane_request(const struct exynos_drm *drm, struct exynos_plane *plane)
   if (!plane->atomic_request)
     return -1;
 
-  plane_id = drm->plane_id[plane_overlay];
+  plane_id = drm->plane_id[ePlaneOverlay];
 
   mapping = lookup_mapping(drm, plane_id, plane_prop_crtc_id);
   ret = drmModeAtomicAddProperty(plane->atomic_request, plane_id, mapping->id, drm->crtc_id);
@@ -751,11 +760,11 @@ create_page_request(struct exynos_page_base *page)
 
   drm = page->root->drm;
 
-  ret = primary_plane_request(drm, &page->planes[plane_primary]);
+  ret = primary_plane_request(drm, &page->planes[ePlanePrimary]);
   if (ret < 0)
     goto out;
 
-  ret = overlay_plane_request(drm, &page->planes[plane_overlay]);
+  ret = overlay_plane_request(drm, &page->planes[ePlaneOverlay]);
   if (ret < 0)
     goto out;
 
@@ -771,7 +780,7 @@ initial_modeset(int fd, struct exynos_page_base *page, struct exynos_drm *drm)
   drmModeAtomicReq *request;
 
   ret = 0;
-  plane = &page->planes[plane_primary];
+  plane = &page->planes[ePlanePrimary];
 
   request = drmModeAtomicDuplicate(drm->modeset_request);
   if (request == NULL) {
@@ -823,15 +832,15 @@ check_plane(struct exynos_data_base *data, unsigned crtc_index,
   if (!get_propval_by_id(data->fd, plane->plane_id, DRM_MODE_OBJECT_PLANE, prop_id, &type))
     return;
 
-  primary = &data->plane_infos[plane_primary];
-  overlay = &data->plane_infos[plane_overlay];
+  primary = &data->plane_infos[ePlanePrimary];
+  overlay = &data->plane_infos[ePlaneOverlay];
 
-  if (planes[plane_primary] == NULL) {
+  if (planes[ePlanePrimary] == NULL) {
     if (plane_has_format(plane, primary->pixel_format) && type == DRM_PLANE_TYPE_PRIMARY)
-      planes[plane_primary] = plane;
-  } else if (planes[plane_overlay] == NULL) {
+      planes[ePlanePrimary] = plane;
+  } else if (planes[ePlaneOverlay] == NULL) {
     if (plane_has_format(plane, overlay->pixel_format) && type != DRM_PLANE_TYPE_PRIMARY)
-          planes[plane_overlay] = plane;
+          planes[ePlaneOverlay] = plane;
   }
 }
 
@@ -955,17 +964,17 @@ int exynos_open(struct exynos_data_base *data)
     drmModeFreePlane(plane);
   }
 
-  if (dm.planes[plane_primary] == NULL) {
+  if (dm.planes[ePlanePrimary] == NULL) {
     RARCH_ERR("exynos_open: no primary plane found\n");
     goto fail;
   }
 
-  if (dm.planes[plane_overlay] == NULL) {
+  if (dm.planes[ePlaneOverlay] == NULL) {
     RARCH_ERR("exynos_open: no overlay plane found\n");
     goto fail;
   }
 
-  for (i = 0; i < exynos_plane_max; ++i)
+  for (i = 0; i < ePlaneTypeNum; ++i)
     data->drm->plane_id[i] = dm.planes[i]->plane_id;
 
   if (setup_properties(data->fd, data->drm, dm.res, dm.plane_res)) {
@@ -985,17 +994,26 @@ int exynos_open(struct exynos_data_base *data)
   data->fliphandler->evctx.version = DRM_EVENT_CONTEXT_VERSION;
   data->fliphandler->evctx.page_flip_handler = page_flip_handler;
 
+  data->temp_request = drmModeAtomicAlloc();
+  if (data->temp_request == NULL) {
+    RARCH_ERR("exynos_open: failed to allocate temporary atomic request\n");
+    goto fail;
+  }
+
   RARCH_LOG("exynos_open: using DRM device \"%s\" with connector id %u\n",
             buf, data->drm->connector_id);
 
   RARCH_LOG("exynos_open: primary plane has ID %u, overlay plane has ID %u\n",
-            data->drm->plane_id[plane_primary], data->drm->plane_id[plane_overlay]);
+            data->drm->plane_id[ePlanePrimary], data->drm->plane_id[ePlaneOverlay]);
 
   cleanup_drm_mode(&dm);
 
   return 0;
 
 fail:
+  drmModeAtomicFree(data->temp_request);
+  data->temp_request = NULL;
+
   free(data->fliphandler);
   data->fliphandler = NULL;
 
@@ -1012,6 +1030,9 @@ fail:
  * Counterpart to exynos_open().
  */
 void exynos_close(struct exynos_data_base *data) {
+  drmModeAtomicFree(data->temp_request);
+  data->temp_request = NULL;
+
   free(data->fliphandler);
   data->fliphandler = NULL;
 
@@ -1082,8 +1103,8 @@ int exynos_init(struct exynos_data_base *data)
     goto fail;
   }
 
-  primary = &data->plane_infos[plane_primary];
-  overlay = &data->plane_infos[plane_overlay];
+  primary = &data->plane_infos[ePlanePrimary];
+  overlay = &data->plane_infos[ePlaneOverlay];
 
   primary->width = mode->hdisplay;
   primary->height = mode->vdisplay;
@@ -1121,7 +1142,7 @@ void exynos_deinit(struct exynos_data_base *data)
 
   drm = NULL;
 
-  memset(data->plane_infos, 0, sizeof(struct plane_info) * exynos_plane_max);
+  memset(data->plane_infos, 0, sizeof(struct plane_info) * ePlaneTypeNum);
 }
 
 int exynos_register_page(struct exynos_data_base *data,
@@ -1130,7 +1151,7 @@ int exynos_register_page(struct exynos_data_base *data,
   void *npages;
 
   npages = realloc(data->pages, sizeof(void*) * (data->num_pages + 1));
-  if (!npages)
+  if (npages == NULL)
     return -1;
 
   data->pages = npages;
@@ -1174,7 +1195,7 @@ int exynos_alloc(struct exynos_data_base *data)
     struct exynos_page_base *p = data->pages[i];
     unsigned j;
 
-    for (j = 0; j < exynos_plane_max; ++j) {
+    for (j = 0; j < ePlaneTypeNum; ++j) {
       struct exynos_plane *plane;
       struct plane_info *pi;
 
@@ -1202,10 +1223,11 @@ int exynos_alloc(struct exynos_data_base *data)
         RARCH_ERR("exynos_alloc: failed to create atomic request for page %u\n", i);
         goto fail;
       }
+
+      plane->ctype = eClearAll;
     }
 
     p->root = data;
-    p->flags |= page_clear;
   }
 
   // Setup framebuffer: display the last allocated page.
@@ -1249,10 +1271,8 @@ struct exynos_page_base* exynos_get_free_page(struct exynos_data_base *data)
   unsigned i;
 
   for (i = 0; i < data->num_pages; ++i) {
-    if (pages[i]->flags & page_used)
-      continue;
-
-    return pages[i];
+    if (!pages[i]->bUsed)
+      return pages[i];
   }
 
   return NULL;
@@ -1285,10 +1305,10 @@ int exynos_issue_flip(struct exynos_data_base *data, struct exynos_page_base *pa
   assert(data != NULL);
   assert(page != NULL);
 
-  primary = &page->planes[plane_primary];
+  primary = &page->planes[ePlanePrimary];
 
-  if (page->flags & page_overlay) {
-    overlay = &page->planes[plane_overlay];
+  if (page->bOverlay) {
+    overlay = &page->planes[ePlaneOverlay];
 
     ret = refresh_overlay_config(data->drm, page);
     if (ret < 0) {
@@ -1324,11 +1344,11 @@ int exynos_issue_flip(struct exynos_data_base *data, struct exynos_page_base *pa
   data->pageflip_pending++;
 
   // On startup no frame is displayed. We therefore wait for the initial flip to finish.
-  if (!data->cur_page)
+  if (data->cur_page == NULL)
     exynos_wait_for_flip(data);
 
 out:
-  if (page->flags & page_overlay)
+  if (page->bOverlay)
     drmModeAtomicFree(request);
 
   return ret;
