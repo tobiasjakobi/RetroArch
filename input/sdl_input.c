@@ -335,7 +335,7 @@ const input_driver_t input_sdl = {
    .get_capabilities = sdl_get_capabilities,
 #ifdef HAVE_SDL2
    .ident = "sdl2",
-   .grab = mouse sdl_grab_mouse,
+   .grab_mouse = sdl_grab_mouse,
 #else
    .ident = "sdl",
 #endif
