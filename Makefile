@@ -149,7 +149,8 @@ ifeq ($(HAVE_SDL2), 1)
 endif
 
 ifeq ($(HAVE_EXYNOS), 1)
-   OBJ += gfx/exynos.o gfx/exynos_common.o mem/neon/memcpy-neon.o
+   ##OBJ += gfx/exynos.o gfx/exynos_common.o mem/neon/memcpy-neon.o
+   OBJ += gfx/exynos.o gfx/exynos_common.o
    LIBS += $(DRM_LIBS) $(EXYNOS_LIBS)
    DEFINES += $(DRM_CFLAGS) $(EXYNOS_CFLAGS)
 endif
