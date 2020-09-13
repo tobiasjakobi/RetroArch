@@ -13,12 +13,21 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// -----------------------------------------------------------------------------------------
+// Header files
+// -----------------------------------------------------------------------------------------
+
 #include <poll.h>
 
 #include <stdbool.h>
 
 #include <xf86drm.h>
 #include <xf86drmMode.h>
+
+
+// -----------------------------------------------------------------------------------------
+// Defines
+// -----------------------------------------------------------------------------------------
 
 // Set to '1' to enable debug logging code.
 #define EXYNOS_GFX_DEBUG_LOG 0
@@ -43,6 +52,8 @@ enum clear_type {
   eClearAll,
   eClearPartial,
   eClearComplement,
+
+  eClearTypeNum,
 };
 
 enum plane_type {

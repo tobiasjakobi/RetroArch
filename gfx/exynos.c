@@ -28,6 +28,13 @@
 /* TODO: Honor these properties: vsync, menu rotation, menu alpha, aspect ratio change */
 
 // -----------------------------------------------------------------------------------------
+// Defines
+// -----------------------------------------------------------------------------------------
+
+#define MSG_PREFIX "video_exynos: "
+
+
+// -----------------------------------------------------------------------------------------
 // External functions
 // -----------------------------------------------------------------------------------------
 
@@ -109,6 +116,7 @@ struct exynos_config_default {
 };
 
 struct blit_destination {
+  // @img: image object backing the blit destination.
   struct g2d_image img;
 
   /*
@@ -122,24 +130,24 @@ struct blit_destination {
 };
 
 struct g2d_blitter {
-  // @bo: buffer object backing the source G2D image.
-  struct exynos_bo *bo;
+  // @boSrc: buffer object backing the source G2D image.
+  struct exynos_bo *boSrc;
 
   /*
-   * @u16Width: width of the blitting source rectangle
-   * @u16Height: height of the blitting source rectangle
+   * @u16SrcWidth: width of the blitting source rectangle
+   * @u16SrcHeight: height of the blitting source rectangle
    *
    * We only store width and height here, since the blitting rectangle
    * is always located at (0,0), i.e. there is no offset.
    */
-  uint16_t u16Width;
-  uint16_t u16Height;
+  uint16_t u16SrcWidth;
+  uint16_t u16SrcHeight;
 
   /*
-   * @src: source image for the blitting operation.
+   * @imgSrc: source image for the blitting operation.
    * @dst: blitting destination of the operation.
    */
-  struct g2d_image src;
+  struct g2d_image imgSrc;
   struct blit_destination *dst;
 };
 
@@ -417,13 +425,13 @@ create_mapped_bo(struct exynos_device *dev, size_t size)
 
   bo = exynos_bo_create(dev, size, flags);
   if (bo == NULL) {
-    RARCH_ERR("video_exynos: failed to create temp buffer object\n");
+    RARCH_ERR(MSG_PREFIX "failed to create temp buffer object\n");
     return NULL;
   }
 
   addr = exynos_bo_map(bo);
   if (addr == NULL) {
-    RARCH_ERR("video_exynos: failed to map temp buffer object\n");
+    RARCH_ERR(MSG_PREFIX "failed to map temp buffer object\n");
     exynos_bo_destroy(bo);
     return NULL;
   }
@@ -448,27 +456,27 @@ realloc_blitter_bo(struct exynos_device *dev, struct g2d_blitter *blitter, size_
   assert(dev != NULL);
   assert(blitter != NULL);
 
-  oldbo = blitter->bo;
+  oldbo = blitter->boSrc;
 
   if (size <= oldbo->size)
     return 0;
 
 #if (EXYNOS_GFX_DEBUG_LOG == 1)
-  RARCH_LOG("video_exynos: reallocating %s buffer (%u -> %u bytes)\n",
+  RARCH_LOG(MSG_PREFIX "reallocating %s buffer (%u -> %u bytes)\n",
             buffer_name(type), buf->size, size);
 #endif
 
   bo = create_mapped_bo(dev, size);
   if (bo == NULL) {
-    RARCH_ERR("video_exynos: realloc_blitter_bo: out of memory\n");
+    RARCH_ERR(MSG_PREFIX "realloc_blitter_bo: out of memory\n");
     return -1;
   }
 
   exynos_bo_destroy(oldbo);
 
   // Assign new GEM buffer to the G2D image backed by it.
-  blitter->bo = bo;
-  blitter->src.bo[0] = bo->handle;
+  blitter->boSrc = bo;
+  blitter->imgSrc.bo[0] = bo->handle;
 
   return 0;
 }
@@ -493,7 +501,7 @@ clear_buffer(struct g2d_context *g2d, struct g2d_image *img)
     ret = g2d_exec(g2d);
 
   if (ret != 0)
-    RARCH_ERR("video_exynos: failed to clear buffer using G2D\n");
+    RARCH_ERR(MSG_PREFIX "failed to clear buffer (%d)\n", ret);
 
   return ret;
 }
@@ -550,7 +558,7 @@ clear_buffer_bb(struct g2d_context *g2d, struct g2d_image *img,
     ret = g2d_exec(g2d);
 
   if (ret != 0)
-    RARCH_ERR("video_exynos: failed to clear buffer (bb) using G2D\n");
+    RARCH_ERR(MSG_PREFIX "failed to clear buffer (bb) (%d)\n", ret);
 
 out:
   return ret;
@@ -590,7 +598,7 @@ clear_buffer_complement(struct g2d_context *g2d, struct g2d_image *img,
     ret = g2d_exec(g2d);
 
   if (ret != 0)
-    RARCH_ERR("video_exynos: failed to clear buffer (complement) using G2D\n");
+    RARCH_ERR(MSG_PREFIX "failed to clear buffer (complement) (%d)\n", ret);
 
   return ret;
 }
@@ -749,17 +757,17 @@ perf_finish(struct exynos_perf *p)
 {
   assert(p != NULL);
 
-  RARCH_LOG("video_exynos: debug: total memcpy calls: %u\n", p->memcpy_calls);
-  RARCH_LOG("video_exynos: debug: total g2d calls: %u\n", p->g2d_calls);
+  RARCH_LOG(MSG_PREFIX "DEBUG: total memcpy calls: %u\n", p->memcpy_calls);
+  RARCH_LOG(MSG_PREFIX "DEBUG: total G2D calls: %u\n", p->g2d_calls);
 
-  RARCH_LOG("video_exynos: debug: total memcpy time: %f seconds\n",
+  RARCH_LOG(MSG_PREFIX "DEBUG: total memcpy time: %f seconds\n",
             (double)p->memcpy_time / 1000000.0);
-  RARCH_LOG("video_exynos: debug: total g2d time: %f seconds\n",
+  RARCH_LOG(MSG_PREFIX "DEBUG: total g2d time: %f seconds\n",
             (double)p->g2d_time / 1000000.0);
 
-  RARCH_LOG("video_exynos: debug: average time per memcpy call: %f microseconds\n",
+  RARCH_LOG(MSG_PREFIX "DEBUG: average time per memcpy call: %f microseconds\n",
             (double)p->memcpy_time / (double)p->memcpy_calls);
-  RARCH_LOG("video_exynos: debug: average time per g2d call: %f microseconds\n",
+  RARCH_LOG(MSG_PREFIX "DEBUG: average time per g2d call: %f microseconds\n",
             (double)p->g2d_time / (double)p->g2d_calls);
 }
 
@@ -882,7 +890,7 @@ additional_init(struct exynos_data *data)
 
 fail:
   for (i = 0; i < eImageTypeNum; ++i) {
-    exynos_bo_destroy(data->blitters[i].bo);
+    exynos_bo_destroy(data->blitters[i].boSrc);
     data->blitters[i] = (struct g2d_blitter) { 0 };
   }
 
@@ -899,7 +907,7 @@ additional_deinit(struct exynos_data *data)
   g2d_fini(data->g2d);
 
   for (i = 0; i < eImageTypeNum; ++i) {
-    exynos_bo_destroy(data->blitters[i].bo);
+    exynos_bo_destroy(data->blitters[i].boSrc);
     data->blitters[i] = (struct g2d_blitter) { 0 };
   }
 }
@@ -907,7 +915,6 @@ additional_deinit(struct exynos_data *data)
 __attribute__((unused)) static void
 alloc_status(struct exynos_data *data)
 {
-  // TODO: correct location?
   static const char *plane_names[ePlaneTypeNum] = {
       "primary",
       "overlay",
@@ -918,14 +925,14 @@ alloc_status(struct exynos_data *data)
   assert(data != NULL);
   assert(data->pages != NULL);
 
-  RARCH_LOG("video_exynos: allocated %u pages\n", data->base.num_pages);
+  RARCH_LOG(MSG_PREFIX "allocated %u pages\n", data->base.num_pages);
 
   for (i = 0; i < ePlaneTypeNum; ++i) {
     struct plane_info *pi;
 
     pi = &data->base.plane_infos[i];
 
-    RARCH_LOG("video_exynos: %s plane has total size of %u bytes (pitch = %u bytes)\n",
+    RARCH_LOG(MSG_PREFIX "%s plane has total size of %u bytes (pitch = %u bytes)\n",
               plane_names[i], pi->size, pi->pitch);
   }
 
@@ -940,7 +947,7 @@ alloc_status(struct exynos_data *data)
 
       plane = &page->base.planes[j];
 
-      RARCH_LOG("video_exynos: page %u: %s plane: BO at %p, buffer id = %u\n",
+      RARCH_LOG(MSG_PREFIX "page %u: %s plane: BO at %p, buffer id = %u\n",
                 i, plane_names[j], plane->bo, plane->buf_id);
     }
   }
@@ -949,7 +956,11 @@ alloc_status(struct exynos_data *data)
 /**
  * Find a free page, clear it if necessary, and return the page.
  *
+ * @data: pointer to a exynos_data object.
+ *
  * If no free page is available when called, wait for a page flip.
+ *
+ * Always returns a pointer to a valid exynos_page object.
  */
 static struct exynos_page*
 find_free_page(struct exynos_data *data)
@@ -970,7 +981,7 @@ find_free_page(struct exynos_data *data)
 
   ret = clear_page(data->g2d, page, data->dsts);
   if (ret < 0)
-    return NULL; // TODO: maybe only warning?
+    RARCH_WARN(MSG_PREFIX "failed to clear free page (%u)\n", ret);
 
   page->base.bUsed = true;
   page->base.bOverlay = false;
@@ -987,6 +998,9 @@ find_free_page(struct exynos_data *data)
  * @height: new source height for the blitter
  * @color_mode: new source color mode for the blitter
  * @pitch: new source pitch for the blitter
+ *
+ * Updates the dimensions of the source image and reallocates
+ * the BO backing the source image.
  */
 static int
 update_blitter_source(struct exynos_data *data, enum image_type type,
@@ -1002,12 +1016,12 @@ update_blitter_source(struct exynos_data *data, enum image_type type,
 
   blitter = &data->blitters[type];
 
-  blitter->src.width = width;
-  blitter->src.height = height;
-  blitter->src.color_mode = color_mode;
-  blitter->src.stride = pitch;
+  blitter->imgSrc.width = width;
+  blitter->imgSrc.height = height;
+  blitter->imgSrc.color_mode = color_mode;
+  blitter->imgSrc.stride = pitch;
 
-  size = pitch * blitter->u16Height;
+  size = pitch * blitter->u16SrcHeight;
 
   if (realloc_blitter_bo(data->base.device, blitter, size) < 0)
     return -1;
@@ -1024,7 +1038,7 @@ update_blitter_source(struct exynos_data *data, enum image_type type,
  * @height: new height for the source blitting rectangle
  *
  * Updates the source blitting rectangle and the damage
- * bounding box in the destination image.
+ * bounding box for the destination image.
  */
 static void
 update_blitter_config(struct exynos_data *data, enum image_type type,
@@ -1065,8 +1079,9 @@ update_blitter_config(struct exynos_data *data, enum image_type type,
   bb->y = (img->height - h) / 2;
   bb->w = w;
   bb->h = h;
-  blitter->u16Width = width;
-  blitter->u16Height = height;
+
+  blitter->u16SrcWidth = width;
+  blitter->u16SrcHeight = height;
 
   for (i = 0; i < data->base.num_pages; ++i)
     flag_clear_page(&data->pages[i], defaults[type].ptype);
@@ -1108,6 +1123,16 @@ fake_blitter_config(struct exynos_data *data, enum image_type type)
     force_full_clear_page(&data->pages[i], defaults[type].ptype);
 }
 
+/*
+ * Blit pixel buffer using a blitter object.
+ *
+ * @g2d: pointer to a g2d_context object
+ * @blitter: pointer to a g2d_blitter object
+ * @pixels: opaque pointer to pixel buffer
+ *
+ * The user has to make sure that the size of the pixel buffer
+ * matches the current configuration of the blitter.
+ */
 static int
 blit_pixels(struct g2d_context *g2d, struct g2d_blitter *blitter, const void *pixels)
 {
@@ -1115,27 +1140,115 @@ blit_pixels(struct g2d_context *g2d, struct g2d_blitter *blitter, const void *pi
   int ret;
   size_t size;
 
-  size = blitter->src.stride * blitter->u16Height;
+  assert(g2d != NULL);
+  assert(blitter != NULL);
+  assert(pixels != NULL);
+
+  size = blitter->imgSrc.stride * blitter->u16SrcHeight;
   bb = &blitter->dst->damage;
 
   perf_memcpy(&data->perf, true);
 
   // Without IOMMU the G2D only works properly between GEM buffers.
-  memcpy_neon(blitter->bo->vaddr, pixels, size);
+  memcpy_neon(blitter->boSrc->vaddr, pixels, size);
 
   perf_memcpy(&data->perf, false);
 
   perf_g2d(&data->perf, true);
 
-  if (g2d_copy_with_scale(g2d, &blitter->src, &blitter->dst->img, 0, 0,
-                          blitter->u16Width, blitter->u16Height,
+  if (g2d_copy_with_scale(g2d, &blitter->imgSrc, &blitter->dst->img, 0, 0,
+                          blitter->u16SrcWidth, blitter->u16SrcHeight,
                           bb->x, bb->y, bb->w, bb->h, 0) ||
       g2d_exec(g2d)) {
-    RARCH_ERR("video_exynos: failed to blit frame\n");
+    RARCH_ERR("video_exynos: failed to blit pixels (blitter = %p)\n", blitter);
     return -1;
   }
 
   perf_g2d(&data->perf, false);
+
+  return 0;
+}
+
+/*
+ * Execute blend operation with a blitter object.
+ *
+ * @g2d: pointer to a g2d_context object
+ * @blitter: pointer to a g2d_blitter object
+ * @pixels: optional opaque pointer to pixel buffer
+ *
+ * If no pixel buffer is given, the current content of the BO belonging
+ * to the blitter is used.
+ *
+ * The user has to make sure that the size of the pixel buffer
+ * matches the current configuration of the blitter.
+ */
+static int
+blend_pixels(struct g2d_context *g2d, struct g2d_blitter *blitter, const void *pixels)
+{
+  const struct bounding_box *bb;
+  int ret;
+
+  assert(g2d != NULL);
+  assert(blitter != NULL);
+
+  bb = &blitter->dst->damage;
+
+  if (pixels != NULL)
+  {
+    size_t size;
+
+    size = blitter->imgSrc.stride * blitter->u16SrcHeight;
+
+    perf_memcpy(&data->perf, true);
+
+    memcpy_neon(blitter->boSrc->vaddr, pixels, size);
+
+    perf_memcpy(&data->perf, false);
+  }
+
+  perf_g2d(&data->perf, true);
+
+  if (g2d_scale_and_blend(g2d, &blitter->imgSrc, &blitter->dst->img, 0, 0,
+                          blitter->u16SrcWidth, blitter->u16SrcHeight,
+                          bb->x, bb->y, bb->w, bb->h, G2D_OP_INTERPOLATE) ||
+      g2d_exec(g2d)) {
+    RARCH_ERR("video_exynos: failed to blend pixels (blitter = %p)\n", blitter);
+    return -1;
+  }
+
+  perf_g2d(&data->perf, false);
+
+  return 0;
+}
+
+/*
+ * Handle a resolution change of the emulator framebuffer.
+ *
+ * @vid: pointer to a exynos_video object
+ * @width: new width of the emulator framebuffer
+ * @height: new height of the emulator framebuffer
+ * @pitch: new pitch/stride of the emulator framebuffer
+ */
+static int
+handle_res_change(struct exynos_video *vid, unsigned width, unsigned height, unsigned pitch)
+{
+  struct exynos_data *data;
+  int ret;
+
+  assert(vid != NULL);
+  data = &vid->data;
+
+  RARCH_LOG(MSG_PREFIX "resolution changed by core: %ux%u -> %ux%u\n",
+            vid->width, vid->height, width, height);
+
+  update_blitter_config(data, eImageEmulator, width, height);
+
+  ret = update_blitter_source(data, eImageEmulator, width, height, vid->color_mode, pitch);
+  if (ret < 0)
+    return ret;
+
+  vid->width = width;
+  vid->height = height;
 
   return 0;
 }
@@ -1390,7 +1503,7 @@ swfb_get_current_addr(void *ctx, void **addr, size_t *pitch)
   if (ret < 0)
     return false;
 
-  *addr = blitter->bo->vaddr;
+  *addr = blitter->boSrc->vaddr;
   *pitch = data->sw_fb.stride;
 
   return true;
@@ -1428,7 +1541,6 @@ swfb_video_refresh(void *ctx, const struct retro_rectangle *rect)
   }
 
   page = find_free_page(data);
-  // TODO: handle page == NULL
 
   update_blit_destination(page, data->dsts);
 
@@ -1446,7 +1558,7 @@ swfb_video_refresh(void *ctx, const struct retro_rectangle *rect)
    * This clips the blitting rectangle, should it be
    * not inside [0, w] x [0, h].
    */
-  if (g2d_copy_with_scale(data->g2d, &blitter->src, &blitter->dst->img,
+  if (g2d_copy_with_scale(data->g2d, &blitter->imgSrc, &blitter->dst->img,
                           rect->x, rect->y, rect->w, rect->h,
                           bb->x, bb->y, bb->w, bb->h, 0) ||
       g2d_exec(data->g2d)) {
@@ -1627,6 +1739,8 @@ exynos_gfx_frame(void *driver_data, const void *frame, unsigned width,
 
   struct exynos_page *page;
 
+  int ret;
+
   assert(driver_data != NULL);
   vid = driver_data;
 
@@ -1641,38 +1755,28 @@ exynos_gfx_frame(void *driver_data, const void *frame, unsigned width,
 
   page = NULL;
 
-  if (frame != NULL) {
-    int ret;
-
+  if (frame != NULL)
+  {
     if (width != vid->width || height != vid->height) {
       // Sanity check on new dimension parameters.
       if (width == 0 || height == 0)
         return true;
 
-      RARCH_LOG("video_exynos: resolution changed by core: %ux%u -> %ux%u\n",
-                vid->width, vid->height, width, height);
-      update_blitter_config(data, eImageEmulator, width, height);
-
-      vid->width = width;
-      vid->height = height;
+      ret = handle_res_change(vid, width, height, pitch);
+      if (ret < 0)
+        return false;
     }
 
     page = find_free_page(data);
-    // TODO: handle page == NULL
-
     update_blit_destination(page, data->dsts);
 
-    // TODO. check page for NULL
-
-    ret = update_blitter_source(data, eImageEmulator, vid->width, vid->height,
-                                vid->color_mode, pitch);
-
-    if (blit_pixels(data->g2d, &data->blitters[eImageEmulator], frame) != 0)
+    if (blit_pixels(data->g2d, &data->blitters[eImageEmulator], frame) < 0)
       goto fail;
   }
 
   if (g_settings.fps_show) {
-    char buffer[128], buffer_fps[128];
+    char buffer[128];
+    char buffer_fps[128];
 
     gfx_get_fps(buffer, sizeof(buffer), g_settings.fps_show ? buffer_fps : NULL, sizeof(buffer_fps));
     msg_queue_push(g_extern.msg_queue, buffer_fps, 1, 1);
@@ -1681,14 +1785,13 @@ exynos_gfx_frame(void *driver_data, const void *frame, unsigned width,
   if (vid->width == 0 || vid->height == 0) {
     /*
      * If at this point the dimension parameters are still zero, setup some
-     * fake blit parameters so that menu and font rendering work properly.
+     * fake blit parameters so that menu rendering works properly.
      */
     fake_blitter_config(data, eImageEmulator);
   }
 
   if (page == NULL) {
     page = find_free_page(data);
-    // TODO: handle page == NULL
 
     update_blit_destination(page, data->dsts);
   }
@@ -1887,53 +1990,41 @@ static void
 exynos_set_texture_frame(void *driver_data, const void *frame, bool rgb32,
                          unsigned width, unsigned height, float alpha)
 {
-  struct exynos_video *vid = driver_data;
-  struct exynos_data *data = &vid->data;
-  struct g2d_blitter *blitter = &data->blitters[eImageMenu];
+  struct exynos_video *vid;
+  struct exynos_data *data;
+  struct g2d_blitter *blitter;
 
-  uint32_t pitch, color_mode;
+  unsigned pitch;
+  unsigned size;
+  uint32_t color_mode;
+
   int ret;
 
+  assert(driver_data != NULL);
+  assert(frame != NULL);
+  vid = driver_data;
+
+  data = &vid->data;
+  blitter = &data->blitters[eImageMenu];
+
   pitch = width * (rgb32 ? 4 : 2);
+  size = pitch * height;
   color_mode = rgb32 ? G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_RGBAX :
                        G2D_COLOR_FMT_ARGB4444 | G2D_ORDER_RGBAX;
 
   ret = update_blitter_source(data, eImageMenu, width, height, color_mode, pitch);
-  if (ret < 0)
-    return; // TODO: print warning
+  if (ret < 0) {
+    RARCH_WARN("video_exynos: failed to update blitter source for menu image (%u)\n", ret);
 
-  blitter->src.component_alpha = 255.0f * alpha;
-
-  //const enum exynos_buffer_type buf_type = defaults[exynos_image_menu].buf_type;
-
-
-#if 0
-    update_blitter_source(struct exynos_data *data, enum image_type type,
-                          unsigned width, unsigned height,
-                          unsigned color_mode, unsigned pitch)
-#endif
-
-  //struct g2d_image *src = &data->src[exynos_image_menu];
-
-
-#if 0
-  const unsigned size = width * height * (rgb32 ? 4 : 2);
-
-  if (realloc_blitter_bo(data->base.device, image_menu, size) < 0)
     return;
+  }
 
-  src->width = width;
-  src->height = height;
-  src->stride = width * (rgb32 ? 4 : 2);
-  src->color_mode = rgb32 ? G2D_COLOR_FMT_ARGB8888 | G2D_ORDER_RGBAX :
-                            G2D_COLOR_FMT_ARGB4444 | G2D_ORDER_RGBAX;
-#endif
-
-  //src->
+  // TODO: honor component alpha in blend_pixels()
+  blitter->src.component_alpha = 255.0f * alpha;
 
   perf_memcpy(&data->perf, true);
 
-  memcpy_neon(data->buf[buf_type]->vaddr, frame, size);
+  memcpy_neon(blitter->bo->vaddr, frame, size);
 
   perf_memcpy(&data->perf, false);
 }
